@@ -1203,7 +1203,46 @@ body{min-width:320px!important}
  #view-home .post-actions .action{padding:5px 1px!important;font-size:10px!important}
 }
 </style>
-</head>
+<style id="compact-profile-layout">
+/* Compact profile layout */
+#view-profile .profile-hero-card{padding:10px!important;border-radius:14px!important;margin-bottom:9px!important}
+#view-profile .profile-cover{height:92px!important;border-radius:11px!important;margin:-1px -1px 0!important}
+#view-profile .profile-main{gap:9px!important;margin-top:-25px!important;padding:0 9px!important;align-items:flex-end!important;flex-wrap:wrap!important}
+#view-profile .profile-main .avatar{width:58px!important;height:58px!important;border-width:3px!important;font-size:19px!important;flex:0 0 58px!important}
+#view-profile .profile-identity{min-width:0!important;flex:1!important;padding-bottom:3px!important}
+#view-profile .profile-identity h2{font-size:17px!important;line-height:1.2!important;margin:0 0 3px!important;overflow-wrap:anywhere}
+#view-profile .profile-handle{font-size:11px!important;line-height:1.2!important}
+#view-profile .profile-main .follow,#view-profile .profile-main .soft{padding:6px 9px!important;font-size:10px!important;border-radius:9px!important}
+#view-profile .profile-bio{font-size:12px!important;line-height:1.45!important;margin:8px 9px 5px!important}
+#view-profile .profile-public-details{font-size:10px!important;line-height:1.4!important;margin:4px 9px 7px!important;gap:5px!important}
+#view-profile .profile-stats{display:flex!important;justify-content:space-around!important;gap:5px!important;padding:9px 4px 3px!important;margin-top:7px!important}
+#view-profile .profile-stats>div,#view-profile .profile-stat-button{min-width:0!important;flex:1!important;text-align:center!important;padding:3px!important}
+#view-profile .profile-stats b{font-size:15px!important;line-height:1.2!important}
+#view-profile .profile-stats span{font-size:10px!important}
+#view-profile .profile-post-heading{margin:10px 2px 7px!important}
+#view-profile .profile-post-heading h2{font-size:15px!important}
+#view-profile .profile-post-heading .tiny{font-size:10px!important}
+#view-profile .post{padding:10px!important;margin-bottom:8px!important;border-radius:13px!important}
+#view-profile .post-head{gap:7px!important}
+#view-profile .post-head .avatar{width:34px!important;height:34px!important}
+#view-profile .post-text{font-size:12px!important;line-height:1.45!important;margin:7px 0!important}
+#view-profile .post-media{max-height:340px!important;border-radius:9px!important}
+#view-profile .post-actions .action{padding:6px 2px!important;font-size:10px!important}
+#view-profile .profile-empty{padding:25px 12px!important}
+@media(max-width:680px){
+ #view-profile .profile-hero-card{padding:8px!important;margin-bottom:7px!important}
+ #view-profile .profile-cover{height:82px!important}
+ #view-profile .profile-main{margin-top:-22px!important;padding:0 7px!important;gap:7px!important}
+ #view-profile .profile-main .avatar{width:52px!important;height:52px!important;flex-basis:52px!important}
+ #view-profile .profile-identity h2{font-size:15px!important}
+ #view-profile .profile-bio{font-size:11px!important;margin:7px 7px 4px!important}
+ #view-profile .profile-stats{padding:7px 2px 2px!important}
+ #view-profile .profile-stats b{font-size:14px!important}
+ #view-profile .profile-stats span{font-size:9px!important}
+ #view-profile .profile-main .follow,#view-profile .profile-main .soft{padding:5px 7px!important;font-size:9px!important}
+ #view-profile .post-media{max-height:300px!important}
+}
+</style></head>
 <body>
 
 <div class="app">
