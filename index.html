@@ -1590,7 +1590,7 @@ function addSocialLogout(){
 }
 async function loadSocialData(){
  const uid=myId();if(!uid)return;
- const [profiles,privateProfileRes,posts,likes,comments,follows,saved,stories,storyLikes,storyViews,storyReplies,notifs]=await Promise.all([
+ const [profiles,privateProfileRes,posts,likes,comments,commentLikes,follows,saved,stories,storyLikes,storyViews,storyReplies,notifs]=await Promise.all([
   supabaseClient.from('social_profiles').select('*'),
   supabaseClient.from('social_profile_private').select('*').eq('user_id',uid).maybeSingle(),
   supabaseClient.from('social_posts').select('*').order('created_at',{ascending:false}).limit(200),
@@ -1633,6 +1633,7 @@ function subscribeSocialRealtime(){
   .on('postgres_changes',{event:'*',schema:'public',table:'social_profiles'},queueSocialRefresh)
   .on('postgres_changes',{event:'*',schema:'public',table:'social_likes'},queueSocialRefresh)
   .on('postgres_changes',{event:'*',schema:'public',table:'social_comments'},queueSocialRefresh)
+  .on('postgres_changes',{event:'*',schema:'public',table:'social_comment_likes'},queueSocialRefresh)
   .on('postgres_changes',{event:'*',schema:'public',table:'social_follows'},queueSocialRefresh)
   .on('postgres_changes',{event:'*',schema:'public',table:'social_saved_posts'},queueSocialRefresh)
   .on('postgres_changes',{event:'*',schema:'public',table:'social_notifications'},queueSocialRefresh)
