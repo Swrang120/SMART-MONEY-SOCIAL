@@ -828,6 +828,69 @@ body{min-width:320px!important}
 .post-author-link{display:inline-flex;align-items:center;gap:0;padding:0;border:0;background:transparent;color:inherit;font:inherit;font-weight:inherit;text-align:left;cursor:pointer}.post-author-link:hover{color:var(--blue)}
 
 .post-author-profile{display:inline-flex;cursor:pointer;flex:0 0 auto}.post-author-profile:focus-visible,.post-author-link:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:8px}
+
+/* Profile identity layout fix — keep this CSS inside the stylesheet */
+
+/* Profile identity layout fix — prevent display name and username from being squeezed */
+.profile-main{
+ display:grid!important;
+ grid-template-columns:88px minmax(0,1fr) auto!important;
+ align-items:end!important;
+ column-gap:14px!important;
+ row-gap:8px!important;
+ min-width:0!important;
+}
+.profile-avatar-wrap{grid-column:1;grid-row:1;min-width:0}
+.profile-identity{grid-column:2;grid-row:1;min-width:0!important;width:100%;padding-top:38px!important}
+.profile-identity h2{
+ display:block!important;
+ max-width:100%!important;
+ white-space:normal!important;
+ overflow-wrap:anywhere!important;
+ word-break:normal!important;
+ hyphens:auto!important;
+ line-height:1.18!important;
+}
+.profile-handle{
+ display:block!important;
+ max-width:100%!important;
+ white-space:normal!important;
+ overflow-wrap:anywhere!important;
+ word-break:break-word!important;
+ line-height:1.35!important;
+}
+.profile-edit-btn{grid-column:3;grid-row:1;justify-self:end;align-self:end}
+@media(max-width:560px){
+ .profile-main{
+  grid-template-columns:76px minmax(0,1fr)!important;
+  column-gap:12px!important;
+  row-gap:10px!important;
+  align-items:end!important;
+  margin-top:-37px!important;
+  padding:0 4px!important;
+ }
+ .profile-main .avatar{width:76px!important;height:76px!important}
+ .profile-identity{grid-column:2;grid-row:1;min-width:0!important;padding-top:28px!important}
+ .profile-identity h2{font-size:clamp(16px,4.8vw,20px)!important;letter-spacing:.15px!important}
+ .profile-handle{font-size:12px!important;letter-spacing:0!important}
+ .profile-edit-btn{grid-column:2;grid-row:2;justify-self:start;align-self:start;margin:0!important;min-height:38px!important;padding:8px 12px!important}
+}
+@media(min-width:561px) and (max-width:760px){
+ .profile-main{grid-template-columns:82px minmax(0,1fr) auto!important;column-gap:12px!important}
+ .profile-main .avatar{width:82px!important;height:82px!important}
+ .profile-identity{padding-top:34px!important}
+ .profile-identity h2{font-size:20px!important}
+ .profile-edit-btn{padding:9px 11px!important}
+}
+
+
+/* Keep profile action buttons in their own column without squeezing identity */
+.profile-main > .follow,
+.profile-main > .soft{grid-column:3;justify-self:end;align-self:end}
+@media(max-width:560px){
+ .profile-main > .follow,
+ .profile-main > .soft{grid-column:2;justify-self:start;align-self:start}
+}
 </style>
 </head>
 <body>
@@ -1289,55 +1352,3 @@ function renderStats(){const mine=db.posts.filter(p=>p.user===myId());$('statPos
 (async()=>{try{const {data,error}=await supabaseClient.auth.getSession();if(error)throw error;if(data.session?.user)await activateSocialUser(data.session.user);else showAuthGate();}catch(e){showAuthGate(e.message||'Could not connect to Social.');}})();
 supabaseClient.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){authUser=null;showAuthGate();}else if(event==='SIGNED_IN'&&session?.user&&!authUser)setTimeout(()=>activateSocialUser(session.user),0);});
 </script></body></html>
-
-/* Profile identity layout fix — prevent display name and username from being squeezed */
-.profile-main{
- display:grid!important;
- grid-template-columns:88px minmax(0,1fr) auto!important;
- align-items:end!important;
- column-gap:14px!important;
- row-gap:8px!important;
- min-width:0!important;
-}
-.profile-avatar-wrap{grid-column:1;grid-row:1;min-width:0}
-.profile-identity{grid-column:2;grid-row:1;min-width:0!important;width:100%;padding-top:38px!important}
-.profile-identity h2{
- display:block!important;
- max-width:100%!important;
- white-space:normal!important;
- overflow-wrap:anywhere!important;
- word-break:normal!important;
- hyphens:auto!important;
- line-height:1.18!important;
-}
-.profile-handle{
- display:block!important;
- max-width:100%!important;
- white-space:normal!important;
- overflow-wrap:anywhere!important;
- word-break:break-word!important;
- line-height:1.35!important;
-}
-.profile-edit-btn{grid-column:3;grid-row:1;justify-self:end;align-self:end}
-@media(max-width:560px){
- .profile-main{
-  grid-template-columns:76px minmax(0,1fr)!important;
-  column-gap:12px!important;
-  row-gap:10px!important;
-  align-items:end!important;
-  margin-top:-37px!important;
-  padding:0 4px!important;
- }
- .profile-main .avatar{width:76px!important;height:76px!important}
- .profile-identity{grid-column:2;grid-row:1;min-width:0!important;padding-top:28px!important}
- .profile-identity h2{font-size:clamp(16px,4.8vw,20px)!important;letter-spacing:.15px!important}
- .profile-handle{font-size:12px!important;letter-spacing:0!important}
- .profile-edit-btn{grid-column:2;grid-row:2;justify-self:start;align-self:start;margin:0!important;min-height:38px!important;padding:8px 12px!important}
-}
-@media(min-width:561px) and (max-width:760px){
- .profile-main{grid-template-columns:82px minmax(0,1fr) auto!important;column-gap:12px!important}
- .profile-main .avatar{width:82px!important;height:82px!important}
- .profile-identity{padding-top:34px!important}
- .profile-identity h2{font-size:20px!important}
- .profile-edit-btn{padding:9px 11px!important}
-}
