@@ -403,12 +403,102 @@ body{background:radial-gradient(ellipse at 50% -12%,#1d3c68 0,transparent 43%),l
 .social-brand-hero img{display:block;width:100%;height:auto;max-height:210px;object-fit:contain;object-position:center}
 @media(max-width:560px){.social-brand-hero{margin:7px auto 9px;padding:5px 7px;border-radius:15px}.social-brand-hero img{max-height:170px}}
 
+
+/* FINAL CONSISTENT PHONE FRAME + PREMIUM BLUE UI */
+:root{--bg:#071326;--panel:#11243b;--panel2:#172e49;--line:#2a4b6c;--text:#f4f8ff;--muted:#b4c4d8;--gold:#55d4f2;--gold2:#3986ee}
+html,body{width:100%;min-height:100%;margin:0!important;background:#050d1a!important;color:#f4f8ff!important;font-family:Roboto,"Arial",system-ui,sans-serif!important;font-size:16px!important}
+body{background:radial-gradient(ellipse at 50% 0,#183d6a 0,transparent 42%),#050d1a!important}
+.social-brand-hero{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ width:100%!important;max-width:460px!important;margin:0 auto!important;padding:8px 12px 4px!important;
+ background:linear-gradient(180deg,#07172e,#0a1b33)!important;border:0!important;
+ border-bottom:1px solid #244a75!important;border-radius:0!important;box-shadow:none!important;
+}
+.social-brand-hero img{display:block!important;width:100%!important;height:auto!important;max-height:205px!important;object-fit:contain!important}
+.app{
+ display:block!important;width:100%!important;max-width:460px!important;min-height:100vh!important;
+ margin:0 auto!important;padding:0 12px 108px!important;overflow-x:hidden!important;
+ background:linear-gradient(180deg,#0b1b30 0%,#071326 100%)!important;
+ border-left:1px solid #1e3a5a!important;border-right:1px solid #1e3a5a!important;
+ box-shadow:0 0 50px #0008!important;
+}
+.top{
+ height:auto!important;min-height:74px!important;display:flex!important;align-items:center!important;
+ justify-content:space-between!important;gap:8px!important;padding:10px 2px!important;
+ position:relative!important;top:auto!important;background:transparent!important;
+ border:0!important;border-bottom:1px solid #294766!important;border-radius:0!important;box-shadow:none!important;
+}
+.brand{gap:10px!important;font-size:17px!important;line-height:1.2!important;letter-spacing:.5px!important;color:#f5f8ff!important}
+.brand>div:last-child{font-size:16px!important;font-weight:900!important}
+.brand small{font-size:11px!important;letter-spacing:2.5px!important;color:#72dfff!important;margin-top:4px!important}
+.logo{width:48px!important;height:48px!important;border-radius:16px!important;background:linear-gradient(145deg,#58d9f5,#3679e8)!important;color:#07182c!important;font-size:25px!important;box-shadow:0 0 20px #3eb9f455!important}
+.top-actions{display:flex!important;gap:7px!important;align-items:center!important}
+.top-actions .iconbtn{width:42px!important;height:44px!important;border-radius:14px!important;background:#142d49!important;border:1px solid #355b80!important;color:#8ce6ff!important;font-size:21px!important}
+.top-actions .iconbtn:last-child{background:linear-gradient(145deg,#58d9f5,#3679e8)!important;color:#07182c!important;border:0!important;font-size:22px!important}
+.layout{display:block!important;width:100%!important;max-width:100%!important;padding-top:13px!important}
+.side,.right{display:none!important}
+main,.feed,.content{display:block!important;width:100%!important;min-width:0!important}
+.card{background:linear-gradient(145deg,#142b46,#10223a)!important;border:1px solid #2e506f!important;border-radius:22px!important;padding:17px!important;box-shadow:0 10px 28px #0003!important;color:#f4f8ff!important}
+.section-head h2{font-size:22px!important;font-weight:900!important;letter-spacing:.1px!important;color:#f5f8ff!important}
+.muted,.tiny{color:#b3c5d9!important}
+.avatar{width:48px!important;height:48px!important;background:linear-gradient(145deg,#55d5f2,#397ee9)!important;color:#06182c!important;font-size:20px!important;font-weight:900!important;border:1px solid #7be4ff!important}
+.stories{gap:16px!important;padding:6px 0 13px!important}
+.story{font-size:14px!important;font-weight:700!important;color:#d5e5f5!important}
+.story-ring{width:72px!important;height:72px!important;padding:3px!important;background:linear-gradient(135deg,#59e0f6,#4388f2,#a0aaff)!important}
+.story-ring .avatar{width:100%!important;height:100%!important;border:3px solid #142b46!important}
+.story-add{color:#83e6ff!important;font-size:14px!important}
+.composer{gap:10px!important;align-items:center!important}
+.composer input{font-size:16px!important;min-height:58px!important;padding:14px!important;background:#09182b!important;color:#f5f8ff!important;border:1px solid #3a5b7c!important;border-radius:17px!important}
+.composer input::placeholder{color:#9eb2ca!important}
+.primary{font-size:16px!important;font-weight:900!important;padding:13px 17px!important;border-radius:16px!important;background:linear-gradient(120deg,#5bdcf3,#3b82ed)!important;color:#06172a!important;border:1px solid #8beaff!important;box-shadow:0 7px 20px #248fe844!important}
+.soft,.pill,.iconbtn,.tab,.filter{font-size:15px!important;font-weight:750!important;background:#172e49!important;color:#e0efff!important;border:1px solid #355574!important;border-radius:15px!important;padding:12px 15px!important}
+.feedbar{gap:8px!important;padding:2px 0 5px!important}
+.filter{font-size:16px!important;padding:13px 17px!important;white-space:nowrap!important}
+.filter.active{background:linear-gradient(120deg,#5bdcf3,#3b82ed)!important;color:#06172a!important;border-color:#76e5ff!important}
+.post-author strong{font-size:16px!important;color:#f5f8ff!important}
+.post-text{font-size:16px!important;line-height:1.6!important;color:#e5eef9!important}
+.action{font-size:14px!important;color:#bdd0e4!important}
+.preview-banner,.guest-mode-label,.guest-pill{display:none!important}
+.mobile-nav{
+ display:flex!important;position:fixed!important;left:50%!important;transform:translateX(-50%)!important;
+ bottom:0!important;width:min(100%,460px)!important;z-index:50!important;justify-content:space-around!important;
+ padding:9px 5px calc(9px + env(safe-area-inset-bottom))!important;
+ background:rgba(7,19,38,.97)!important;backdrop-filter:blur(20px)!important;
+ border:1px solid #315273!important;border-bottom:0!important;border-radius:20px 20px 0 0!important;
+ box-shadow:0 -8px 28px #0008!important;
+}
+.mobile-nav button{display:grid!important;flex:1!important;min-width:0!important;justify-items:center!important;gap:4px!important;color:#a9bdd3!important;font-size:12px!important;font-weight:700!important}
+.mobile-nav button b{font-size:23px!important}
+.mobile-nav button.active{background:#1b3d60!important;color:#7de3ff!important;border-radius:14px!important}
+@media(min-width:461px){
+ body{padding:0!important}
+ .social-brand-hero,.app{max-width:460px!important}
+}
+@media(max-width:460px){
+ .social-brand-hero{padding:7px 10px 3px!important}
+ .social-brand-hero img{max-height:190px!important}
+ .app{padding-left:10px!important;padding-right:10px!important}
+ .top{min-height:68px!important}
+ .brand>div:last-child{font-size:14px!important}
+ .brand small{font-size:9px!important}
+ .top-actions{gap:5px!important}
+ .top-actions .iconbtn{width:38px!important;height:40px!important}
+ .card{padding:14px!important;border-radius:19px!important}
+ .section-head h2{font-size:21px!important}
+ .primary{font-size:15px!important;padding:12px 14px!important}
+ .composer{flex-wrap:wrap!important}
+ .composer input{width:calc(100% - 60px)!important}
+ .composer .primary{margin-left:auto!important}
+ .composer-actions{width:100%!important}
+ .mobile-nav{width:100%!important}
+}
+
 </style></head>
 <body>
 <div class="social-brand-hero"><img src="./smart-money-social-logo.jpg" alt="Smart Money Social — Share, Connect, Engage"></div>
-<div class="preview-banner">✨ SMART MONEY SOCIAL · PREVIEW MODE <span>Login & account features will be added after the platform is complete.</span></div>
+
 <div class="app">
-<header class="top"><div class="brand"><div class="logo">S</div><div>SMART MONEY <small>SOCIAL COMMUNITY</small></div></div><div class="top-actions"><span class="pill tiny guest-pill" id="accountPill">Preview mode</span><button class="iconbtn" onclick="showView('notifications')" title="Notifications">♧</button><button class="iconbtn" onclick="window.location.href=SOCIAL_BASE+'community.html?messages=1'" title="Messages">✉</button><button class="iconbtn" onclick="showView('settings')" title="Settings">⚙</button><button class="iconbtn" onclick="openProfile()" title="Profile">👤</button><span class="guest-mode-label">● PREVIEW MODE</span></div></header>
+<header class="top"><div class="brand"><div class="logo">S</div><div>SMART MONEY <small>SOCIAL COMMUNITY</small></div></div><div class="top-actions"><button class="iconbtn" onclick="showView('notifications')" title="Notifications">♧</button><button class="iconbtn" onclick="window.location.href=SOCIAL_BASE+'community.html?messages=1'" title="Messages">✉</button><button class="iconbtn" onclick="showView('settings')" title="Settings">⚙</button><button class="iconbtn" onclick="openProfile()" title="Profile">👤</button></div></header>
 <div class="layout">
 <aside class="side"><div class="card"><div class="side-profile"><div class="avatar" id="sideAvatar">S</div><div><b id="sideName">Swrang Creator</b><div class="tiny muted">Smart Money member</div></div></div><nav class="nav" id="sideNav"><button class="active" data-view="home" onclick="showView('home')"><span class="ico">⌂</span> Home Feed</button><button data-view="explore" onclick="showView('explore')"><span class="ico">⌕</span> Explore</button><button onclick="openComposer()"><span class="ico">＋</span> Create Post</button><button data-view="notifications" onclick="showView('notifications')"><span class="ico">♧</span> Notifications</button><button data-view="profile" onclick="openProfile()"><span class="ico">◉</span> My Profile</button><button data-view="saved" onclick="showView('saved')"><span class="ico">▣</span> Saved Posts</button><button onclick="window.location.href=SOCIAL_BASE+'community.html?messages=1'"><span class="ico">✉</span> Messages</button><button data-view="settings" onclick="showView('settings')"><span class="ico">⚙</span> Settings & Privacy</button><button data-view="help" onclick="showView('help')"><span class="ico">❔</span> Help & Support</button></nav></div><div class="preview-note" id="accessNotice">Connected to Smart Money Social.</div></aside>
 <main>
