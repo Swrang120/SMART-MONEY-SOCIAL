@@ -1089,6 +1089,52 @@ body{min-width:320px!important}
  .profile-main>.follow,
  .profile-main>.soft{grid-column:1 / -1!important;grid-row:3!important}
 }
+
+/* COMPACT PROFILE DASHBOARD — balanced card and calmer typography */
+.profile-hero-card{padding:12px!important;border-radius:18px!important}
+.profile-cover-premium{height:clamp(132px,24vw,178px)!important;border-radius:15px!important}
+.profile-main{row-gap:8px!important;padding-bottom:9px!important}
+.profile-main>.profile-identity h2{
+ font-size:clamp(19px,2vw,22px)!important;
+ font-weight:850!important;letter-spacing:.15px!important;
+ line-height:1.18!important;
+}
+.profile-main>.profile-identity .profile-handle{
+ font-size:12px!important;font-weight:600!important;
+}
+.profile-main>.profile-edit-btn,.profile-main>.follow,.profile-main>.soft{
+ min-height:40px!important;padding:8px 13px!important;
+ font-size:12px!important;border-radius:12px!important;
+}
+.profile-main>.profile-edit-btn .profile-edit-icon{
+ width:22px!important;height:22px!important;font-size:17px!important;
+}
+.profile-bio{font-size:13px!important;line-height:1.55!important;margin:11px 6px 6px!important}
+.profile-public-details{font-size:11px!important;margin:6px 6px 10px!important}
+.profile-stats{gap:8px!important;padding:10px 3px 2px!important;margin-top:9px!important}
+.profile-stats>div{padding:8px 4px!important;border-radius:11px!important;gap:2px!important}
+.profile-stats b{font-size:18px!important;line-height:1.1!important}
+.profile-stats span{font-size:10px!important}
+.profile-post-heading{margin:15px 3px 9px!important}
+.profile-post-heading h2{font-size:18px!important}
+@media(max-width:560px){
+ .profile-hero-card{padding:10px!important}
+ .profile-cover-premium{height:132px!important}
+ .profile-main{margin-top:-32px!important;row-gap:7px!important;padding:0 4px 8px!important}
+ .profile-main .avatar{width:68px!important;height:68px!important}
+ .profile-main>.profile-identity h2{font-size:18px!important;line-height:1.18!important}
+ .profile-main>.profile-identity .profile-handle{font-size:11px!important}
+ .profile-main>.profile-edit-btn,.profile-main>.follow,.profile-main>.soft{
+  min-height:36px!important;padding:7px 11px!important;font-size:11px!important;
+ }
+ .profile-main>.profile-edit-btn .profile-edit-icon{width:20px!important;height:20px!important;font-size:16px!important}
+ .profile-bio{font-size:12px!important;margin-top:9px!important}
+ .profile-stats{gap:6px!important;padding-top:8px!important}
+ .profile-stats>div{padding:7px 3px!important;border-radius:10px!important}
+ .profile-stats b{font-size:16px!important}
+ .profile-stats span{font-size:9px!important}
+ .profile-post-heading h2{font-size:17px!important}
+}
 </style>
 </head>
 <body>
