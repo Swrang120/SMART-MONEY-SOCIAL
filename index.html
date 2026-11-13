@@ -713,6 +713,44 @@ body,button,input,textarea,select{font-family:'Roboto',Arial,sans-serif!importan
  .profile-stats>div{border-radius:13px!important}
 }
 
+
+/* Final profile header layout: keep identity and actions on separate rows */
+.profile-main{
+ display:grid!important;
+ grid-template-columns:88px minmax(0,1fr)!important;
+ grid-template-rows:auto auto auto!important;
+ align-items:center!important;
+ column-gap:14px!important;
+ row-gap:10px!important;
+ padding:0 14px 14px!important;
+ margin-top:-35px!important;
+}
+.profile-main .profile-avatar-wrap{grid-column:1!important;grid-row:1!important}
+.profile-main .profile-identity{
+ grid-column:2!important;grid-row:1!important;
+ align-self:center!important;min-width:0!important;
+ padding:0!important;transform:none!important;
+}
+.profile-main .profile-identity h2{
+ margin:0 0 5px!important;white-space:normal!important;
+ overflow-wrap:anywhere!important;line-height:1.2!important;
+}
+.profile-main .profile-edit-btn,
+.profile-main>.follow,
+.profile-main>.soft{
+ grid-column:2!important;justify-self:start!important;
+ align-self:start!important;margin:0!important;
+}
+.profile-main .profile-edit-btn{grid-row:2!important}
+.profile-main>.follow{grid-row:2!important}
+.profile-main>.soft{grid-row:3!important}
+@media(max-width:560px){
+ .profile-main{grid-template-columns:76px minmax(0,1fr)!important;column-gap:12px!important;padding:0 4px 14px!important;margin-top:-37px!important}
+ .profile-main .avatar{width:76px!important;height:76px!important}
+ .profile-main .profile-identity{grid-column:2!important;grid-row:1!important;padding:0!important;transform:none!important}
+ .profile-main .profile-identity h2{font-size:clamp(16px,4.8vw,20px)!important}
+ .profile-main .profile-handle{font-size:12px!important}
+}
 </style><style>#authGate{position:fixed;inset:0;z-index:99999;display:none;place-items:center;padding:20px;background:radial-gradient(circle at 10% 10%,#17466a,#071426 60%,#050b18);color:#f4f8ff;font-family:system-ui,sans-serif}.auth-card{width:min(440px,100%);padding:30px 24px;border:1px solid #315a7c;border-radius:25px;background:linear-gradient(150deg,#142f4c,#0a192e);box-shadow:0 24px 80px #0009}.auth-brand{font-weight:900;letter-spacing:2px;font-size:19px}.auth-brand span{display:block;color:#75dcff;font-size:10px;letter-spacing:4px}.auth-card h1{font-size:29px;margin:25px 0 4px}.auth-card p{color:#b5c9dd}.auth-card form label{display:grid;gap:7px;margin:14px 0;font-size:13px;font-weight:700}.auth-card input{width:100%;box-sizing:border-box;padding:14px;border:1px solid #3c6384;border-radius:13px;background:#08172a;color:white;font-size:16px}.auth-submit{width:100%;padding:15px;border-radius:14px;background:linear-gradient(120deg,#58d8f3,#397de7);color:#061528;font-weight:900;font-size:16px;margin-top:12px}.auth-google{width:100%;margin:16px 0 8px;min-height:48px;border:1px solid #d8dce5;border-radius:12px;background:#fff;color:#20242d;font-weight:750;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px}.auth-google:disabled{opacity:.65;cursor:wait}.auth-divider{display:flex;align-items:center;gap:12px;color:#9298a5;font-size:11px;font-weight:800;letter-spacing:1.4px;margin:5px 0 13px}.auth-divider:before,.auth-divider:after{content:"";height:1px;background:#e6e8ee;flex:1}.auth-switch{width:100%;margin:15px 0;background:transparent;color:#78dcff;font-weight:800}.auth-card small{display:block;color:#91a9c1;line-height:1.6;text-align:center}#authMessage{min-height:24px;color:#9de8ff;font-size:13px}
 /* FINAL RESPONSIVE FRAME — desktop website / mobile-app layout */
 *,*::before,*::after{box-sizing:border-box}
