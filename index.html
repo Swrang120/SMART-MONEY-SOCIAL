@@ -893,6 +893,14 @@ body{min-width:320px!important}
  .profile-main > .follow,
  .profile-main > .soft{grid-column:2;justify-self:start;align-self:start}
 }
+
+/* Keep the member name and handle fully below the cover banner */
+.profile-main{padding-bottom:30px!important}
+.profile-identity{transform:translateY(30px)!important}
+@media(max-width:560px){
+ .profile-main{padding-bottom:28px!important}
+ .profile-identity{transform:translateY(28px)!important}
+}
 </style>
 </head>
 <body>
