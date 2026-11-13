@@ -604,7 +604,7 @@ button{font-family:inherit!important;min-height:44px!important}
  .profile-stats span{font-size:11px!important}
 }
 @media(min-width:761px){.profile-hero-card,.profile-post-heading,.profile-empty{max-width:100%!important}}
-</style></head>
+</style><style>#authGate{position:fixed;inset:0;z-index:99999;display:none;place-items:center;padding:20px;background:radial-gradient(circle at 10% 10%,#17466a,#071426 60%,#050b18);color:#f4f8ff;font-family:system-ui,sans-serif}.auth-card{width:min(440px,100%);padding:30px 24px;border:1px solid #315a7c;border-radius:25px;background:linear-gradient(150deg,#142f4c,#0a192e);box-shadow:0 24px 80px #0009}.auth-brand{font-weight:900;letter-spacing:2px;font-size:19px}.auth-brand span{display:block;color:#75dcff;font-size:10px;letter-spacing:4px}.auth-card h1{font-size:29px;margin:25px 0 4px}.auth-card p{color:#b5c9dd}.auth-card form label{display:grid;gap:7px;margin:14px 0;font-size:13px;font-weight:700}.auth-card input{width:100%;box-sizing:border-box;padding:14px;border:1px solid #3c6384;border-radius:13px;background:#08172a;color:white;font-size:16px}.auth-submit{width:100%;padding:15px;border-radius:14px;background:linear-gradient(120deg,#58d8f3,#397de7);color:#061528;font-weight:900;font-size:16px;margin-top:12px}.auth-switch{width:100%;margin:15px 0;background:transparent;color:#78dcff;font-weight:800}.auth-card small{display:block;color:#91a9c1;line-height:1.6;text-align:center}#authMessage{min-height:24px;color:#9de8ff;font-size:13px}</style></head>
 <body>
 
 <div class="app">
@@ -658,8 +658,7 @@ const SUPABASE_URL='https://rvprrulkjegvicbnjuft.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_IdI5j4Q4qcd-1knRMVeGKw_O3Ek42ZJ';
 // GitHub Pages project-site base path (works locally and on alternate hosts too).
 const SOCIAL_BASE=new URL('.',window.location.href).pathname;
-// Preview phase: no login, signup, guest session, or auth storage is initialized.
-const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:window.localStorage,storageKey:'smart-money-social-auth-v1'}});
 let authUser=null,canPublish=false,isAdmin=false,authCheckInProgress=false,socialRealtimeChannel=null,socialRealtimeTimer=null,people=[],activeProfile=null,filter='for-you';
 let db={posts:[],stories:[],following:[],followersById:{},saved:[],notifications:[],reported:[]};
 const bucket='smart-money-social';
@@ -675,21 +674,20 @@ function initials(s){return (s||'U').trim().split(/\\s+/).map(x=>x[0]).slice(0,2
 function ago(t){const m=Math.max(1,Math.floor((Date.now()-new Date(t).getTime())/60000));return m<60?m+'m':m<1440?Math.floor(m/60)+'h':Math.floor(m/1440)+'d';}
 function person(id){return people.find(p=>p.id===id)||{id,name:'Community Member',handle:'@member',bio:'',avatar:'U'};}
 function avatar(p,size=''){return '<div class="avatar '+size+'">'+(p.photo?'<img src="'+safe(p.photo)+'" alt="">':initials(p.name||p.avatar))+'</div>';}
-function myId(){return null;}
+function myId(){return authUser?.id||null;}
 function mediaUrl(path){return path||'';}
-async function signedMedia(path){return '';}
-async function uploadMedia(){throw new Error('Posting and uploads will be enabled after account setup is added.');}
-function enterPreviewMode(){
- document.body.classList.add('preview-mode');
- const app=document.querySelector('.app');if(app)app.style.display='block';
- const notice=$('accessNotice');if(notice)notice.textContent='Preview mode is active. Social account actions are paused until login is added.';
- const feed=$('feed');if(feed)feed.innerHTML='<div class="card empty"><h3>Welcome to Smart Money Social</h3><p class="muted">The platform is being prepared. Posts, stories and interactive features will be connected after the core build is complete.</p></div>';
- const stories=$('stories');if(stories)stories.innerHTML='<div class="tiny muted">Stories preview will appear here.</div>';
-}
-enterPreviewMode();
-document.addEventListener('submit',e=>{if(document.body.classList.contains('preview-mode')){e.preventDefault();e.stopImmediatePropagation();showToast('This feature will be enabled after the platform is complete.');}},true);
-document.addEventListener('click',e=>{if(!document.body.classList.contains('preview-mode'))return;const btn=e.target.closest('button');if(!btn)return;const action=btn.getAttribute('onclick')||'';if(action&&!/showView\(|setFilter\(|window\.location\.href|applySocialSettings|resetSocialSettings|openProfile/.test(action)){e.preventDefault();e.stopImmediatePropagation();showToast('Interactive features will be enabled after the platform is complete.');}},true);
-
+async function signedMedia(path){if(!path)return '';const {data,error}=await supabaseClient.storage.from(bucket).createSignedUrl(path,3600);if(error)throw error;return data.signedUrl||'';}
+async function uploadMedia(file,folder='posts'){if(!file)throw new Error('Choose a file first.');if(file.size>8*1024*1024)throw new Error('Maximum file size is 8 MB.');const ext=(file.name.split('.').pop()||'bin').toLowerCase().replace(/[^a-z0-9]/g,'');const path=myId()+'/'+folder+'/'+crypto.randomUUID()+'.'+ext;const {error}=await supabaseClient.storage.from(bucket).upload(path,file,{contentType:file.type,upsert:false});if(error)throw error;return path;}
+function authMessage(t){const e=$('authMessage');if(e)e.textContent=t;}
+function showAuthGate(message=''){document.body.classList.remove('preview-mode');const app=document.querySelector('.app');if(app)app.style.display='none';const nav=document.querySelector('.mobile-nav');if(nav)nav.style.display='none';let g=$('authGate');if(!g){g=document.createElement('section');g.id='authGate';g.innerHTML='<div class="auth-card"><div class="auth-brand">SMART MONEY <span>SOCIAL COMMUNITY</span></div><h1 id="authTitle">Welcome back</h1><p id="authSubtitle">Sign in to your Social account</p><div id="authMessage"></div><form id="socialLoginForm"><label>Gmail / Email<input id="loginEmail" type="email" autocomplete="email" required></label><label>Password<input id="loginPassword" type="password" autocomplete="current-password" required></label><button class="auth-submit">Login</button></form><form id="socialSignupForm" hidden><label>Gmail / Email<input id="signupEmail" type="email" autocomplete="email" required></label><label>Password<input id="signupPassword" type="password" minlength="8" autocomplete="new-password" required></label><label>Confirm Password<input id="signupConfirm" type="password" minlength="8" autocomplete="new-password" required></label><button class="auth-submit">Create Account</button></form><button id="authSwitch" class="auth-switch" type="button">New here? Create an account</button><small>Stay signed in on this device until you choose Logout. Never share your password.</small></div>';document.body.appendChild(g);
+$('authSwitch').onclick=()=>{const showSignup=$('socialSignupForm').hidden;$('socialSignupForm').hidden=!showSignup;$('socialLoginForm').hidden=showSignup;$('authTitle').textContent=showSignup?'Create your account':'Welcome back';$('authSubtitle').textContent=showSignup?'Register with Gmail and password':'Sign in to your Social account';$('authSwitch').textContent=showSignup?'Already registered? Login':'New here? Create an account';authMessage('');};
+$('socialLoginForm').onsubmit=async e=>{e.preventDefault();authMessage('Signing in…');const {data,error}=await supabaseClient.auth.signInWithPassword({email:$('loginEmail').value.trim(),password:$('loginPassword').value});if(error){authMessage(error.message);return;}await activateSocialUser(data.user);};
+$('socialSignupForm').onsubmit=async e=>{e.preventDefault();const email=$('signupEmail').value.trim(),password=$('signupPassword').value;if(password!==$('signupConfirm').value){authMessage('Passwords do not match.');return;}if(password.length<8){authMessage('Use at least 8 characters for the password.');return;}authMessage('Creating account…');const {data,error}=await supabaseClient.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname}});if(error){authMessage(error.message);return;}if(data.session){await activateSocialUser(data.user);}else{authMessage('Account created. Check your Gmail inbox, confirm your email, then log in.');}};
+}g.style.display='grid';if(message)authMessage(message);}
+async function ensureSocialProfile(user){const {data,error}=await supabaseClient.from('social_profiles').select('user_id').eq('user_id',user.id).maybeSingle();if(error)throw error;if(!data){const local=(user.email||'member').split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g,'').slice(0,16)||'member';const {error:insertError}=await supabaseClient.from('social_profiles').insert({user_id:user.id,username:local+'_'+user.id.slice(0,6),display_name:local,bio:''});if(insertError)throw insertError;}}
+async function activateSocialUser(user){authUser=user;try{await ensureSocialProfile(user);$('authGate')?.remove();document.body.classList.remove('preview-mode');const app=document.querySelector('.app');if(app)app.style.display='';const nav=document.querySelector('.mobile-nav');if(nav)nav.style.display='';await loadSocialData();startSocialRealtime();renderAll();const route=new URLSearchParams(location.search);if(route.get('settings')==='1')showView('settings');else if(route.get('notifications')==='1')showView('notifications');else if(route.get('profile')==='1')openProfile();addSocialLogout();}catch(e){console.error(e);showAuthGate('Account setup could not finish: '+(e.message||'Please retry.'));}}
+async function logoutSocial(){const {error}=await supabaseClient.auth.signOut({scope:'local'});if(error){showToast(error.message);return;}authUser=null;canPublish=false;isAdmin=false;showAuthGate('You have been logged out.');}
+function addSocialLogout(){const host=document.querySelector('.top-actions');if(host&&!$('socialLogoutBtn')){const b=document.createElement('button');b.id='socialLogoutBtn';b.className='iconbtn premium-action';b.textContent='↪';b.title='Logout';b.onclick=logoutSocial;host.appendChild(b);}}
 async function loadSocialData(){
  const uid=myId();if(!uid)return;
  const [profiles,posts,likes,comments,follows,saved,stories,notifs]=await Promise.all([
@@ -807,6 +805,6 @@ function openModal(s){$('modal').innerHTML=s;$('modalBack').classList.add('open'
 function closeModal(){$('modalBack').classList.remove('open');}
 function renderAll(){renderFeed();renderStories();renderSuggestions();renderStats();if($('view-profile').classList.contains('active'))renderProfile();if($('view-explore').classList.contains('active'))renderExplore();if($('view-saved').classList.contains('active'))renderSaved();if($('view-notifications').classList.contains('active'))renderNotifications();}
 function renderStats(){const mine=db.posts.filter(p=>p.user===myId());$('statPosts').textContent=mine.length;$('statFollowers').textContent=db.followersById[myId()]||0;$('statFollowing').textContent=db.following.length;$('statLikes').textContent=mine.reduce((a,p)=>a+p.likes.length,0);const p=person(myId());$('sideName').textContent=p.name;$('sideAvatar').innerHTML=p.photo?'<img src="'+safe(p.photo)+'">':initials(p.name);$('composerAvatar').innerHTML=p.photo?'<img src="'+safe(p.photo)+'">':initials(p.name);}
-renderAll();
-const socialRoute=new URLSearchParams(location.search);if(socialRoute.get('settings')==='1')showView('settings');else if(socialRoute.get('notifications')==='1')showView('notifications');else if(socialRoute.get('profile')==='1')openProfile();
+(async()=>{try{const {data,error}=await supabaseClient.auth.getSession();if(error)throw error;if(data.session?.user)await activateSocialUser(data.session.user);else showAuthGate();}catch(e){showAuthGate(e.message||'Could not connect to Social.');}})();
+supabaseClient.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){authUser=null;showAuthGate();}else if(event==='SIGNED_IN'&&session?.user&&!authUser)setTimeout(()=>activateSocialUser(session.user),0);});
 </script></body></html>
