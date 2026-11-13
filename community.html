@@ -814,9 +814,15 @@ window.addEventListener('storage',e=>{if(e.key==='smart-money-social-auth-v1'&&!
 <style id="composer-plus-alignment-fix">
 /* Keep the attachment button, message field and send action on one clean row. */
 .message-window .composer{
- display:flex!important;align-items:center!important;gap:8px!important;
+ display:flex!important;flex-flow:row nowrap!important;align-items:center!important;gap:8px!important;
  width:100%!important;max-width:100%!important;min-width:0!important;
  padding:7px!important;overflow:visible!important;position:relative!important;
+}
+.message-window .composer>*{min-width:0!important}
+.message-window .composer #messageText{
+ display:block!important;flex:1 1 0%!important;width:100%!important;min-width:0!important;max-width:100%!important;
+ height:44px!important;min-height:44px!important;margin:0!important;padding:0 12px!important;
+ box-sizing:border-box!important;white-space:nowrap!important;
 }
 .message-window .composer .composer-attach-wrap{
  position:relative!important;display:flex!important;align-items:center!important;justify-content:center!important;
@@ -830,11 +836,7 @@ window.addEventListener('storage',e=>{if(e.key==='smart-money-social-auth-v1'&&!
  margin:0!important;padding:0!important;border-radius:50%!important;
  font-size:25px!important;line-height:1!important;font-weight:500!important;
 }
-.message-window .composer #messageText{
- display:block!important;flex:1 1 0!important;width:0!important;min-width:0!important;max-width:none!important;
- height:44px!important;min-height:44px!important;margin:0!important;padding:0 12px!important;
- box-sizing:border-box!important;
-}
+
 .message-window .composer>button[type="submit"]{
  display:flex!important;align-items:center!important;justify-content:center!important;
  flex:0 0 auto!important;width:auto!important;min-width:58px!important;max-width:none!important;
@@ -854,7 +856,7 @@ window.addEventListener('storage',e=>{if(e.key==='smart-money-social-auth-v1'&&!
  left:0!important;bottom:calc(100% + 10px)!important;z-index:1490!important;
 }
 @media(max-width:480px){
- .message-window .composer{gap:6px!important;padding:6px!important}
+ .message-window .composer{flex-flow:row nowrap!important;gap:6px!important;padding:6px!important}
  .message-window .composer .composer-attach-wrap{flex-basis:40px!important;width:40px!important;min-width:40px!important}
  .message-window .composer .composer-plus-button{flex-basis:40px!important;width:40px!important;min-width:40px!important;max-width:40px!important;height:40px!important;min-height:40px!important;max-height:40px!important}
  .message-window .composer #messageText{height:42px!important;min-height:42px!important;padding:0 10px!important;font-size:14px!important}
