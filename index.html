@@ -767,7 +767,7 @@ body{min-width:320px!important}
 <section id="view-profile" class="view"><div id="profileView"></div></section>
 <section id="view-saved" class="view"><div class="section-head"><h2>Saved Posts</h2></div><div id="savedFeed"></div></section>
 <section id="view-dashboard" class="view"><div class="section-head"><div><h2>Dashboard</h2><div class="tiny muted">Your S-Coin wallet, earning activity and account summary</div></div><span class="badge">MY DASHBOARD</span></div><section class="card coin-dashboard" aria-label="S-Coin and earnings dashboard"><div class="coin-dashboard-head"><div><span class="badge">S-COIN WALLET · TEST PREVIEW</span><h2>Your Social Wallet</h2><p class="tiny muted">Demo balances only — no cash value, purchases or bank payouts.</p></div><div class="scoin-large"><span class="scoin-mark">S</span><div><b id="scoinWalletBalance">0</b><small>TEST COINS</small></div></div></div><div class="coin-stats"><div><small>Coins Used</small><b id="scoinUsed">0</b></div><div><small>Like Activity</small><b id="socialLikesReceived">0</b></div><div><small>Demo Earning</small><b id="socialDemoEarning">₹0.00</b></div><div><small>Withdrawal</small><b id="socialWithdrawalStatus">Not enabled</b></div></div><div class="coin-dashboard-foot"><span class="tiny muted">Paid Likes and real-money features are not active yet.</span><button class="soft" onclick="addDemoCoins()">＋ Add 10 Demo Coins</button></div><div class="like-activity-wrap"><div class="section-head"><h3>Recent Like Activity</h3><span class="tiny muted">Your photo posts</span></div><div id="socialLikeActivity" class="like-activity"><div class="tiny muted">Loading activity…</div></div></div></section>
-<section class="card scoin-price-card" aria-label="S-Coin test price calculator"><div class="section-head"><div><h3>🪙 S-Coin Price Calculator</h3><div class="tiny muted">Test estimate · ₹0.90 per coin</div></div><span class="badge">TEST ONLY</span></div><div class="scoin-price-grid"><div class="field"><label for="scoinQuantity">Number of coins (100–100,000)</label><input id="scoinQuantity" type="number" inputmode="numeric" min="100" max="100000" step="1" value="100" oninput="calculateSCoinPrice()" onblur="calculateSCoinPrice()"></div><div class="scoin-price-total"><small>Estimated total</small><b id="scoinPriceTotal">₹90.00</b><span id="scoinPriceBreakdown">100 × ₹0.90</span></div></div><div class="scoin-presets"><button class="soft" onclick="setSCoinQuantity(100)">100</button><button class="soft" onclick="setSCoinQuantity(1000)">1,000</button><button class="soft" onclick="setSCoinQuantity(10000)">10,000</button><button class="soft" onclick="setSCoinQuantity(100000)">100,000</button></div><p id="scoinPriceError" class="tiny" role="status" aria-live="polite"></p><div class="preview-note">Preview only: this calculator does not accept payment, purchase or credit coins, or create a transaction. The displayed amount is an estimate, not a payment request.</div></section></section>
+<section class="card scoin-price-card" aria-label="S-Coin test request"><div class="section-head"><div><h3>🪙 Get S-Coins</h3><div class="tiny muted">Send a test request to Social Admin</div></div><span class="badge">TEST ONLY</span></div><div class="preview-note">TEST MODE — NO PAYMENT. These are non-purchasable demo coins with no cash value. This button only sends a request for admin review; it does not charge money or credit coins.</div><div class="field"><label for="scoinTestPack">Choose a demo coin pack</label><select id="scoinTestPack"><option value="trial_100">100 Demo S-Coins</option><option value="trial_500">500 Demo S-Coins</option><option value="trial_1000">1,000 Demo S-Coins</option><option value="trial_5000">5,000 Demo S-Coins</option></select></div><button class="primary" id="scoinBuyButton" style="width:100%" onclick="submitSCoinRequest()">＋ Request Demo S-Coins</button><div id="scoinRequestMessage" class="tiny muted" style="margin-top:10px" role="status"></div><div class="section-head" style="margin-top:22px"><h3>Request history</h3><span class="tiny muted">Your submissions</span></div><div id="scoinRequestHistory" class="like-activity"><div class="tiny muted">Loading requests…</div></div></section></section>
 <section id="view-settings" class="view">
 <div class="section-head"><div><h2>Settings & Privacy</h2><div class="tiny muted">Tap a section to open its options</div></div><span class="badge">YOUR EXPERIENCE</span></div>
 <div class="settings-accordion-list">
@@ -961,8 +961,42 @@ function writeDemoWallet(w){localStorage.setItem(S_COIN_TEST_KEY,JSON.stringify(
 function addDemoCoins(){const w=readDemoWallet();w.coins=Math.max(0,Number(w.coins)||0)+10;w.events=[...(w.events||[]),{type:'demo_grant',coins:10,time:Date.now()}].slice(-100);writeDemoWallet(w);renderCoinDashboard();showToast('10 test-only S-Coins added on this device');}
 function calculateSCoinPrice(){const input=$('scoinQuantity'),total=$('scoinPriceTotal'),breakdown=$('scoinPriceBreakdown'),error=$('scoinPriceError');if(!input||!total||!breakdown||!error)return;const raw=input.value.trim(),qty=Number(raw);if(raw===''||!Number.isSafeInteger(qty)||qty<100||qty>100000){total.textContent='—';breakdown.textContent='Allowed range: 100–100,000 coins';error.textContent='Enter a whole number from 100 to 100,000.';return;}const paise=qty*90;total.textContent='₹'+(paise/100).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});breakdown.textContent=qty.toLocaleString('en-IN')+' × ₹0.90';error.textContent='';}
 function setSCoinQuantity(qty){const input=$('scoinQuantity');if(!input)return;input.value=String(qty);calculateSCoinPrice();}
+async function submitSCoinRequest(){
+ const btn=$('scoinBuyButton'),pack=$('scoinTestPack')?.value;
+ const packs={trial_100:100,trial_500:500,trial_1000:1000,trial_5000:5000};
+ if(!myId()){showToast('Please sign in first.');return;}
+ if(!packs[pack]){showToast('Choose a valid demo pack.');return;}
+ if(btn){btn.disabled=true;btn.textContent='Sending request…';}
+ try{
+  const {error}=await supabaseClient.from('social_coin_requests').insert({user_id:myId(),pack_code:pack,coins:packs[pack],status:'pending',request_note:'TEST REQUEST — no payment'});
+  if(error)throw error;
+  const msg=$('scoinRequestMessage');if(msg)msg.textContent='Your demo request was sent to Social Admin. No payment was made and no coins were credited.';
+  await loadMySCoinRequests();
+  showToast('Demo coin request submitted');
+ }catch(e){const msg=$('scoinRequestMessage');if(msg)msg.textContent=e.message||'Could not submit request.';showToast(e.message||'Request failed');}
+ finally{if(btn){btn.disabled=false;btn.textContent='＋ Request Demo S-Coins';}}
+}
+async function loadMySCoinRequests(){
+ const host=$('scoinRequestHistory');if(!host||!myId())return;
+ try{
+  const {data,error}=await supabaseClient.from('social_coin_requests').select('id,pack_code,coins,status,created_at').eq('user_id',myId()).order('created_at',{ascending:false}).limit(30);
+  if(error)throw error;
+  host.innerHTML=(data||[]).length?(data||[]).map(r=>'<div class="like-activity-row"><div class="scoin-mark">S</div><div class="like-activity-copy"><b>'+Number(r.coins).toLocaleString('en-IN')+' Demo S-Coins</b><small>'+safe(r.pack_code)+' · '+new Date(r.created_at).toLocaleString()+'</small></div><strong class="badge">'+safe(r.status.toUpperCase())+'</strong></div>').join(''):'<div class="tiny muted">No requests yet. Choose a demo pack above.</div>';
+ }catch(e){host.innerHTML='<div class="tiny muted">Request history unavailable: '+safe(e.message||'Please retry')+'</div>';}
+}
+async function reviewSCoinRequest(id,status){
+ if(!isAdmin||!['approved','rejected'].includes(status))return;
+ try{
+  const {data,error}=await supabaseClient.from('social_coin_requests').update({status,reviewed_by:myId(),reviewed_at:new Date().toISOString()}).eq('id',id).eq('status','pending').select('id');
+  if(error)throw error;
+  if(!data?.length)throw new Error('Request was already reviewed or is not accessible.');
+  showToast('Demo request '+status+'. No coins were credited.');
+  openAdmin();
+ }catch(e){showToast(e.message||'Could not review request');}
+}
 function renderCoinDashboard(){
  const w=readDemoWallet(),coins=Math.max(0,Number(w.coins)||0),used=Math.max(0,Number(w.used)||0);
+ loadMySCoinRequests();
  const mine=db.posts.filter(p=>p.user===myId()&&p.kind==='image'&&p.mediaPath);
  const mineIds=new Set(mine.map(p=>p.id));
  const events=(db.likeEvents||[]).filter(e=>mineIds.has(e.postId)&&e.user!==myId()).sort((a,b)=>b.time-a.time);
@@ -1060,12 +1094,13 @@ async function moderateStory(id,status){if(!isAdmin)return;try{const {error}=awa
 async function openAdmin(){
  if(!isAdmin){showToast('Admin access required');return;}
  try{
-  const [profilesRes,accessRes,reportsRes]=await Promise.all([
+  const [profilesRes,accessRes,reportsRes,coinRequestsRes]=await Promise.all([
    supabaseClient.from('social_profiles').select('user_id,username,display_name'),
    supabaseClient.from('social_access').select('user_id,access_status'),
-   supabaseClient.from('social_reports').select('*').order('created_at',{ascending:false}).limit(100)
+   supabaseClient.from('social_reports').select('*').order('created_at',{ascending:false}).limit(100),
+   supabaseClient.from('social_coin_requests').select('*').order('created_at',{ascending:false}).limit(100)
   ]);
-  for(const r of [profilesRes,accessRes,reportsRes])if(r.error)throw r.error;
+  for(const r of [profilesRes,accessRes,reportsRes,coinRequestsRes])if(r.error)throw r.error;
   const statusById=new Map((accessRes.data||[]).map(a=>[a.user_id,a.access_status]));
   const members=(profilesRes.data||[]).filter(p=>statusById.get(p.user_id)!=='approved');
   const memberHtml=members.map(p=>'<div class="comment"><b>'+safe(p.display_name||p.username||'Member')+'</b> · '+safe(statusById.get(p.user_id)||'not approved')+' <button class="follow" onclick="manageAccess(\''+p.user_id+'\',\'approved\')">Approve</button> <button class="follow" onclick="manageAccess(\''+p.user_id+'\',\'revoked\')">Revoke</button></div>').join('');
@@ -1074,7 +1109,9 @@ async function openAdmin(){
   const pendingStories=db.stories.filter(s=>s.status==='pending');
   const storyHtml=pendingStories.map(s=>'<div class="comment"><b>'+safe(person(s.user).name)+'</b> · Story <button class="follow" onclick="moderateStory(\''+s.id+'\',\'published\')">Approve</button> <button class="follow" onclick="moderateStory(\''+s.id+'\',\'rejected\')">Reject</button></div>').join('');
   const reportHtml=(reportsRes.data||[]).map(r=>'<div class="comment"><b>'+safe(r.reason)+'</b> · '+safe(r.details||'')+' <span class="tiny muted">['+safe(r.status)+']</span></div>').join('');
-  openModal('<h3>Community Admin · Moderation</h3><div class="preview-note">Shared database moderation. New members can browse immediately; post and story publishing requires admin approval.</div><div class="statgrid"><div class="stat"><b>'+members.length+'</b><span class="tiny muted">Members awaiting approval</span></div><div class="stat"><b>'+pending.length+'</b><span class="tiny muted">Pending posts</span></div><div class="stat"><b>'+pendingStories.length+'</b><span class="tiny muted">Pending stories</span></div><div class="stat"><b>'+(reportsRes.data||[]).length+'</b><span class="tiny muted">Reports</span></div></div><h4>Member access</h4>'+(memberHtml||'<p class="muted tiny">All current members are approved.</p>')+'<h4>Pending posts</h4>'+(postHtml||'<p class="muted tiny">No pending posts.</p>')+'<h4>Pending stories</h4>'+(storyHtml||'<p class="muted tiny">No pending stories.</p>')+'<h4>Community reports</h4>'+(reportHtml||'<p class="muted tiny">No reports yet.</p>')+'<div class="modal-actions"><button class="soft" onclick="closeModal()">Close</button></div>');
+  const coinRequests=coinRequestsRes.data||[];
+  const coinRequestHtml=coinRequests.map(r=>'<div class="comment"><b>'+safe(person(r.user_id).name||r.user_id.slice(0,8))+'</b> · '+Number(r.coins).toLocaleString('en-IN')+' demo coins · <span class="badge">'+safe(r.status)+'</span> '+(r.status==='pending'?'<button class="follow" onclick="reviewSCoinRequest(\''+r.id+'\',\'approved\')">Approve</button> <button class="follow" onclick="reviewSCoinRequest(\''+r.id+'\',\'rejected\')">Reject</button>':'')+'<div class="tiny muted">TEST ONLY · No payment · '+new Date(r.created_at).toLocaleString()+'</div></div>').join('');
+  openModal('<h3>Community Admin · Moderation</h3><div class="preview-note">Shared database moderation. New members can browse immediately; post and story publishing requires admin approval.</div><div class="statgrid"><div class="stat"><b>'+members.length+'</b><span class="tiny muted">Members awaiting approval</span></div><div class="stat"><b>'+pending.length+'</b><span class="tiny muted">Pending posts</span></div><div class="stat"><b>'+pendingStories.length+'</b><span class="tiny muted">Pending stories</span></div><div class="stat"><b>'+(reportsRes.data||[]).length+'</b><span class="tiny muted">Reports</span></div></div><h4>Member access</h4>'+(memberHtml||'<p class="muted tiny">All current members are approved.</p>')+'<h4>Pending posts</h4>'+(postHtml||'<p class="muted tiny">No pending posts.</p>')+'<h4>Pending stories</h4>'+(storyHtml||'<p class="muted tiny">No pending stories.</p>')+'<h4>Demo S-Coin requests · TEST ONLY</h4><div class="preview-note">No payment or coin credit is involved. Approval only records the test request status.</div>'+(coinRequestHtml||'<p class="muted tiny">No demo coin requests yet.</p>')+'<h4>Community reports</h4>'+(reportHtml||'<p class="muted tiny">No reports yet.</p>')+'<div class="modal-actions"><button class="soft" onclick="closeModal()">Close</button></div>');
  }catch(e){showToast(e.message||'Could not load moderation data');}
 }
 function openModal(s){$('modal').innerHTML=s;$('modalBack').classList.add('open');}
