@@ -34,9 +34,9 @@ It also expects the private Storage bucket `smart-money-social`.
 
 **Do not disable RLS or make the bucket public.** Any missing table, policy or storage rule must be handled as a Social-scoped migration only, with a backup and explicit approval. Do not alter main Smart Money auth, tables, payment gateway, packages, withdrawals or Academy.
 
-### Guest mode
+### Authentication plan
 
-The current UI attempts Supabase anonymous sign-in. If anonymous sign-in is disabled in Supabase Auth Providers, guest startup will fail until that provider is enabled. That provider setting has not been changed by this repository setup. Guest profiles may not be recoverable after browser storage is cleared; a permanent account-linking flow is needed before treating guest accounts as permanent identities.
+No login, signup or anonymous/guest authentication is active during this build phase. Do not enable Supabase Anonymous Sign-Ins or change project-level Auth settings for this preview. Authentication will be designed and integrated only after the Social platform is complete.
 
 ## Media constraints
 
