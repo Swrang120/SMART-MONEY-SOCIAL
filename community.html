@@ -553,7 +553,16 @@ body{min-width:320px!important}
  body.chat-open .chatitem{flex:0 0 220px;scroll-snap-align:start}
  body.chat-open .message-window{padding:12px!important}
  body.chat-open .chatbox{height:calc(100dvh - 330px)!important;min-height:260px!important;max-height:620px!important;padding:12px!important}
- body.chat-open .message-topbar{padding-bottom:10px}
+ body.chat-open>header.top{display:none!important}
+body.chat-open #app.wrap{max-width:1440px!important;padding-top:12px!important}
+body.chat-open .grid{grid-template-columns:minmax(0,1fr)!important;gap:0!important;margin-top:0!important}
+body.chat-open .grid>aside{display:none!important}
+body.chat-open .grid>section{min-width:0!important;width:100%!important}
+body.chat-open #messagesPane{width:100%!important}
+body.chat-open .messages-layout{min-height:calc(100dvh - 28px)}
+body.chat-open .messages-inbox{max-height:calc(100dvh - 28px);min-height:calc(100dvh - 28px)}
+body.chat-open .messages-layout>.message-window{min-height:calc(100dvh - 28px)}
+body.chat-open .message-topbar{padding-bottom:10px}
  body.chat-open .message-peer-icon{width:40px;height:40px;flex-basis:40px}
  body.chat-open .composer button{padding:0 13px!important}
 }</style>
