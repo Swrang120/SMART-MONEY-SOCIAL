@@ -413,4 +413,5 @@ function closeModal(){$('modalBack').classList.remove('open');}
 function renderAll(){renderFeed();renderStories();renderSuggestions();renderStats();if($('view-profile').classList.contains('active'))renderProfile();if($('view-explore').classList.contains('active'))renderExplore();if($('view-saved').classList.contains('active'))renderSaved();if($('view-notifications').classList.contains('active'))renderNotifications();}
 function renderStats(){const mine=db.posts.filter(p=>p.user===myId());$('statPosts').textContent=mine.length;$('statFollowers').textContent=db.followersById[myId()]||0;$('statFollowing').textContent=db.following.length;$('statLikes').textContent=mine.reduce((a,p)=>a+p.likes.length,0);const p=person(myId());$('sideName').textContent=p.name;$('sideAvatar').innerHTML=p.photo?'<img src="'+safe(p.photo)+'">':initials(p.name);$('composerAvatar').innerHTML=p.photo?'<img src="'+safe(p.photo)+'">':initials(p.name);}
 renderAll();
+if(new URLSearchParams(location.search).get('settings')==='1')showView('settings');
 </script></body></html>
