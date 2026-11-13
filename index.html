@@ -1609,7 +1609,7 @@ async function loadSocialData(){
  const ownPrivateProfile=privateProfileRes.data||{};
  people=(profiles.data||[]).map(p=>({...p,...(p.user_id===uid?ownPrivateProfile:{}),id:p.user_id,name:cleanDisplayName(p.display_name||p.username||'Community Member')||p.username||'Community Member',handle:'@'+(p.username||'member'),bio:p.bio||'',photo:'',cover:'',avatar:'U',verified:p.user_id===uid}));
  const paths=[...(posts.data||[]).map(x=>x.media_path),...(stories.data||[]).flatMap(x=>[x.media_path,x.music_path]),...(profiles.data||[]).flatMap(x=>[x.avatar_path,x.cover_path])].filter(Boolean);
- const signed={};const uniquePaths=[...new Set(paths)];for(let i=0;i<uniquePaths.length;i+=100){const batch=uniquePaths.slice(i,i+100);try{const {data,error}=await supabaseClient.storage.from(bucket).createSignedUrls(batch,3600);if(error)throw error;(data||[]).forEach(item=>{if(item.path)signed[item.path]=item.signedUrl||'';});}catch(e){console.warn('Bulk media signing failed; using individual fallback:',e.message);await Promise.all(batch.map(async path=>{try{signed[path]=await signedMedia(path);}catch(err){console.warn('Social media URL unavailable:',path,err.message);signed[path]='';}}));}}
+ const signed={};const uniquePaths=[...new Set(paths)];for(let i=0;i<uniquePaths.length;i+=100){const batch=uniquePaths.slice(i,i+100);try{const {data,error}=await supabaseClient.storage.from(bucket).createSignedUrls(batch,3600);if(error)throw error;(data||[]).forEach(item=>{if(item.path&&item.signedUrl)signed[item.path]=item.signedUrl;});}catch(e){console.warn('Bulk media signing failed; using individual fallback:',e.message);}const missing=batch.filter(path=>!signed[path]);await Promise.all(missing.map(async path=>{try{signed[path]=await signedMedia(path);}catch(err){console.warn('Social media URL unavailable:',path,err.message);signed[path]='';}}));}
  people.forEach(p=>{if(p.avatar_path)p.photo=signed[p.avatar_path]||'';if(p.cover_path)p.cover=signed[p.cover_path]||'';});
  db.likeEvents=(likes.data||[]).map(l=>({postId:l.post_id,user:l.user_id,time:new Date(l.created_at||Date.now()).getTime()}));
  db.posts=(posts.data||[]).map(p=>({id:p.id,user:p.user_id,title:p.title||'',category:p.category||'General',hideLikeCount:!!p.hide_like_count,commentsEnabled:p.comments_enabled!==false,backgroundStyle:p.background_style||'none',text:p.body||'',media:p.media_path?signed[p.media_path]||'':'',mediaPath:p.media_path,kind:(p.media_type||'').startsWith('video')?'video':(p.media_type?'image':''),likes:(likes.data||[]).filter(l=>l.post_id===p.id).map(l=>l.user_id),comments:(comments.data||[]).filter(c=>c.post_id===p.id).map(c=>({id:c.id,user:c.user_id,text:c.body,time:new Date(c.created_at).getTime()})),created:new Date(p.created_at).getTime(),status:p.moderation_status}));
@@ -1684,7 +1684,7 @@ function openProfile(id=myId()){activeProfile=id;showView('profile');}
 function setFilter(f,el){filter=f;document.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));el.classList.add('active');renderFeed();}
 function postCard(p){
  const u=person(p.user),own=p.user===myId(),published=p.status==='published',liked=p.likes.includes(myId()),saved=db.saved.includes(p.id);
- const media=p.media?(p.kind==='video'?'<video class="post-media" controls playsinline src="'+safe(p.media)+'"></video>':'<img class="post-media" src="'+safe(p.media)+'" alt="Post image">'):'';
+ const media=p.media?(p.kind==='video'?'<video class="post-media" controls playsinline preload="metadata" src="'+safe(p.media)+'" onerror="retryPostMedia(this,\''+safe(p.mediaPath)+'\')"></video>':'<img class="post-media" loading="lazy" decoding="async" src="'+safe(p.media)+'" alt="Post image" onerror="retryPostMedia(this,\''+safe(p.mediaPath)+'\')">'):'';
  const comments=p.comments||[];
  const likeAction=published?'<button class="action '+(liked?'liked':'')+'" onclick="toggleLike(\''+p.id+'\')">♥ <span>'+(p.hideLikeCount?'Like':p.likes.length+' Like')+'</span></button>':'';
  const commentAction=published?(p.commentsEnabled?'<button class="action" onclick="focusComment(\''+p.id+'\')">▢ <span>'+comments.length+' Comment</span></button>':'<span class="tiny muted">Comments off</span>'):'<span class="tiny muted">Awaiting admin review</span>';
@@ -1713,7 +1713,32 @@ async function renderCoinDashboard(){
 }
 
 async function toggleLike(id){try{const post=db.posts.find(x=>x.id===id);if(!post||post.status!=='published'){showToast('You can like a post after admin approval.');return;}const exists=post.likes.includes(myId());const q=exists?supabaseClient.from('social_likes').delete().eq('post_id',id).eq('user_id',myId()):supabaseClient.from('social_likes').insert({post_id:id,user_id:myId()});const {error}=await q;if(error)throw error;await loadSocialData();}catch(e){showToast(e.message||'Could not update like');}}
-async function addComment(id){const post=db.posts.find(x=>x.id===id);if(!post||post.status!=='published'){showToast('Comments are available after the post is approved.');return;}if(!post.commentsEnabled){showToast('The post owner has turned comments off.');return;}const el=$('comment-'+id),body=el?.value.trim();if(!body)return;try{const {error}=await supabaseClient.from('social_comments').insert({post_id:id,user_id:myId(),body});if(error)throw error;await loadSocialData();showToast('Comment added');}catch(e){showToast(e.message||'Could not add comment');}}
+async function addComment(id){
+ const post=db.posts.find(x=>x.id===id);
+ if(!myId()){showToast('Please sign in to comment.');return;}
+ if(!post||post.status!=='published'){showToast('Comments are available on published posts.');return;}
+ if(!post.commentsEnabled){showToast('The post owner has turned comments off.');return;}
+ const el=$('comment-'+id),body=el?.value.trim();
+ if(!body){el?.focus();return;}
+ if(body.length>1000){showToast('Comments can be up to 1,000 characters.');return;}
+ const button=el?.parentElement?.querySelector('button');
+ if(button){button.disabled=true;button.textContent='Sending…';}
+ try{
+  const {error}=await supabaseClient.from('social_comments').insert({post_id:id,user_id:myId(),body});
+  if(error)throw error;
+  if(el)el.value='';
+  await loadSocialData();
+  showToast('Comment added successfully.');
+ }catch(e){console.error('Social comment insert failed:',e);showToast('Comment failed: '+(e.message||'Please try again.'));}
+ finally{if(button){button.disabled=false;button.textContent='Send';}}
+}
+function retryPostMedia(element,path){
+ if(!element||!path||element.dataset.retrying==='1'||element.dataset.retried==='1')return;
+ element.dataset.retrying='1';
+ signedMedia(path).then(url=>{if(url){element.dataset.retried='1';element.src=url;}})
+ .catch(error=>{console.warn('Post media could not be refreshed:',error.message);if(element.tagName==='IMG')element.alt='Photo unavailable. Please refresh the feed.';})
+ .finally(()=>{element.dataset.retrying='0';});
+}
 function focusComment(id){$('comment-'+id)?.focus();}
 async function toggleSave(id){try{const exists=db.saved.includes(id);const q=exists?supabaseClient.from('social_saved_posts').delete().eq('post_id',id).eq('user_id',myId()):supabaseClient.from('social_saved_posts').insert({post_id:id,user_id:myId()});const {error}=await q;if(error)throw error;await loadSocialData();showToast(exists?'Removed from saved':'Post saved');}catch(e){showToast(e.message||'Could not save post');}}
 async function sharePost(id){const p=db.posts.find(x=>x.id===id);if(!p)return;const text=(p.text||'Smart Money Social post')+' — Smart Money Social';try{if(navigator.share)await navigator.share({title:'Smart Money Social',text,url:location.href});else{await navigator.clipboard.writeText(text);showToast('Post text copied');}}catch(e){}}
