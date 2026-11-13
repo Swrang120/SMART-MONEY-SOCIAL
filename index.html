@@ -615,6 +615,14 @@ button{font-family:inherit!important;min-height:44px!important}
 @media(min-width:761px){.profile-hero-card,.profile-post-heading,.profile-empty{max-width:100%!important}}
 
 
+/* Profile typography: Roboto, uppercase display names, lowercase handles */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;800;900&display=swap');
+body,button,input,textarea,select{font-family:'Roboto',Arial,sans-serif!important}
+.profile-identity h2,.post-author strong,.side-profile b,.person .grow b,.story strong,.like-activity-copy b{font-family:'Roboto',Arial,sans-serif!important;text-transform:uppercase!important;letter-spacing:.35px}
+.profile-handle,.post-author .handle,.username,.user-handle,.side-profile small,.person .grow small{font-family:'Roboto',Arial,sans-serif!important;text-transform:lowercase!important;letter-spacing:.2px}
+#settingsProfileName{text-transform:uppercase!important}
+#settingsProfileUsername{text-transform:lowercase!important}
+
 /* S-Coin Rewards Center */
 .reward-task-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:13px}
 .reward-task-card{padding:14px!important;margin:0!important;display:flex;flex-direction:column;gap:8px}
@@ -910,7 +918,7 @@ async function ensureSocialProfile(user){
  if(!data){
   const local=(user.email||'member').split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g,'').slice(0,16)||'member';
   const display=(user.user_metadata?.full_name||user.user_metadata?.name||local).toString().slice(0,60);
-  const {error:insertError}=await supabaseClient.from('social_profiles').insert({user_id:user.id,username:local+'_'+user.id.slice(0,6),display_name:display,bio:''});
+  const {error:insertError}=await supabaseClient.from('social_profiles').insert({user_id:user.id,username:local+'_'+user.id.slice(0,6),display_name:display.toLocaleUpperCase('en'),bio:''});
   if(insertError)throw insertError;
  }
 }
@@ -1072,8 +1080,8 @@ async function saveProfileDetails(){
   const relationshipVisibility=$('settingsProfileRelationshipVisibility').value;
   const linksVisibility=$('settingsProfileSocialVisibility').value;
   const updates={
-   display_name:$('settingsProfileName').value.trim()||person(myId()).name,
-   username:$('settingsProfileUsername').value.trim().replace(/^@/,''),
+   display_name:($('settingsProfileName').value.trim()||person(myId()).name).toLocaleUpperCase('en'),
+   username:$('settingsProfileUsername').value.trim().replace(/^@/,'').toLocaleLowerCase('en'),
    bio:$('settingsProfileBio').value.trim(),
    relationship_visibility:relationshipVisibility,
    social_links_visibility:linksVisibility,
