@@ -810,4 +810,54 @@ async function unblockPerson(id){if(!confirm('Unblock this person?'))return;cons
 function subscribe(){if(channel)window.socialClient.removeChannel(channel);channel=window.socialClient.channel('social-community-'+me.id).on('postgres_changes',{event:'*',schema:'public',table:'social_messages'},async payload=>{if(currentPeer&&(payload.new?.sender_id===currentPeer.user_id||payload.new?.recipient_id===currentPeer.user_id))await loadMessages();await loadChatList()}).on('postgres_changes',{event:'*',schema:'public',table:'social_profiles'},async()=>{await refreshProfiles();renderPeople();await loadChatList()}).on('postgres_changes',{event:'*',schema:'public',table:'social_follows',filter:'follower_id=eq.'+me.id},async()=>{await loadChatList()}).subscribe()}
 supabaseReady.then(async client=>{try{const {data,error}=await client.auth.getSession();if(error)throw error;if(!data.session?.user){location.replace(SOCIAL_BASE+'?messages=1');return;}await start(data.session.user);const actions=document.getElementById('socialMenu');if(actions&&!document.getElementById('communityLogout')){const b=document.createElement('button');b.className='soft';b.id='communityLogout';b.textContent='Logout';b.onclick=async()=>{const {error}=await client.auth.signOut({scope:'local'});if(error){alert(error.message);return;}location.href=SOCIAL_BASE;};actions.appendChild(b);}}catch(e){console.error('Social auth startup failed:',e);location.replace(SOCIAL_BASE+'?messages=1');}});
 window.addEventListener('storage',e=>{if(e.key==='smart-money-social-auth-v1'&&!e.newValue)location.href=SOCIAL_BASE;});
-</script></body></html>
+</script>
+<style id="composer-plus-alignment-fix">
+/* Keep the attachment button, message field and send action on one clean row. */
+.message-window .composer{
+ display:flex!important;align-items:center!important;gap:8px!important;
+ width:100%!important;max-width:100%!important;min-width:0!important;
+ padding:7px!important;overflow:visible!important;position:relative!important;
+}
+.message-window .composer .composer-attach-wrap{
+ position:relative!important;display:flex!important;align-items:center!important;justify-content:center!important;
+ flex:0 0 42px!important;width:42px!important;min-width:42px!important;height:44px!important;
+ margin:0!important;padding:0!important;overflow:visible!important;
+}
+.message-window .composer .composer-plus-button{
+ display:grid!important;place-items:center!important;
+ flex:0 0 42px!important;width:42px!important;min-width:42px!important;max-width:42px!important;
+ height:42px!important;min-height:42px!important;max-height:42px!important;
+ margin:0!important;padding:0!important;border-radius:50%!important;
+ font-size:25px!important;line-height:1!important;font-weight:500!important;
+}
+.message-window .composer #messageText{
+ display:block!important;flex:1 1 0!important;width:0!important;min-width:0!important;max-width:none!important;
+ height:44px!important;min-height:44px!important;margin:0!important;padding:0 12px!important;
+ box-sizing:border-box!important;
+}
+.message-window .composer>button[type="submit"]{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ flex:0 0 auto!important;width:auto!important;min-width:58px!important;max-width:none!important;
+ height:42px!important;min-height:42px!important;margin:0!important;padding:0 12px!important;
+ white-space:nowrap!important;font-size:13px!important;line-height:1!important;
+}
+.message-window .composer .composer-attach-menu{
+ position:absolute!important;left:0!important;bottom:calc(100% + 10px)!important;
+ width:172px!important;max-width:calc(100vw - 28px)!important;
+ z-index:1500!important;
+}
+.message-window .composer .composer-attach-menu>button{
+ width:100%!important;min-width:0!important;height:auto!important;min-height:48px!important;
+ margin:0!important;padding:6px 9px!important;
+}
+.message-window .composer .social-emoji-picker{
+ left:0!important;bottom:calc(100% + 10px)!important;z-index:1490!important;
+}
+@media(max-width:480px){
+ .message-window .composer{gap:6px!important;padding:6px!important}
+ .message-window .composer .composer-attach-wrap{flex-basis:40px!important;width:40px!important;min-width:40px!important}
+ .message-window .composer .composer-plus-button{flex-basis:40px!important;width:40px!important;min-width:40px!important;max-width:40px!important;height:40px!important;min-height:40px!important;max-height:40px!important}
+ .message-window .composer #messageText{height:42px!important;min-height:42px!important;padding:0 10px!important;font-size:14px!important}
+ .message-window .composer>button[type="submit"]{min-width:44px!important;height:40px!important;min-height:40px!important;padding:0 9px!important;font-size:12px!important}
+}
+</style></body></html>
