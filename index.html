@@ -305,7 +305,7 @@ function enterPreviewMode(){
 }
 enterPreviewMode();
 document.addEventListener('submit',e=>{if(document.body.classList.contains('preview-mode')){e.preventDefault();e.stopImmediatePropagation();showToast('This feature will be enabled after the platform is complete.');}},true);
-document.addEventListener('click',e=>{if(!document.body.classList.contains('preview-mode'))return;const btn=e.target.closest('button');if(!btn)return;const action=btn.getAttribute('onclick')||'';if(action&&!/showView\\(|setFilter\\(|window\\.location\\.href|applySocialSettings|resetSocialSettings/.test(action)){e.preventDefault();e.stopImmediatePropagation();showToast('Interactive features will be enabled after the platform is complete.');}},true);
+document.addEventListener('click',e=>{if(!document.body.classList.contains('preview-mode'))return;const btn=e.target.closest('button');if(!btn)return;const action=btn.getAttribute('onclick')||'';if(action&&!/showView\(|setFilter\(|window\.location\.href|applySocialSettings|resetSocialSettings|openProfile/.test(action)){e.preventDefault();e.stopImmediatePropagation();showToast('Interactive features will be enabled after the platform is complete.');}},true);
 
 async function loadSocialData(){
  const uid=myId();if(!uid)return;
