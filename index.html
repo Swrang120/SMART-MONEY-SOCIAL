@@ -646,6 +646,71 @@ body,button,input,textarea,select{font-family:'Roboto',Arial,sans-serif!importan
 
 /* Keep all mobile destinations reachable, including Dashboard. */
 @media(max-width:680px){.mobile-nav{justify-content:flex-start!important;overflow-x:auto!important;overflow-y:hidden!important;gap:3px!important;scrollbar-width:none!important}.mobile-nav::-webkit-scrollbar{display:none}.mobile-nav button{flex:0 0 auto!important;min-width:58px!important;padding:5px 7px!important}}
+
+/* PREMIUM PROFILE FINISH — deep indigo, soft violet and champagne accents */
+.profile-hero-card{
+ background:linear-gradient(150deg,#17152b 0%,#201b3c 48%,#171d35 100%)!important;
+ border:1px solid #514477!important;
+ border-radius:24px!important;
+ box-shadow:0 18px 44px rgba(35,25,70,.16),inset 0 1px 0 rgba(255,255,255,.08)!important;
+ color:#f8f6ff!important;
+}
+.profile-cover-premium{
+ background:
+  radial-gradient(circle at 78% 18%,rgba(216,184,119,.45),transparent 22%),
+  radial-gradient(ellipse at 18% 12%,rgba(157,119,255,.58),transparent 42%),
+  linear-gradient(125deg,#21183e 0%,#44306c 48%,#202c50 100%)!important;
+ border:1px solid rgba(226,203,155,.55)!important;
+ box-shadow:inset 0 0 40px rgba(12,9,30,.2)!important;
+}
+.profile-cover-premium:before{
+ content:"SMART MONEY SOCIAL";
+ position:absolute;top:17px;left:18px;z-index:1;
+ padding:7px 11px;border-radius:999px;
+ color:#f7e8c3;background:rgba(20,15,39,.55);
+ border:1px solid rgba(239,213,158,.48);
+ font-size:9px;font-weight:900;letter-spacing:1.8px;
+ backdrop-filter:blur(10px);
+}
+.profile-cover-premium:after{
+ background:linear-gradient(180deg,rgba(13,10,29,.04) 15%,rgba(13,10,29,.18) 48%,rgba(13,10,29,.78) 100%)!important;
+}
+.profile-main .avatar{
+ border-color:#211a3a!important;
+ box-shadow:0 0 0 2px #d9bd83,0 10px 28px rgba(0,0,0,.42)!important;
+}
+.profile-identity h2{color:#fff!important;text-shadow:0 2px 16px #09061580}
+.profile-handle{color:#d0c2f3!important}
+.profile-edit-btn{
+ background:linear-gradient(135deg,#e8d29c,#b88b4d)!important;
+ color:#241a32!important;border:1px solid #f2dfb3!important;
+ box-shadow:0 7px 20px rgba(190,151,86,.22)!important;
+}
+.profile-bio{color:#e5def4!important}
+.profile-public-details{color:#d7c5f4!important}
+.profile-social-link{color:#f0d69d!important}
+.profile-detail-sep{color:#9b8ab9!important}
+.profile-stats{border-top:1px solid rgba(219,196,151,.28)!important}
+.profile-stats>div{
+ background:linear-gradient(145deg,rgba(255,255,255,.09),rgba(255,255,255,.035))!important;
+ border:1px solid rgba(219,196,151,.28)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.06)!important;
+}
+.profile-stats b{color:#f0d69d!important}
+.profile-stats span{color:#d4cce5!important}
+.profile-post-heading{padding:4px 3px}
+.profile-post-heading h2{color:#292440!important;font-weight:850!important;letter-spacing:-.35px}
+.profile-post-heading .badge{background:#f4edff!important;color:#6243a4!important;border-color:#e2d5ff!important}
+.profile-empty{background:linear-gradient(145deg,#211b3d,#2a2447)!important;border:1px solid #514477!important;color:#fff!important;border-radius:20px!important}
+.profile-empty p{color:#d3c9e8!important}
+@media(max-width:480px){
+ .profile-hero-card{border-radius:20px!important}
+ .profile-cover-premium:before{top:12px;left:12px;font-size:8px;letter-spacing:1.4px}
+ .profile-main .avatar{box-shadow:0 0 0 2px #d9bd83,0 7px 20px rgba(0,0,0,.4)!important}
+ .profile-edit-btn{background:linear-gradient(135deg,#e8d29c,#b88b4d)!important}
+ .profile-stats>div{border-radius:13px!important}
+}
+
 </style><style>#authGate{position:fixed;inset:0;z-index:99999;display:none;place-items:center;padding:20px;background:radial-gradient(circle at 10% 10%,#17466a,#071426 60%,#050b18);color:#f4f8ff;font-family:system-ui,sans-serif}.auth-card{width:min(440px,100%);padding:30px 24px;border:1px solid #315a7c;border-radius:25px;background:linear-gradient(150deg,#142f4c,#0a192e);box-shadow:0 24px 80px #0009}.auth-brand{font-weight:900;letter-spacing:2px;font-size:19px}.auth-brand span{display:block;color:#75dcff;font-size:10px;letter-spacing:4px}.auth-card h1{font-size:29px;margin:25px 0 4px}.auth-card p{color:#b5c9dd}.auth-card form label{display:grid;gap:7px;margin:14px 0;font-size:13px;font-weight:700}.auth-card input{width:100%;box-sizing:border-box;padding:14px;border:1px solid #3c6384;border-radius:13px;background:#08172a;color:white;font-size:16px}.auth-submit{width:100%;padding:15px;border-radius:14px;background:linear-gradient(120deg,#58d8f3,#397de7);color:#061528;font-weight:900;font-size:16px;margin-top:12px}.auth-google{width:100%;margin:16px 0 8px;min-height:48px;border:1px solid #d8dce5;border-radius:12px;background:#fff;color:#20242d;font-weight:750;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px}.auth-google:disabled{opacity:.65;cursor:wait}.auth-divider{display:flex;align-items:center;gap:12px;color:#9298a5;font-size:11px;font-weight:800;letter-spacing:1.4px;margin:5px 0 13px}.auth-divider:before,.auth-divider:after{content:"";height:1px;background:#e6e8ee;flex:1}.auth-switch{width:100%;margin:15px 0;background:transparent;color:#78dcff;font-weight:800}.auth-card small{display:block;color:#91a9c1;line-height:1.6;text-align:center}#authMessage{min-height:24px;color:#9de8ff;font-size:13px}
 /* FINAL RESPONSIVE FRAME — desktop website / mobile-app layout */
 *,*::before,*::after{box-sizing:border-box}
