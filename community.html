@@ -936,10 +936,16 @@ window.addEventListener('storage',e=>{if(e.key==='smart-money-social-auth-v1'&&!
 </style>
 
 <style id="chat-latest-message-raised">
-/* Keep the newest bubble comfortably above the lower edge of the chat viewport. */
-.message-window .chatbox{padding-bottom:52px!important;scroll-padding-bottom:52px!important}
+/* Reserve roughly two message rows below the newest bubble; keep this space inside the chat scroller. */
+.message-window .chatbox{
+ padding-bottom:136px!important;
+ scroll-padding-bottom:136px!important;
+}
 @media(max-width:760px){
- body.chat-open.chat-conversation .message-window .chatbox{padding-bottom:52px!important;scroll-padding-bottom:52px!important}
+ body.chat-open.chat-conversation .message-window .chatbox{
+  padding-bottom:136px!important;
+  scroll-padding-bottom:136px!important;
+ }
 }
 </style>
 </body></html>
