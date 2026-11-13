@@ -617,7 +617,13 @@ body.chat-open .message-topbar{padding-bottom:10px}
  body.chat-open .message-peer-icon{width:40px;height:40px;flex-basis:40px}
  body.chat-open .composer button{padding:0 13px!important}
 }</style>
-</head><body>
+<style id="messages-only-navigation-fix">
+/* Messages screen must contain messaging UI only; hide global navigation and logout. */
+body.chat-open>header.top,
+body.chat-open>.community-bottom-nav{display:none!important}
+body.chat-open #app.wrap{padding-top:0!important;padding-bottom:0!important}
+body.chat-open .grid{margin-top:0!important}
+</style></head><body>
 <header class="top"><div class="topin"><div class="brand">SMART MONEY SOCIAL<span>COMMUNITY · PROFILE · MESSAGES</span></div><div class="actions"><button class="soft" onclick="location.href=SOCIAL_BASE">Home Feed</button><button class="soft" onclick="location.href=SOCIAL_BASE+'?notifications=1'">🔔 Alerts</button><button class="soft" onclick="showPane('profile')">My Profile</button><button class="soft" onclick="showPane('messages')">Messages</button><button class="soft" onclick="location.href=SOCIAL_BASE+'?settings=1'">Settings</button></div></div></header>
 <main id="app" class="wrap"><div class="grid"><aside>
  <section class="card"><h3>Community</h3><input class="search" id="peopleSearch" placeholder="Search people or college..." oninput="renderPeople()"><div id="peopleList"></div></section>
