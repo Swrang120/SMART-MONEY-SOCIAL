@@ -492,6 +492,57 @@ body{min-width:320px}
  .composer input{min-width:0!important}
 }
 
+
+/* Messenger-style conversation experience */
+.messages-layout{display:grid;grid-template-columns:340px minmax(0,1fr);gap:0;min-height:calc(100dvh - 36px);background:#fff;border:1px solid #e4e7ef;border-radius:18px;overflow:hidden;box-shadow:0 8px 30px #25345a0c}
+.messages-inbox{min-width:0;max-height:none!important;min-height:0!important;overflow:auto;border:0!important;border-right:1px solid #e8eaf1!important;border-radius:0!important;margin:0!important;padding:18px!important}
+.inbox-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.inbox-heading h2{font-size:24px;margin:0;color:#20283c}
+.inbox-icon{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:#f0edff;color:#7354d5;font-size:20px}
+.inbox-search{position:relative;margin-bottom:13px}
+.inbox-search input{width:100%;height:43px;padding:0 14px;border:1px solid #e5e7ef;border-radius:22px;background:#f5f6fa;color:#26314a;outline:none}
+.inbox-search input:focus{border-color:#9b8be8;box-shadow:0 0 0 3px #8066db19}
+.chatlist{display:grid;gap:3px}
+.chatitem{width:100%;min-height:70px;padding:10px 9px;text-align:left;border:0;border-radius:13px;background:transparent;color:#27314a;display:flex;align-items:center;gap:11px}
+.chatitem:hover{background:#f5f6fb}
+.chatitem.active{background:#f0edff;border:0;box-shadow:inset 3px 0 #7958dc}
+.chatitem .avatar{width:48px!important;height:48px!important;flex:0 0 48px;border:0;box-shadow:none}
+.chatitem .grow{display:grid;gap:3px}
+.chatitem b{font-size:14px;font-weight:750}
+.chat-subline{display:block;max-width:205px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:#7a8294}
+.chat-unread{display:grid;place-items:center;min-width:20px;height:20px;padding:0 5px;border-radius:12px;background:#7654d6;color:#fff;font-size:11px;font-weight:800}
+.message-window{min-width:0;min-height:0!important;display:flex;flex-direction:column;border:0!important;border-radius:0!important;margin:0!important;padding:18px!important;background:#fff!important}
+.message-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 0 14px;border-bottom:1px solid #edf0f5}
+.message-peer{display:flex;align-items:center;gap:11px;min-width:0}
+.message-peer h2{font-size:17px;margin:0;color:#20283c}
+.message-peer-icon{display:none}
+.message-peer .tiny{font-size:12px}
+.message-back{display:none;width:36px;height:36px;padding:0;border-radius:50%;background:#f1edff;color:#6747c6;font-size:27px;line-height:1}
+.message-window .chatbox{height:auto!important;min-height:220px;max-height:none!important;flex:1;overflow:auto;margin:14px 0 0;border:0;border-radius:12px;background:#fff;padding:12px 4px}
+.message-window .bubble{max-width:min(72%,560px);padding:10px 14px;border-radius:18px;background:#f0f1f6;color:#26314a}
+.message-window .bubble.mine{background:#7353d1;color:#fff}
+.message-window .composer{align-items:center;padding:8px;border:1px solid #e5e7ef;border-radius:25px;background:#f7f8fb}
+.message-window .composer input{height:42px;border:0!important;background:transparent!important;box-shadow:none!important;padding:0 12px}
+.message-window .composer button{height:42px;border-radius:22px;padding:0 20px}
+.message-foot{padding:8px 4px 0}
+.chat-empty{padding:28px 12px;text-align:center;color:#7b8394;font-size:13px;display:grid;gap:6px}
+@media(max-width:760px){
+ body.chat-open #app.wrap{padding:0!important;max-width:none!important}
+ body.chat-open .grid{display:block!important;margin:0!important}
+ body.chat-open .grid>aside{display:none!important}
+ body.chat-open .grid>section{width:100%!important}
+ body.chat-open #messagesPane{width:100%!important}
+ body.chat-open .messages-layout{display:block;min-height:100dvh;border:0;border-radius:0;box-shadow:none}
+ body.chat-open .messages-inbox{display:block;min-height:100dvh!important;max-height:none!important;padding:17px 14px!important;border:0!important}
+ body.chat-open .message-window{display:none;min-height:100dvh!important;padding:12px 13px!important}
+ body.chat-open.chat-conversation .messages-inbox{display:none}
+ body.chat-open.chat-conversation .message-window{display:flex}
+ body.chat-open .message-back{display:grid;place-items:center;flex:0 0 36px}
+ body.chat-open .message-topbar>button.soft{display:none}
+ body.chat-open .message-window .chatbox{min-height:0;height:auto!important;max-height:none!important}
+ body.chat-open .message-window .bubble{max-width:84%}
+ body.chat-open .message-foot .tiny{font-size:10px}
+}
 </style>
 <style id="community-final-layout-fix">
 html,body{width:100%!important;max-width:100%!important;overflow-x:hidden!important}
@@ -587,7 +638,7 @@ body.chat-open .message-topbar{padding-bottom:10px}
  </div>
  <div id="messagesPane" class="hidden"><div class="messages-layout">
  <aside class="messages-inbox card"><div class="inbox-heading"><div><h2>Messages</h2><span class="tiny muted">Your conversations & following</span></div><span class="inbox-icon">✉</span></div><div class="inbox-search"><input id="chatSearch" type="search" placeholder="Search messages or people..." oninput="filterChatList()" aria-label="Search conversations"></div><div id="chatList" class="chatlist"></div></aside>
- <div class="card message-window"><div class="message-topbar"><div class="message-peer"><div class="message-peer-icon">✉</div><div><h2 id="chatTitle">Select a chat</h2><div class="tiny muted" id="chatWith">Choose a person from the list</div><div class="tiny privacy-label">🔒 Private conversation</div></div></div><button class="soft" onclick="showPane('profile')">Profile</button></div><div id="chatMessages" class="chatbox"><div class="empty">Select a person from the message list to start chatting.</div></div><form class="composer" onsubmit="sendMessage(event)"><input id="messageText" maxlength="2000" placeholder="Write a message..." autocomplete="off" aria-label="Message"><button class="primary" aria-label="Send message">➤ Send</button></form><div class="message-foot"><span class="tiny muted">Be respectful. Never share passwords or private codes.</span><button class="danger tiny" onclick="blockCurrent()">Block</button></div></div>
+ <div class="card message-window"><div class="message-topbar"><div class="message-peer"><button class="message-back" type="button" onclick="showInboxList()" aria-label="Back to conversations">‹</button><div class="message-peer-icon">✉</div><div><h2 id="chatTitle">Select a chat</h2><div class="tiny muted" id="chatWith">Choose a person from the list</div><div class="tiny privacy-label">🔒 Private conversation</div></div></div><button class="soft" onclick="showPane('profile')">Profile</button></div><div id="chatMessages" class="chatbox"><div class="empty">Select a person from the message list to start chatting.</div></div><form class="composer" onsubmit="sendMessage(event)"><input id="messageText" maxlength="2000" placeholder="Write a message..." autocomplete="off" aria-label="Message"><button class="primary" aria-label="Send message">➤ Send</button></form><div class="message-foot"><span class="tiny muted">Be respectful. Never share passwords or private codes.</span><button class="danger tiny" onclick="blockCurrent()">Block</button></div></div>
  </div></div>
 </section></div></main>
 <nav class="community-bottom-nav" aria-label="Social navigation"><button onclick="location.href=SOCIAL_BASE"><span>⌂</span><span>Home</span></button><button onclick="document.getElementById('peopleSearch').focus();window.scrollTo({top:0,behavior:'smooth'})"><span>⌕</span><span>Search</span></button><button onclick="showPane('profile')"><span>◎</span><span>Profile</span></button><button onclick="location.href=SOCIAL_BASE+'?notifications=1'"><span>♧</span><span>Alerts</span></button><button onclick="location.href=SOCIAL_BASE+'?settings=1'"><span>⚙</span><span>Settings</span></button></nav><div id="modalHost"></div>
@@ -599,7 +650,8 @@ const supabaseReady=(async()=>{await loadSupabaseSdk('https://cdn.jsdelivr.net/n
 
 let me=null,myProfile=null,profiles=[],currentPeer=null,channel=null,messages=[],followingIds=[],profilePhotoUrls={},messagePollTimer=null;
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function showPane(which){$('feedPane').classList.toggle('hidden',which!=='feed');$('profilePane').classList.toggle('hidden',which!=='profile');$('messagesPane').classList.toggle('hidden',which!=='messages');document.body.classList.toggle('chat-open',which==='messages');if(which==='feed')loadCommunityPosts().catch(e=>console.error('Feed refresh failed:',e));}
+function showInboxList(){document.body.classList.remove('chat-conversation');currentPeer=null;}
+function showPane(which){if(which!=='messages')document.body.classList.remove('chat-conversation');$('feedPane').classList.toggle('hidden',which!=='feed');$('profilePane').classList.toggle('hidden',which!=='profile');$('messagesPane').classList.toggle('hidden',which!=='messages');document.body.classList.toggle('chat-open',which==='messages');if(which==='feed')loadCommunityPosts().catch(e=>console.error('Feed refresh failed:',e));}
 async function signed(path){if(!path)return '';const {data,error}=await window.socialClient.storage.from(BUCKET).createSignedUrl(path,3600);if(error){console.warn(error);return ''}return data.signedUrl}
 async function start(user){me=user;$('guestBootScreen')?.classList.add('hidden');$('app').classList.remove('hidden');try{await ensureMe();await refreshProfiles();renderPeople();const sharedId=new URLSearchParams(location.search).get('profile');if(sharedId&&sharedId!==me.id){await renderSharedProfile(sharedId);showPane('profile')}else{await renderMine();await loadCommunityPosts();showPane('feed')}await loadChatList();subscribe();if(messagePollTimer)clearInterval(messagePollTimer);messagePollTimer=setInterval(async()=>{try{await loadChatList();if(currentPeer&&$('messagesPane')&&!$('messagesPane').classList.contains('hidden'))await loadMessages();}catch(err){console.warn('Message refresh:',err.message)}},5000);if(new URLSearchParams(location.search).get('messages')==='1'){showPane('messages');const peerId=new URLSearchParams(location.search).get('peer');if(peerId)await startChat(peerId);}}catch(err){console.error('Community startup failed:',err);me=null;$('app').classList.add('hidden');$('app').classList.remove('hidden');const host=$('communityPosts');if(host)host.innerHTML='<div class="card empty">Could not load Community: '+esc(err.message||'Please retry.')+'</div>';}}
 async function loadCommunityPosts(){if(!me)return;const host=$('communityPosts');host.innerHTML='<div class="card muted">Loading community photos…</div>';const results=await Promise.all([window.socialClient.from('social_posts').select('*').order('created_at',{ascending:false}).limit(100),window.socialClient.from('social_profiles').select('user_id,username,display_name,avatar_path')]);const posts=results[0].data||[],peopleRows=results[1].data||[];if(results[0].error)throw results[0].error;if(results[1].error)throw results[1].error;const visible=posts.filter(p=>p.moderation_status==='published'||p.user_id===me.id);const profileMap=new Map(peopleRows.map(p=>[p.user_id,p]));const paths=[...visible.map(p=>p.media_path),...peopleRows.map(p=>p.avatar_path)].filter(Boolean);const signedMap={};await Promise.all([...new Set(paths)].map(async path=>{const result=await window.socialClient.storage.from(BUCKET).createSignedUrl(path,3600);if(!result.error)signedMap[path]=result.data.signedUrl}));host.innerHTML=visible.length?visible.map(p=>{const u=profileMap.get(p.user_id)||{};const img=p.media_path&&signedMap[p.media_path]?'<img class="community-post-image" loading="lazy" src="'+esc(signedMap[p.media_path])+'" alt="Community photo">':'';const avatar=u.avatar_path&&signedMap[u.avatar_path]?'<img src="'+esc(signedMap[u.avatar_path])+'" alt="">':esc((u.display_name||'U').slice(0,1).toUpperCase());return '<article class="card community-post"><div class="row" style="gap:11px;align-items:center"><div class="avatar" style="width:42px;height:42px">'+avatar+'</div><div class="grow"><b class="member-name" role="button" tabindex="0" onclick="openMemberProfile(\''+p.user_id+'\')">'+esc(u.display_name||u.username||'Community Member')+'</b><div class="tiny muted">'+new Date(p.created_at).toLocaleString()+'</div></div>'+(p.user_id===me.id&&p.moderation_status!=='published'?'<span class="tiny">🕒 Pending review</span>':'')+'</div><p style="white-space:pre-wrap;overflow-wrap:anywhere">'+esc(p.body||'')+'</p>'+img+'</article>'}).join(''):'<div class="card empty"><h3>📷 No photos yet</h3><p class="muted">Be the first to share a photo or update. Other members’ approved posts will appear here.</p></div>';}
@@ -617,7 +669,7 @@ async function uploadCover(){try{let f=$('coverFile').files[0];let path=await up
 async function shareProfile(){const url=location.origin+location.pathname+'?profile='+me.id;try{if(navigator.share)await navigator.share({title:myProfile.display_name+' on Smart Money Social',text:'View my Social profile',url});else{await navigator.clipboard.writeText(url);alert('Profile link copied')}}catch(e){}}
 function profileAvatar(p,size=42){const src=profilePhotoUrls[p.user_id];return '<div class="avatar" style="width:'+size+'px;height:'+size+'px">'+(src?'<img src="'+esc(src)+'" alt="">':esc((p.display_name||'U').slice(0,1).toUpperCase()))+'</div>';}
 function renderPeople(){const q=$('peopleSearch').value.toLowerCase();const list=profiles.filter(p=>p.user_id!==me.id&&((p.display_name+' '+p.username+' '+(p.college||'')).toLowerCase().includes(q)));$('peopleList').innerHTML=list.map(p=>'<div class="person">'+profileAvatar(p,42)+'<div class="grow"><b class="member-name" role="button" tabindex="0" onclick="openMemberProfile(\''+p.user_id+'\')">'+esc(p.display_name||p.username)+'</b><div class="tiny muted">@'+esc(p.username)+' '+(p.college?'· '+esc(p.college):'')+'</div></div><span class="tiny muted">View profile</span></div>').join('')||'<div class="empty">No matching members.</div>';}
-async function startChat(id){currentPeer=profiles.find(p=>p.user_id===id);if(!currentPeer){await refreshProfiles();currentPeer=profiles.find(p=>p.user_id===id);}if(!currentPeer)return;showPane('messages');$('chatTitle').textContent=currentPeer.display_name||currentPeer.username;$('chatWith').textContent='@'+(currentPeer.username||'member')+' · Private conversation';try{await loadMessages();await loadChatList();$('messageText').focus({preventScroll:true});}catch(e){$('chatMessages').innerHTML='<div class="empty">Could not open this chat: '+esc(e.message||'Please retry.')+'</div>';}}
+async function startChat(id){currentPeer=profiles.find(p=>p.user_id===id);if(!currentPeer){await refreshProfiles();currentPeer=profiles.find(p=>p.user_id===id);}if(!currentPeer)return;showPane('messages');document.body.classList.add('chat-conversation');$('chatTitle').textContent=currentPeer.display_name||currentPeer.username;$('chatWith').textContent='@'+(currentPeer.username||'member')+' · Private conversation';try{await loadMessages();await loadChatList();$('messageText').focus({preventScroll:true});}catch(e){$('chatMessages').innerHTML='<div class="empty">Could not open this chat: '+esc(e.message||'Please retry.')+'</div>';}}
 async function loadMessages(){if(!currentPeer)return;const peer=currentPeer.user_id;const {data,error}=await window.socialClient.from('social_messages').select('*').or('and(sender_id.eq.'+me.id+',recipient_id.eq.'+peer+'),and(sender_id.eq.'+peer+',recipient_id.eq.'+me.id+')').order('created_at',{ascending:true}).limit(200);if(error)throw error;messages=data||[];$('chatMessages').innerHTML=messages.map(m=>'<div class="bubble '+(m.sender_id===me.id?'mine':'')+'">'+esc(m.body)+'<div style="font-size:10px;opacity:.7;text-align:right">'+new Date(m.created_at).toLocaleString()+'</div></div>').join('')||'<div class="empty">Say hello. Keep personal details private.</div>';$('chatMessages').scrollTop=$('chatMessages').scrollHeight;await window.socialClient.from('social_messages').update({read_at:new Date().toISOString()}).eq('recipient_id',me.id).eq('sender_id',peer).is('read_at',null)}
 async function sendMessage(e){e.preventDefault();const body=$('messageText').value.trim();if(!body||!currentPeer)return;try{const {error}=await window.socialClient.from('social_messages').insert({sender_id:me.id,recipient_id:currentPeer.user_id,body});if(error)throw error;$('messageText').value='';await loadMessages();await loadChatList()}catch(err){alert(err.message)}}
 async function loadChatList(){
