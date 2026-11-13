@@ -1414,22 +1414,28 @@ function renderStoryViewer(){const s=storySequence[storySequenceIndex];if(!s)ret
 function stepStory(direction){const next=storySequenceIndex+direction;if(next<0||next>=storySequence.length)return;storySequenceIndex=next;renderStoryViewer();}
 
 async function openStoryAudience(id,type){
- const s=db.stories.find(x=>x.id===id);if(!s||s.user!==myId())return;
+ const story=db.stories.find(x=>x.id===id);if(!story||story.user!==myId())return;
  try{
-  let ids=[];
-  if(type==='views'){
-   const {data,error}=await supabaseClient.from('social_story_views').select('viewer_id,viewed_at').eq('story_id',id).order('viewed_at',{ascending:false});
-   if(error)throw error;ids=(data||[]).map(x=>x.viewer_id);
-  }else ids=s.likes||[];
-  ids=[...new Set(ids)].filter(uid=>uid!==myId());
-  const title=type==='views'?'People who viewed your story':'People who liked your story';
-  const rows=ids.map(uid=>{const p=person(uid);return '<div class="person" style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #eee"><div>'+avatar(p)+'</div><div class="grow"><b class="tiny">'+safe(p.name||'Member')+'</b><div class="tiny muted">'+safe(p.handle||'')+'</div></div>'+(type==='likes'?'<span style="color:#e34d78;font-size:20px">♥</span>':'<span class="tiny muted">Viewed</span>')+'</div>';}).join('');
-  openModal('<div style="display:flex;align-items:center;justify-content:space-between"><h3>'+title+'</h3><button class="post-menu" onclick="closeModal()">✕</button></div><div class="tiny muted" style="margin-bottom:10px">'+ids.length+' people</div>'+(rows||'<p class="tiny muted">No viewers yet. When someone views your story, they will appear here.</p>'));
- }catch(e){showToast(e.message||'Could not load story viewers');}
+  const isViews=type==='views';
+  const table=isViews?'social_story_views':'social_story_likes';
+  const columns=isViews?'viewer_id,viewed_at':'user_id,created_at';
+  const {data,error}=await supabaseClient.from(table).select(columns).eq('story_id',id).order(isViews?'viewed_at':'created_at',{ascending:false});
+  if(error)throw error;
+  const rowsData=data||[];
+  const ids=[...new Set(rowsData.map(row=>isViews?row.viewer_id:row.user_id))].filter(Boolean);
+  const title=isViews?'People who viewed your story':'People who liked your story';
+  const rows=ids.map(uid=>{const p=person(uid)||{};return '<div class="person" style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #eee"><div>'+avatar(p)+'</div><div class="grow"><b class="tiny">'+safe(p.name||'Member')+'</b><div class="tiny muted">'+safe(p.handle||'')+'</div></div>'+(isViews?'<span class="tiny muted">Viewed</span>':'<span style="color:#e34d78;font-size:20px">♥</span>')+'</div>';}).join('');
+  openModal('<div style="display:flex;align-items:center;justify-content:space-between"><h3>'+title+'</h3><button class="post-menu" onclick="closeModal()">✕</button></div><div class="tiny muted" style="margin-bottom:10px">'+ids.length+' '+(isViews?'views':'likes')+'</div>'+(rows||'<p class="tiny muted">'+(isViews?'No views recorded yet.':'No likes yet.')+'</p>'));
+ }catch(e){console.error('Story audience load failed:',e);showToast((type==='views'?'Viewers':'Likes')+' load nahi ho paye: '+(e.message||'Please try again'));}
 }
 async function trackStoryView(id){
- try{const {error}=await supabaseClient.from('social_story_views').upsert({story_id:id,viewer_id:myId()},{onConflict:'story_id,viewer_id',ignoreDuplicates:true});if(error)throw error;}catch(e){console.warn('Story view could not be recorded:',e.message);}
+ try{
+  const {error}=await supabaseClient.from('social_story_views').insert({story_id:id,viewer_id:myId()});
+  if(error&&error.code!=='23505')throw error;
+  return true;
+ }catch(e){console.warn('Story view could not be recorded:',e.message);return false;}
 }
+
 async function toggleStoryLike(id){
  const story=db.stories.find(x=>x.id===id);if(!story||story.status!=='published'||story.user===myId())return;
  try{const liked=(story.likes||[]).includes(myId());const q=liked?supabaseClient.from('social_story_likes').delete().eq('story_id',id).eq('user_id',myId()):supabaseClient.from('social_story_likes').insert({story_id:id,user_id:myId()});const {error}=await q;if(error)throw error;await loadSocialData();viewStory(id);}catch(e){showToast(e.message||'Could not update story like');}
