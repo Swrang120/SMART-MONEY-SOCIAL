@@ -604,7 +604,69 @@ button{font-family:inherit!important;min-height:44px!important}
  .profile-stats span{font-size:11px!important}
 }
 @media(min-width:761px){.profile-hero-card,.profile-post-heading,.profile-empty{max-width:100%!important}}
-</style><style>#authGate{position:fixed;inset:0;z-index:99999;display:none;place-items:center;padding:20px;background:radial-gradient(circle at 10% 10%,#17466a,#071426 60%,#050b18);color:#f4f8ff;font-family:system-ui,sans-serif}.auth-card{width:min(440px,100%);padding:30px 24px;border:1px solid #315a7c;border-radius:25px;background:linear-gradient(150deg,#142f4c,#0a192e);box-shadow:0 24px 80px #0009}.auth-brand{font-weight:900;letter-spacing:2px;font-size:19px}.auth-brand span{display:block;color:#75dcff;font-size:10px;letter-spacing:4px}.auth-card h1{font-size:29px;margin:25px 0 4px}.auth-card p{color:#b5c9dd}.auth-card form label{display:grid;gap:7px;margin:14px 0;font-size:13px;font-weight:700}.auth-card input{width:100%;box-sizing:border-box;padding:14px;border:1px solid #3c6384;border-radius:13px;background:#08172a;color:white;font-size:16px}.auth-submit{width:100%;padding:15px;border-radius:14px;background:linear-gradient(120deg,#58d8f3,#397de7);color:#061528;font-weight:900;font-size:16px;margin-top:12px}.auth-switch{width:100%;margin:15px 0;background:transparent;color:#78dcff;font-weight:800}.auth-card small{display:block;color:#91a9c1;line-height:1.6;text-align:center}#authMessage{min-height:24px;color:#9de8ff;font-size:13px}</style></head>
+</style><style>#authGate{position:fixed;inset:0;z-index:99999;display:none;place-items:center;padding:20px;background:radial-gradient(circle at 10% 10%,#17466a,#071426 60%,#050b18);color:#f4f8ff;font-family:system-ui,sans-serif}.auth-card{width:min(440px,100%);padding:30px 24px;border:1px solid #315a7c;border-radius:25px;background:linear-gradient(150deg,#142f4c,#0a192e);box-shadow:0 24px 80px #0009}.auth-brand{font-weight:900;letter-spacing:2px;font-size:19px}.auth-brand span{display:block;color:#75dcff;font-size:10px;letter-spacing:4px}.auth-card h1{font-size:29px;margin:25px 0 4px}.auth-card p{color:#b5c9dd}.auth-card form label{display:grid;gap:7px;margin:14px 0;font-size:13px;font-weight:700}.auth-card input{width:100%;box-sizing:border-box;padding:14px;border:1px solid #3c6384;border-radius:13px;background:#08172a;color:white;font-size:16px}.auth-submit{width:100%;padding:15px;border-radius:14px;background:linear-gradient(120deg,#58d8f3,#397de7);color:#061528;font-weight:900;font-size:16px;margin-top:12px}.auth-switch{width:100%;margin:15px 0;background:transparent;color:#78dcff;font-weight:800}.auth-card small{display:block;color:#91a9c1;line-height:1.6;text-align:center}#authMessage{min-height:24px;color:#9de8ff;font-size:13px}
+/* FINAL RESPONSIVE FRAME — desktop website / mobile-app layout */
+*,*::before,*::after{box-sizing:border-box}
+html,body{width:100%;max-width:100%;overflow-x:clip}
+body{min-width:320px}
+.app{width:100%;max-width:1440px;margin-inline:auto}
+.top{width:100%;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:0;z-index:100;padding:0 clamp(12px,2vw,28px)!important}
+.brand{min-width:0;flex:1;overflow:hidden}
+.brand>div:last-child{min-width:0;white-space:nowrap}
+.brand-logo-image{flex:0 0 48px;width:48px;height:48px;overflow:hidden;border-radius:50%!important}
+.brand-logo-image img{display:block;width:100%;height:100%;object-fit:cover;border-radius:50%}
+.top-actions{flex:0 0 auto;display:flex;align-items:center;justify-content:flex-end;gap:clamp(6px,1vw,12px);min-width:0}
+.premium-action{width:48px!important;height:48px!important;min-width:48px!important;flex:0 0 48px;border-radius:15px!important;display:grid;place-items:center}
+.premium-action svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.layout{width:100%;min-width:0;grid-template-columns:240px minmax(0,1fr) 280px!important;gap:clamp(14px,1.8vw,24px)!important;align-items:start}
+.layout>*,main,.view{min-width:0;max-width:100%}
+.side,.right{min-width:0}
+.mobile-nav{display:none!important}
+@media(min-width:1101px){
+ .app{padding:16px 26px 40px!important}
+ .layout{grid-template-columns:240px minmax(0,700px) 280px!important;justify-content:center}
+ .side,.right{display:block!important}
+ .mobile-nav{display:none!important}
+}
+@media(min-width:761px) and (max-width:1100px){
+ .app{padding:14px 18px 40px!important}
+ .layout{grid-template-columns:210px minmax(0,1fr)!important}
+ .side{display:block!important}.right{display:none!important}
+ .mobile-nav{display:none!important}
+}
+@media(max-width:760px){
+ .app{width:100%;max-width:100%;padding:0 10px calc(92px + env(safe-area-inset-bottom))!important}
+ .top{height:68px!important;min-height:68px;padding:0 9px!important;gap:7px!important;border-radius:0 0 16px 16px!important}
+ .brand{gap:8px!important;flex:1 1 auto}
+ .brand-logo-image{width:40px!important;height:40px!important;flex-basis:40px!important}
+ .brand>div:last-child{font-size:clamp(11px,3.2vw,14px)!important;letter-spacing:.15px!important}
+ .brand small{font-size:8px!important;letter-spacing:1.35px!important}
+ .top-actions{gap:5px!important;flex:0 0 auto}
+ .premium-action{width:clamp(34px,10vw,42px)!important;height:clamp(34px,10vw,42px)!important;min-width:clamp(34px,10vw,42px)!important;flex-basis:clamp(34px,10vw,42px)!important;border-radius:12px!important}
+ .premium-action svg{width:20px;height:20px}
+ .layout{display:block!important;width:100%;padding-top:12px!important}
+ .layout>.side,.layout>.right{display:none!important}
+ main,.view{width:100%;min-width:0}
+ .card{max-width:100%;padding:14px!important;border-radius:18px!important}
+ .mobile-nav{display:flex!important;position:fixed!important;left:0!important;right:0!important;bottom:0!important;transform:none!important;width:100%!important;max-width:100%!important;z-index:1000!important;padding:7px 3px calc(7px + env(safe-area-inset-bottom))!important;border-radius:18px 18px 0 0!important;justify-content:space-around!important;gap:2px!important}
+ .mobile-nav button{flex:1 1 0!important;min-width:0!important;max-width:none!important;padding:5px 1px!important;font-size:clamp(9px,2.6vw,11px)!important;min-height:54px!important}
+ .mobile-nav button b{font-size:20px!important}
+ .composer,.post-head,.section-head{min-width:0}
+ .composer input{min-width:0!important}
+ .post-media{max-width:100%;height:auto}
+}
+@media(max-width:370px){
+ .top{padding-inline:6px!important;gap:5px!important}
+ .brand{gap:6px!important}
+ .brand-logo-image{width:35px!important;height:35px!important;flex-basis:35px!important}
+ .brand>div:last-child{font-size:10px!important}
+ .brand small{font-size:7px!important;letter-spacing:1px!important}
+ .top-actions{gap:3px!important}
+ .premium-action{width:33px!important;height:33px!important;min-width:33px!important;flex-basis:33px!important}
+ .premium-action svg{width:18px;height:18px}
+}
+
+</style></head>
 <body>
 
 <div class="app">
