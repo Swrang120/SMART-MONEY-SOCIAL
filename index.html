@@ -766,7 +766,7 @@ body{min-width:320px!important}
 <section id="view-notifications" class="view"><div class="section-head"><h2>Notifications</h2><button class="soft tiny" onclick="markNotificationsRead()">Mark all read</button></div><div class="card" id="notificationsList"></div></section>
 <section id="view-profile" class="view"><div id="profileView"></div></section>
 <section id="view-saved" class="view"><div class="section-head"><h2>Saved Posts</h2></div><div id="savedFeed"></div></section>
-<section id="view-dashboard" class="view"><div class="section-head"><div><h2>Dashboard</h2><div class="tiny muted">Your S-Coin wallet, earning activity and account summary</div></div><span class="badge">MY DASHBOARD</span></div></section>
+<section id="view-dashboard" class="view"><div class="section-head"><div><h2>Dashboard</h2><div class="tiny muted">Your account overview and community activity</div></div><span class="badge">MY DASHBOARD</span></div></section>
 <section id="view-settings" class="view">
 <div class="section-head"><div><h2>Settings & Privacy</h2><div class="tiny muted">Tap a section to open its options</div></div><span class="badge">YOUR EXPERIENCE</span></div>
 <div class="settings-accordion-list">
@@ -962,7 +962,7 @@ function calculateSCoinPrice(){const input=$('scoinQuantity'),total=$('scoinPric
 function setSCoinQuantity(qty){const input=$('scoinQuantity');if(!input)return;input.value=String(qty);calculateSCoinPrice();}
 function renderCoinDashboard(){
  const w=readDemoWallet(),coins=Math.max(0,Number(w.coins)||0),used=Math.max(0,Number(w.used)||0);
- loadMySCoinRequests();
+
  const mine=db.posts.filter(p=>p.user===myId()&&p.kind==='image'&&p.mediaPath);
  const mineIds=new Set(mine.map(p=>p.id));
  const events=(db.likeEvents||[]).filter(e=>mineIds.has(e.postId)&&e.user!==myId()).sort((a,b)=>b.time-a.time);
