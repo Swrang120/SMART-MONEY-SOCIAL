@@ -888,8 +888,9 @@ function addSocialLogout(){
 }
 async function loadSocialData(){
  const uid=myId();if(!uid)return;
- const [profiles,posts,likes,comments,follows,saved,stories,notifs]=await Promise.all([
+ const [profiles,privateProfileRes,posts,likes,comments,follows,saved,stories,notifs]=await Promise.all([
   supabaseClient.from('social_profiles').select('*'),
+  supabaseClient.from('social_profile_private').select('*').eq('user_id',uid).maybeSingle(),
   supabaseClient.from('social_posts').select('*').order('created_at',{ascending:false}).limit(200),
   supabaseClient.from('social_likes').select('*'),
   supabaseClient.from('social_comments').select('*').order('created_at',{ascending:true}),
@@ -898,9 +899,10 @@ async function loadSocialData(){
   supabaseClient.from('social_stories').select('*').order('created_at',{ascending:false}),
   supabaseClient.from('social_notifications').select('*').eq('user_id',uid).order('created_at',{ascending:false}).limit(100)
  ]);
- for(const r of [profiles,posts,likes,comments,follows,saved,stories,notifs])if(r.error)throw r.error;
+ for(const r of [profiles,privateProfileRes,posts,likes,comments,follows,saved,stories,notifs])if(r.error)throw r.error;
  const accessRes=await supabaseClient.from('social_access').select('access_status').eq('user_id',uid).maybeSingle();if(accessRes.error)throw accessRes.error;canPublish=isAdmin||accessRes.data?.access_status==='approved';const accessNotice=$('accessNotice');if(accessNotice)accessNotice.textContent=canPublish?'Your Social account is active. You can publish posts and stories.':'Your account is active. Posting and Stories will be available after Social admin approval.';
- people=(profiles.data||[]).map(p=>({...p,id:p.user_id,name:p.display_name||p.username||'Community Member',handle:'@'+(p.username||'member'),bio:p.bio||'',photo:'',cover:'',avatar:'U',verified:p.user_id===uid}));
+ const ownPrivateProfile=privateProfileRes.data||{};
+ people=(profiles.data||[]).map(p=>({...p,...(p.user_id===uid?ownPrivateProfile:{}),id:p.user_id,name:p.display_name||p.username||'Community Member',handle:'@'+(p.username||'member'),bio:p.bio||'',photo:'',cover:'',avatar:'U',verified:p.user_id===uid}));
  const paths=[...(posts.data||[]).map(x=>x.media_path),...(stories.data||[]).map(x=>x.media_path),...(profiles.data||[]).flatMap(x=>[x.avatar_path,x.cover_path])].filter(Boolean);
  const signed={};await Promise.all([...new Set(paths)].map(async path=>{try{signed[path]=await signedMedia(path);}catch(e){console.warn('Social media URL unavailable:',path,e.message);signed[path]='';}}));
  people.forEach(p=>{if(p.avatar_path)p.photo=signed[p.avatar_path]||'';if(p.cover_path)p.cover=signed[p.cover_path]||'';});
@@ -994,7 +996,36 @@ function renderProfile(){
  $('profileView').innerHTML='<article class="card profile-hero-card"><div class="profile-cover profile-cover-premium">'+cover+'</div><div class="profile-main"><div class="profile-avatar-wrap">'+avatar(p)+'</div><div class="profile-identity"><h2>'+safe(p.name||'My Profile')+'</h2><div class="profile-handle">'+safe(p.handle||'@your_username')+'</div></div>'+(own?'<button class="primary profile-edit-btn" onclick="editProfile()">✎ Edit Profile</button>':'<button class="follow '+(db.following.includes(p.id)?'on':'')+'" onclick="toggleFollow(\''+p.id+'\')">'+(db.following.includes(p.id)?'Following':'＋ Follow')+'</button>')+'</div><p class="profile-bio">'+safe(p.bio||'Add a short introduction so people can get to know you.')+'</p>'+(publicBits.length?'<div class="profile-public-details">'+publicBits.join('<span class="profile-detail-sep">•</span>')+'</div>':'')+'<div class="profile-stats"><div><b>'+posts.length+'</b><span>Posts</span></div><div><b>'+followersCount+'</b><span>Followers</span></div><div><b>'+followingCount+'</b><span>Following</span></div></div></article><div class="section-head profile-post-heading"><h2>'+(own?'Your Posts':safe(p.name)+' · Posts')+'</h2><span class="tiny muted">'+posts.length+' shared</span></div>'+(posts.length?posts.map(postCard).join(''):'<div class="card empty profile-empty"><div class="big">✦</div><b>No posts yet</b><p>Photos and updates you share will appear here.</p>'+(own?'<button class="primary" onclick="showView(\'home\')">Create your first post</button>':'')+'</div>');
 }function editProfile(){const p=person(myId());openModal('<h3>🖼️ Profile appearance</h3><p class="tiny muted">Only your profile photo and banner can be changed here. Username, bio and profile details are managed in Settings.</p><div class="field"><label>Profile photo</label><input type="file" id="profilePhoto" accept="image/jpeg,image/png,image/webp,image/gif"></div><div class="field"><label>Profile banner / cover</label><input type="file" id="profileCover" accept="image/jpeg,image/png,image/webp"></div><div class="modal-actions"><button class="soft" onclick="closeModal()">Cancel</button><button class="primary" onclick="saveProfile()">Save appearance</button></div>');}
 function editProfileDetails(){const p=person(myId());openModal('<h3>✍️ Profile information</h3><p class="tiny muted">Choose what should appear on your public profile. Private relationship status stays hidden.</p><div class="field"><label>Display name</label><input id="settingsProfileName" maxlength="60" value="'+safe(p.name)+'"></div><div class="field"><label>Username</label><input id="settingsProfileUsername" maxlength="30" value="'+safe(p.username||p.handle||'').replace(/^@/,'')+'" placeholder="your_username"></div><div class="field"><label>Bio</label><textarea id="settingsProfileBio" maxlength="500">'+safe(p.bio)+'</textarea></div><div class="field"><label>Relationship status</label><select id="settingsProfileRelationship"><option value="">Prefer not to say</option>'+['Single','In a relationship','Married','Engaged','It’s complicated'].map(x=>'<option value="'+x+'" '+(p.relationship_status===x?'selected':'')+'>'+x+'</option>').join('')+'</select></div><div class="field"><label>Relationship status visibility</label><select id="settingsProfileRelationshipVisibility"><option value="private" '+(p.relationship_visibility!=='public'?'selected':'')+'>Private — only me</option><option value="public" '+(p.relationship_visibility==='public'?'selected':'')+'>Show on my profile</option></select></div><div class="field"><label>Social media link 1 (optional)</label><input id="settingsProfileSocial1" type="url" maxlength="500" value="'+safe(p.social_link_1||'')+'" placeholder="https://..."></div><div class="field"><label>Social media link 2 (optional)</label><input id="settingsProfileSocial2" type="url" maxlength="500" value="'+safe(p.social_link_2||'')+'" placeholder="https://..."></div><div class="field"><label>Social links visibility</label><select id="settingsProfileSocialVisibility"><option value="private" '+(p.social_links_visibility!=='public'?'selected':'')+'>Private — only me</option><option value="public" '+(p.social_links_visibility==='public'?'selected':'')+'>Show on my profile</option></select></div><div class="modal-actions"><button class="soft" onclick="closeModal()">Cancel</button><button class="primary" onclick="saveProfileDetails()">Save profile details</button></div>');}
-async function saveProfileDetails(){try{const updates={display_name:$('settingsProfileName').value.trim()||person(myId()).name,username:$('settingsProfileUsername').value.trim().replace(/^@/,''),bio:$('settingsProfileBio').value.trim(),relationship_status:$('settingsProfileRelationship').value||null,relationship_visibility:$('settingsProfileRelationshipVisibility').value,social_link_1:$('settingsProfileSocial1').value.trim()||null,social_link_2:$('settingsProfileSocial2').value.trim()||null,social_links_visibility:$('settingsProfileSocialVisibility').value,updated_at:new Date().toISOString()};if(!/^[a-zA-Z0-9_.]{3,30}$/.test(updates.username))throw Error('Username must be 3–30 characters and use letters, numbers, dot or underscore.');for(const k of ['social_link_1','social_link_2'])if(updates[k]&&!(updates[k].startsWith('https://')||updates[k].startsWith('http://')))throw Error('Social links must start with https:// or http://');const {error}=await supabaseClient.from('social_profiles').update(updates).eq('user_id',myId());if(error)throw error;closeModal();await loadSocialData();activeProfile=myId();renderProfile();showToast('Profile information saved');}catch(e){showToast(e.message||'Could not save profile information');}}
+async function saveProfileDetails(){
+ try{
+  const privateUpdates={
+   relationship_status:$('settingsProfileRelationship').value||null,
+   social_link_1:$('settingsProfileSocial1').value.trim()||null,
+   social_link_2:$('settingsProfileSocial2').value.trim()||null,
+   updated_at:new Date().toISOString()
+  };
+  const relationshipVisibility=$('settingsProfileRelationshipVisibility').value;
+  const linksVisibility=$('settingsProfileSocialVisibility').value;
+  const updates={
+   display_name:$('settingsProfileName').value.trim()||person(myId()).name,
+   username:$('settingsProfileUsername').value.trim().replace(/^@/,''),
+   bio:$('settingsProfileBio').value.trim(),
+   relationship_visibility:relationshipVisibility,
+   social_links_visibility:linksVisibility,
+   relationship_status:relationshipVisibility==='public'?privateUpdates.relationship_status:null,
+   social_link_1:linksVisibility==='public'?privateUpdates.social_link_1:null,
+   social_link_2:linksVisibility==='public'?privateUpdates.social_link_2:null,
+   updated_at:new Date().toISOString()
+  };
+  if(!/^[a-zA-Z0-9_.]{3,30}$/.test(updates.username))throw Error('Username must be 3–30 characters and use letters, numbers, dot or underscore.');
+  for(const k of ['social_link_1','social_link_2'])if(privateUpdates[k]&&!(privateUpdates[k].startsWith('https://')||privateUpdates[k].startsWith('http://')))throw Error('Social links must start with https:// or http://');
+  const {error}=await supabaseClient.from('social_profiles').update(updates).eq('user_id',myId());
+  if(error)throw error;
+  const {error:privateError}=await supabaseClient.from('social_profile_private').upsert({user_id:myId(),...privateUpdates},{onConflict:'user_id'});
+  if(privateError)throw privateError;
+  closeModal();await loadSocialData();activeProfile=myId();renderProfile();showToast('Profile information saved');
+ }catch(e){showToast(e.message||'Could not save profile information');}
+}
 async function saveProfile(){try{const f=$('profilePhoto').files[0],cover=$('profileCover').files[0],updates={updated_at:new Date().toISOString()};if(!f&&!cover)throw Error('Choose a profile photo or banner first.');if(f)updates.avatar_path=await uploadMedia(f,'profile');if(cover)updates.cover_path=await uploadMedia(cover,'profile-cover');const {error}=await supabaseClient.from('social_profiles').update(updates).eq('user_id',myId());if(error)throw error;closeModal();await loadSocialData();activeProfile=myId();renderProfile();showToast('Profile appearance updated');}catch(e){showToast(e.message||'Profile appearance update failed');}}
 function renderNotifications(){const arr=db.notifications;$('notificationsList').innerHTML=arr.length?arr.map(n=>'<div class="notif">'+avatar(person(n.from))+'<div><b>'+safe(person(n.from).name)+'</b> '+safe(n.text)+'<div class="tiny muted">'+ago(n.time)+' ago</div></div>'+(n.read?'':'<span class="badge">NEW</span>')+'</div>').join(''):'<div class="empty"><div class="big">🔔</div>No notifications yet.</div>';}
 async function markNotificationsRead(){try{const {error}=await supabaseClient.from('social_notifications').update({is_read:true}).eq('user_id',myId());if(error)throw error;await loadSocialData();}catch(e){showToast(e.message||'Could not mark notifications');}}
