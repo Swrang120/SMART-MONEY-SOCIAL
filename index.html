@@ -1166,35 +1166,32 @@ body{min-width:320px!important}
  .profile-post-heading h2{font-size:17px!important}
 }
 
-/* Story indicator stays anchored to the profile photo, not the surrounding header. */
-.profile-main>.profile-avatar-wrap.profile-avatar-story{
- position:relative!important;
- width:88px!important;height:88px!important;
- min-width:88px!important;min-height:88px!important;
- flex:0 0 88px!important;
- display:block!important;
+/* Explicit story dot: positioned on the avatar wrapper, independent of avatar markup. */
+.profile-main .profile-avatar-wrap.profile-avatar-story{
+ position:relative!important;display:inline-flex!important;
+ flex:0 0 88px!important;width:88px!important;height:88px!important;
+ overflow:visible!important;isolation:isolate!important;
 }
-.profile-main>.profile-avatar-wrap.profile-avatar-story>.avatar{
- display:block!important;width:88px!important;height:88px!important;
+.profile-main .profile-avatar-wrap.profile-avatar-story>.avatar{
+ width:88px!important;height:88px!important;flex:0 0 88px!important;
 }
-.profile-main>.profile-avatar-wrap.profile-avatar-story:after{
- content:""!important;position:absolute!important;
- top:4px!important;right:4px!important;bottom:auto!important;left:auto!important;
- width:12px!important;height:12px!important;
+.profile-main .profile-avatar-wrap .profile-story-dot{
+ position:absolute!important;top:5px!important;right:5px!important;
+ display:block!important;width:15px!important;height:15px!important;
+ min-width:15px!important;min-height:15px!important;
  border-radius:50%!important;background:#22c55e!important;
- border:2px solid #10223b!important;
- box-shadow:0 1px 5px #0008!important;
- pointer-events:none!important;z-index:6!important;
+ border:3px solid #10221d!important;
+ box-shadow:0 1px 7px #000b!important;
+ z-index:20!important;pointer-events:none!important;
 }
 @media(max-width:560px){
- .profile-main>.profile-avatar-wrap.profile-avatar-story{
-  width:76px!important;height:76px!important;
-  min-width:76px!important;min-height:76px!important;flex-basis:76px!important;
+ .profile-main .profile-avatar-wrap.profile-avatar-story{
+  flex-basis:76px!important;width:76px!important;height:76px!important;
  }
- .profile-main>.profile-avatar-wrap.profile-avatar-story>.avatar{
-  width:76px!important;height:76px!important;
+ .profile-main .profile-avatar-wrap.profile-avatar-story>.avatar{
+  width:76px!important;height:76px!important;flex-basis:76px!important;
  }
- .profile-main>.profile-avatar-wrap.profile-avatar-story:after{
+ .profile-main .profile-avatar-wrap .profile-story-dot{
   top:3px!important;right:3px!important;
  }
 }
@@ -1828,7 +1825,7 @@ function renderProfile(){
  const profileStories=db.stories.filter(x=>x.user===activeProfile&&x.status==='published').sort((a,b)=>b.created-a.created);
  const latestStory=profileStories[0];
  const profileStoryStrip=latestStory?'<div class="profile-story-strip"><button type="button" class="soft" data-story-id="'+latestStory.id+'" onclick="viewStory(this.dataset.storyId)">◉ View Story · '+profileStories.length+' active</button></div>':'';
- const profileAvatar='<div class="profile-avatar-wrap '+(latestStory?'profile-avatar-story':'')+'" '+(latestStory?'role="button" tabindex="0" data-story-id="'+latestStory.id+'" aria-label="View '+safe(p.name||'user')+' story" onclick="viewStory(this.dataset.storyId)" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();viewStory(this.dataset.storyId)}"':'')+'>'+avatar(p)+(own?'<button type="button" class="profile-media-pencil avatar-pencil" aria-label="Change profile photo" title="Change profile photo" onclick="event.stopPropagation();pickProfileMedia(\'avatar\')"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 16.5V20h3.5L19.2 8.3l-3.5-3.5L4 16.5Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="m13.9 6.6 3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></button>':'')+'</div>';
+ const profileAvatar='<div class="profile-avatar-wrap '+(latestStory?'profile-avatar-story':'')+'" '+(latestStory?'role="button" tabindex="0" data-story-id="'+latestStory.id+'" aria-label="View '+safe(p.name||'user')+' story" onclick="viewStory(this.dataset.storyId)" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();viewStory(this.dataset.storyId)}"':'')+'>'+avatar(p)+(latestStory?'<span class="profile-story-dot" aria-hidden="true"></span>':'')+(own?'<button type="button" class="profile-media-pencil avatar-pencil" aria-label="Change profile photo" title="Change profile photo" onclick="event.stopPropagation();pickProfileMedia(\'avatar\')"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 16.5V20h3.5L19.2 8.3l-3.5-3.5L4 16.5Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="m13.9 6.6 3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></button>':'')+'</div>';
  $('profileView').innerHTML='<article class="card profile-hero-card"><div class="profile-cover profile-cover-premium">'+cover+(own?'<button type="button" class="profile-media-pencil cover-pencil" aria-label="Change banner" title="Change banner" onclick="event.stopPropagation();pickProfileMedia(\'cover\')"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 7.5h4l1.5-2h5l1.5 2H20v11H4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>':'')+'</div><div class="profile-main">'+profileAvatar+'<div class="profile-identity"><h2>'+safe(p.name||'My Profile')+'</h2><div class="profile-handle">'+safe(p.handle||'@your_username')+'</div></div>'+(own?'':'<button class="follow '+(db.following.includes(p.id)?'on':'')+'" onclick="toggleFollow(\''+p.id+'\')">'+(db.following.includes(p.id)?'Following':'＋ Follow')+'</button><button class="soft" onclick="messageMember(\''+p.id+'\')">✉ Message</button>')+'</div><p class="profile-bio">'+safe(p.bio||'Add a short introduction so people can get to know you.')+'</p>'+(publicBits.length?'<div class="profile-public-details">'+publicBits.join('<span class="profile-detail-sep">•</span>')+'</div>':'')+'<div class="profile-stats"><div><b>'+posts.length+'</b><span>Posts</span></div><button type="button" class="profile-stat-button" onclick="openFollowList(\'followers\',\''+activeProfile+'\')"><b>'+followersCount+'</b><span>Followers</span></button><button type="button" class="profile-stat-button" onclick="openFollowList(\'following\',\''+activeProfile+'\')"><b>'+followingCount+'</b><span>Following</span></button></div></article>'+profileStoryStrip+'<div class="section-head profile-post-heading"><h2>'+(own?'Your Posts':safe(p.name)+' · Posts')+'</h2><span class="tiny muted">'+posts.length+' shared</span></div>'+(posts.length?posts.map(postCard).join(''):'<div class="card empty profile-empty"><div class="big">✦</div><b>No posts yet</b><p>Photos and updates you share will appear here.</p>'+(own?'<button class="primary" onclick="showView(\'home\')">Create your first post</button>':'')+'</div>');
 }
 function editProfile(){const p=person(myId());openModal('<h3>🖼️ Profile appearance</h3><p class="tiny muted">Only your profile photo and banner can be changed here. Username, bio and profile details are managed in Settings.</p><div class="field"><label>Profile photo</label><input type="file" id="profilePhoto" accept="image/jpeg,image/png,image/webp,image/gif"></div><div class="field"><label>Profile banner / cover</label><input type="file" id="profileCover" accept="image/jpeg,image/png,image/webp"></div><div class="modal-actions"><button class="soft" onclick="closeModal()">Cancel</button><button class="primary" onclick="saveProfile()">Save appearance</button></div>');}
