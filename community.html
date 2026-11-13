@@ -492,7 +492,29 @@ body{min-width:320px}
  .composer input{min-width:0!important}
 }
 
-</style></head><body>
+</style>
+<style id="community-final-layout-fix">
+html,body{width:100%!important;max-width:100%!important;overflow-x:hidden!important}
+body{min-width:320px!important}
+#app,.app,.top,.topin,.layout,.community-shell{width:100%;max-width:100%;min-width:0}
+.topin{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.topin>*{min-width:0}
+.community-bottom-nav{display:none}
+@media(min-width:761px){.community-bottom-nav{display:none!important}}
+@media(max-width:760px){
+ body{overflow-x:hidden!important}
+ .top{padding:12px!important}
+ .topin{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:10px!important}
+ .topin .brand{font-size:clamp(16px,4vw,21px)!important}
+ .topin .actions{display:flex!important;gap:7px!important;overflow-x:auto!important;max-width:100%!important;padding-bottom:3px}
+ .topin .actions>*{flex:0 0 auto!important}
+ .card{max-width:100%!important}
+ .community-bottom-nav{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;position:fixed!important;left:0!important;right:0!important;bottom:0!important;width:100%!important;z-index:1000!important;padding:8px 4px calc(8px + env(safe-area-inset-bottom))!important}
+ .community-bottom-nav button{min-width:0!important;padding:6px 2px!important;font-size:clamp(8px,2.5vw,11px)!important}
+ body{padding-bottom:calc(82px + env(safe-area-inset-bottom))!important}
+}
+</style>
+</head><body>
 <header class="top"><div class="topin"><div class="brand">SMART MONEY SOCIAL<span>COMMUNITY · PROFILE · MESSAGES</span></div><div class="actions"><button class="soft" onclick="location.href=SOCIAL_BASE">Home Feed</button><button class="soft" onclick="location.href=SOCIAL_BASE+'?notifications=1'">🔔 Alerts</button><button class="soft" onclick="showPane('profile')">My Profile</button><button class="soft" onclick="showPane('messages')">Messages</button><button class="soft" onclick="location.href=SOCIAL_BASE+'?settings=1'">Settings</button></div></div></header>
 <main id="app" class="wrap"><div class="grid"><aside>
  <section class="card"><h3>Community</h3><input class="search" id="peopleSearch" placeholder="Search people or college..." oninput="renderPeople()"><div id="peopleList"></div></section>
