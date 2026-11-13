@@ -451,6 +451,47 @@ body{background:radial-gradient(ellipse at 15% 0%,#163b5a 0,transparent 38%),lin
  .chat-subline{max-width:230px!important}
 }
 @media(min-width:761px){.wrap{max-width:1120px!important}.grid{grid-template-columns:290px minmax(0,1fr)!important}}
+
+/* FINAL RESPONSIVE FRAME — consistent desktop and mobile community */
+*,*::before,*::after{box-sizing:border-box}
+html,body{width:100%;max-width:100%;overflow-x:clip}
+body{min-width:320px}
+.top{width:100%;min-width:0;position:sticky;top:0;z-index:100}
+.topin{width:100%!important;max-width:1320px!important;min-width:0!important;margin:0 auto!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:18px!important;padding:12px clamp(12px,2vw,26px)!important}
+.topin>.brand{flex:0 0 auto;min-width:0;font-size:17px!important;line-height:1.35}
+.topin>.brand span{display:block;font-size:10px!important;letter-spacing:2px!important}
+.topin>.actions{flex:1 1 auto;min-width:0;display:flex!important;justify-content:flex-end!important;align-items:center!important;gap:7px!important;flex-wrap:nowrap!important;overflow-x:auto!important;scrollbar-width:none}
+.topin>.actions::-webkit-scrollbar{display:none}
+.topin>.actions button{flex:0 0 auto!important;white-space:nowrap!important;min-height:44px!important;padding:9px 12px!important;font-size:12px!important}
+.wrap{width:100%;max-width:1320px;margin-inline:auto;min-width:0}
+.grid{min-width:0;grid-template-columns:290px minmax(0,1fr)!important;gap:20px!important}
+.grid>*{min-width:0}
+.community-bottom-nav{display:none!important}
+@media(min-width:761px){
+ .wrap{padding:20px 22px 40px!important}
+ .grid{grid-template-columns:290px minmax(0,1fr)!important}
+ .grid>aside{display:block!important}
+ .community-bottom-nav{display:none!important}
+}
+@media(max-width:760px){
+ .topin{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:8px!important;padding:10px 12px!important;min-height:0!important}
+ .topin>.brand{font-size:14px!important;white-space:nowrap}
+ .topin>.brand span{font-size:9px!important;letter-spacing:1.7px!important}
+ .topin>.actions{width:100%!important;max-width:100%!important;justify-content:flex-start!important;gap:6px!important;overflow-x:auto!important;flex-wrap:nowrap!important;padding:1px 0 4px!important}
+ .topin>.actions button{font-size:11px!important;padding:8px 10px!important;min-height:40px!important}
+ .wrap{width:100%!important;max-width:100%!important;padding:12px 10px calc(94px + env(safe-area-inset-bottom))!important}
+ .grid{display:block!important;width:100%!important;margin-top:10px!important}
+ .grid>aside{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:10px!important}
+ .grid>aside .card{margin-bottom:0!important}
+ #app .grid>section{width:100%;min-width:0!important}
+ .card{max-width:100%;padding:14px!important;border-radius:18px!important}
+ .community-bottom-nav{display:flex!important;position:fixed!important;left:0!important;right:0!important;bottom:0!important;transform:none!important;width:100%!important;max-width:100%!important;z-index:1000!important;justify-content:space-around!important;gap:2px!important;padding:7px 3px calc(7px + env(safe-area-inset-bottom))!important;border-radius:18px 18px 0 0!important}
+ .community-bottom-nav button{flex:1 1 0!important;min-width:0!important;min-height:54px!important;font-size:10px!important;padding:4px 1px!important}
+ .chatbox{max-width:100%;min-width:0}
+ .composer{min-width:0;max-width:100%}
+ .composer input{min-width:0!important}
+}
+
 </style></head><body>
 <header class="top"><div class="topin"><div class="brand">SMART MONEY SOCIAL<span>COMMUNITY · PROFILE · MESSAGES</span></div><div class="actions"><button class="soft" onclick="location.href=SOCIAL_BASE">Home Feed</button><button class="soft" onclick="location.href=SOCIAL_BASE+'?notifications=1'">🔔 Alerts</button><button class="soft" onclick="showPane('profile')">My Profile</button><button class="soft" onclick="showPane('messages')">Messages</button><button class="soft" onclick="location.href=SOCIAL_BASE+'?settings=1'">Settings</button></div></div></header>
 <main id="app" class="wrap"><div class="grid"><aside>
