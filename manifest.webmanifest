@@ -1,0 +1,19 @@
+{
+  "name": "Smart Money Social",
+  "short_name": "SM Social",
+  "description": "Connect, share photos and updates, follow people, and message your community.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#071b19",
+  "theme_color": "#0b2420",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "assets/social-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
