@@ -26,7 +26,7 @@ A GitHub Actions workflow deploys the repository root on every push to `main`.
 
 ## Backend dependency
 
-The current HTML frontend connects to the existing Smart Money Social Supabase project and uses its separate auth storage key `smart-money-social-auth-v1`. It expects these Social-only tables:
+The frontend is currently in **Preview Mode**. Login, signup, guest sessions and auth storage are intentionally not initialized. Account-dependent actions (posting, uploading, likes, follows, profiles and messaging) remain paused until the platform UI and feature set are complete and the authentication phase is explicitly started. The existing Social Supabase project configuration is retained for later integration. It expects these Social-only tables:
 
 `social_access`, `social_profiles`, `social_posts`, `social_stories`, `social_likes`, `social_comments`, `social_follows`, `social_saved_posts`, `social_reports`, `social_notifications`, `social_messages`, `social_message_blocks`.
 
