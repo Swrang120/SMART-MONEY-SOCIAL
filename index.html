@@ -237,12 +237,11 @@ h1,h2,h3,h4,.section-head h2,.post-author strong{color:#f6f4e9!important}.muted,
 .modal{background:linear-gradient(150deg,#142a23,#0b1c18)!important;border:1px solid #46644d!important;color:#f4f5ed!important;box-shadow:0 28px 100px #000b!important}.modal h3{color:#f5dc9d!important}.preview-note{background:#252c20!important;border:1px dashed #a88a4d!important;color:#e8d59e!important}.toast{background:linear-gradient(110deg,#f2d991,#bd9144)!important;color:#14251d!important;box-shadow:0 10px 28px #0006!important}.mobile-nav{background:#0c1d18f5!important;border-top:1px solid #3c5c48!important;box-shadow:0 -12px 36px #0006!important;backdrop-filter:blur(20px)!important}.mobile-nav button{color:#a4b4a8!important}.mobile-nav button.active{color:#f4d88f!important;background:#d8b76b1c!important;border-radius:12px!important}
 .guest-boot{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:22px;background:radial-gradient(ellipse at 50% 0%,#1c604a88,transparent 48%),#071411}.guest-boot-card{width:min(440px,100%);padding:34px 28px;text-align:center;border:1px solid #55714c;border-radius:28px;background:linear-gradient(150deg,#173127,#0c1b17);box-shadow:0 28px 90px #0009}.guest-mark{width:66px;height:66px;margin:0 auto 16px;display:grid;place-items:center;border-radius:20px;background:linear-gradient(145deg,#f6dfa0,#b88738);color:#14251d;font-size:32px;font-weight:950}.guest-kicker{font-size:10px;letter-spacing:3px;color:#e3c77e;font-weight:900}.guest-boot-card h1{font-size:25px;margin:12px 0;color:#f5f2e7!important}.guest-boot-card p{color:#b2c3b4!important;line-height:1.7}.guest-help{font-size:12px!important}.guest-loader{height:3px;background:#294438;border-radius:9px;overflow:hidden;margin:22px auto 0;max-width:180px}.guest-loader i{display:block;width:42%;height:100%;background:linear-gradient(90deg,#d6b66b,#6de0aa);border-radius:9px;animation:guestLoad 1.25s ease-in-out infinite alternate}@keyframes guestLoad{from{transform:translateX(-35%)}to{transform:translateX(175%)}}
 @media(max-width:1050px){.layout{grid-template-columns:220px minmax(0,1fr)!important;gap:16px!important}}@media(max-width:680px){.app{padding:0 10px 106px!important}.top{height:64px!important;padding:0 10px!important;border-radius:0 0 17px 17px!important}.brand{font-size:13px!important}.brand small{font-size:9px!important}.logo{width:38px!important;height:38px!important}.layout{display:block!important;padding-top:14px!important}.side{display:none!important}.card{padding:14px!important;border-radius:18px!important}.post{padding:15px!important}.mobile-nav{border-radius:18px 18px 0 0!important}.guest-mode-label{font-size:9px;padding:8px}.guest-boot-card{padding:28px 20px}}
-</style></head>
+.preview-banner{position:sticky;top:0;z-index:1200;padding:10px 16px;text-align:center;background:linear-gradient(100deg,#173d30,#264a39);color:#f1d58c;font-size:12px;font-weight:900;letter-spacing:.7px;border-bottom:1px solid #c7a65c66}.preview-banner span{display:block;color:#d5e4d7;font-size:11px;font-weight:500;letter-spacing:0;margin-top:3px}</style></head>
 <body>
-<!-- Guest mode: no visible sign-in screen -->
-<section id="guestBootScreen" class="guest-boot"><div class="guest-boot-card"><div class="guest-mark">S</div><div class="guest-kicker">SMART MONEY SOCIAL</div><h1>Welcome to your social space</h1><p id="guestBootMessage">Preparing your secure guest session…</p><div class="guest-loader"><i></i></div></div></section>
+<div class="preview-banner">✨ SMART MONEY SOCIAL · PREVIEW MODE <span>Login & account features will be added after the platform is complete.</span></div>
 <div class="app">
-<header class="top"><div class="brand"><div class="logo">S</div><div>SMART MONEY <small>SOCIAL COMMUNITY</small></div></div><div class="top-actions"><span class="pill tiny guest-pill" id="accountPill">Guest session</span><button class="iconbtn" onclick="showView('notifications')" title="Notifications">♧</button><button class="iconbtn" onclick="openProfile()" title="Profile">👤</button><span class="guest-mode-label">● GUEST MODE</span></div></header>
+<header class="top"><div class="brand"><div class="logo">S</div><div>SMART MONEY <small>SOCIAL COMMUNITY</small></div></div><div class="top-actions"><span class="pill tiny guest-pill" id="accountPill">Preview mode</span><button class="iconbtn" onclick="showView('notifications')" title="Notifications">♧</button><button class="iconbtn" onclick="openProfile()" title="Profile">👤</button><span class="guest-mode-label">● PREVIEW MODE</span></div></header>
 <div class="layout">
 <aside class="side"><div class="card"><div class="side-profile"><div class="avatar" id="sideAvatar">S</div><div><b id="sideName">Swrang Creator</b><div class="tiny muted">Smart Money member</div></div></div><nav class="nav" id="sideNav"><button class="active" data-view="home" onclick="showView('home')"><span class="ico">⌂</span> Home Feed</button><button data-view="explore" onclick="showView('explore')"><span class="ico">⌕</span> Explore</button><button onclick="openComposer()"><span class="ico">＋</span> Create Post</button><button data-view="notifications" onclick="showView('notifications')"><span class="ico">♧</span> Notifications</button><button data-view="profile" onclick="openProfile()"><span class="ico">◉</span> My Profile</button><button data-view="saved" onclick="showView('saved')"><span class="ico">▣</span> Saved Posts</button><button onclick="window.location.href=SOCIAL_BASE+'community.html?messages=1'"><span class="ico">✉</span> Messages</button><button onclick="openAdmin()"><span class="ico">⚙</span> Community Admin</button></nav></div><div class="preview-note" id="accessNotice">Connected to Smart Money Social.</div></aside>
 <main>
@@ -268,73 +267,32 @@ const SUPABASE_URL='https://rvprrulkjegvicbnjuft.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_IdI5j4Q4qcd-1knRMVeGKw_O3Ek42ZJ';
 // GitHub Pages project-site base path (works locally and on alternate hosts too).
 const SOCIAL_BASE=new URL('.',window.location.href).pathname;
-// Dedicated auth storage for Smart Money Social; it does not reuse Smart Money's browser session.
-const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{storageKey:'smart-money-social-auth-v1',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+// Preview phase: no login, signup, guest session, or auth storage is initialized.
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
 let authUser=null,canPublish=false,isAdmin=false,authCheckInProgress=false,socialRealtimeChannel=null,socialRealtimeTimer=null,people=[],activeProfile=null,filter='for-you';
 let db={posts:[],stories:[],following:[],followersById:{},saved:[],notifications:[],reported:[]};
 const bucket='smart-money-social';
 const $=id=>document.getElementById(id);
-let guestBootInProgress=false;
-function showGuestError(message){
- const box=$('guestBootScreen');if(!box)return;
- box.innerHTML='<div class="guest-boot-card"><div class="guest-mark">S</div><div class="guest-kicker">SMART MONEY SOCIAL</div><h1>One quick setup needed</h1><p>'+safe(message||'Guest session could not start.')+'</p><p class="guest-help">Enable Anonymous Sign-Ins in Supabase → Authentication → Providers, then tap retry. No Google or email login will be shown.</p><button class="primary" onclick="startGuestSession()">Retry</button></div>';
-}
-async function startGuestSession(){
- if(guestBootInProgress)return;guestBootInProgress=true;
- try{
-  const {data,error}=await supabaseClient.auth.getSession();if(error)throw error;
-  if(data?.session?.user){await applyAuthSession(data.session.user);return;}
-  const {data:guest,error:guestError}=await supabaseClient.auth.signInAnonymously({options:{data:{display_name:'Social Guest'}}});
-  if(guestError)throw guestError;if(!guest?.user)throw new Error('Supabase did not create a guest session.');
-  await applyAuthSession(guest.user);
- }catch(error){console.error('Social guest session failed:',error);showGuestError(error.message||'Please retry.');}
- finally{guestBootInProgress=false;}
-}
 function showToast(s){const e=$('toast');e.textContent=s;e.style.display='block';clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>e.style.display='none',2600);}
 function safe(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function initials(s){return (s||'U').trim().split(/\s+/).map(x=>x[0]).slice(0,2).join('').toUpperCase();}
+function initials(s){return (s||'U').trim().split(/\\s+/).map(x=>x[0]).slice(0,2).join('').toUpperCase();}
 function ago(t){const m=Math.max(1,Math.floor((Date.now()-new Date(t).getTime())/60000));return m<60?m+'m':m<1440?Math.floor(m/60)+'h':Math.floor(m/1440)+'d';}
 function person(id){return people.find(p=>p.id===id)||{id,name:'Community Member',handle:'@member',bio:'',avatar:'U'};}
 function avatar(p,size=''){return '<div class="avatar '+size+'">'+(p.photo?'<img src="'+safe(p.photo)+'" alt="">':initials(p.name||p.avatar))+'</div>';}
-function myId(){return authUser?.id;}
+function myId(){return null;}
 function mediaUrl(path){return path||'';}
-async function signedMedia(path){if(!path)return '';const {data,error}=await supabaseClient.storage.from(bucket).createSignedUrl(path,3600);if(error){console.warn('Signed media URL:',error.message);return '';}return data.signedUrl;}
-async function uploadMedia(file,folder){if(!file)return null;const imageTypes=['image/jpeg','image/png','image/webp','image/gif'];const storyVideoTypes=['video/mp4','video/webm','video/quicktime'];const allowed=folder==='stories'?[...imageTypes,...storyVideoTypes]:imageTypes;if(!allowed.includes(file.type))throw new Error(folder==='stories'?'Stories support photos and short videos only.':'Only photos are allowed here. Videos can be uploaded to Stories only.');if(file.size>100*1024*1024)throw new Error('Maximum upload size is 100 MB.');const ext=(file.name.split('.').pop()||'bin').toLowerCase().replace(/[^a-z0-9]/g,'');const path=myId()+'/'+folder+'/'+crypto.randomUUID()+'.'+ext;const {error}=await supabaseClient.storage.from(bucket).upload(path,file,{contentType:file.type,upsert:false});if(error)throw error;return path;}
-async function ensureProfile(){
- const u=authUser,meta=u.user_metadata||{},display=meta.full_name||meta.name||u.email?.split('@')[0]||'Community Member';
- let {data,error}=await supabaseClient.from('social_profiles').select('*').eq('user_id',u.id).maybeSingle();
- if(error)throw error;
- if(!data){
-  const username=(display.toLowerCase().replace(/[^a-z0-9_]+/g,'_').replace(/^_+|_+$/g,'').slice(0,24)||'member')+'_'+u.id.slice(0,5);
-  const ins=await supabaseClient.from('social_profiles').insert({user_id:u.id,username,display_name:display,bio:'Welcome to Smart Money Social.'}).select().single();
-  if(ins.error)throw ins.error;data=ins.data;
- }
- return data;
+async function signedMedia(path){return '';}
+async function uploadMedia(){throw new Error('Posting and uploads will be enabled after account setup is added.');}
+function enterPreviewMode(){
+ document.body.classList.add('preview-mode');
+ const app=document.querySelector('.app');if(app)app.style.display='block';
+ const notice=$('accessNotice');if(notice)notice.textContent='Preview mode is active. Social account actions are paused until login is added.';
+ const feed=$('feed');if(feed)feed.innerHTML='<div class="card empty"><h3>Welcome to Smart Money Social</h3><p class="muted">The platform is being prepared. Posts, stories and interactive features will be connected after the core build is complete.</p></div>';
+ const stories=$('stories');if(stories)stories.innerHTML='<div class="tiny muted">Stories preview will appear here.</div>';
 }
-async function applyAuthSession(user){
- if(!user||authCheckInProgress)return;authCheckInProgress=true;authUser=user;activeProfile=user.id;
- try{
-  const profile=await ensureProfile();
-  isAdmin=['admin','super_admin'].includes(user.app_metadata?.role);
-  // Every authenticated Social user may upload; posts and stories remain pending until admin review.
-  canPublish=!!user;
-  document.body.classList.add('authenticated');$('guestBootScreen').style.display='none';
-  $('accountPill').textContent=user.is_anonymous?'Guest session · temporary profile':(user.email||'Smart Money Account');
-  $('sideName').textContent=profile.display_name||profile.username||'Community Member';
-  $('accessNotice').textContent=canPublish?'Your Social account is active. You can publish posts and stories.':'You can publish photos, videos and stories. Posts and stories are visible to all signed-in Social members.';
-  // OAuth always returns to the main Social feed. Keep the Social session independent.
-  localStorage.removeItem('sm_social_open_community_after_oauth');
-  if(localStorage.getItem('sm_social_return_to')==='messages'){
-   localStorage.removeItem('sm_social_return_to');
-   location.replace(window.location.origin+SOCIAL_BASE+'community.html?messages=1');
-   return;
-  }
-  await loadSocialData();
-  subscribeSocialRealtime();
- }catch(e){console.error('Social startup failed:',e);authUser=null;showGuestError('Social could not load: '+(e.message||'Please retry.'));}finally{authCheckInProgress=false;}
-}
-supabaseClient.auth.onAuthStateChange((event,session)=>{if(session?.user&&authUser?.id!==session.user.id)setTimeout(()=>applyAuthSession(session.user),0);else if(event==='SIGNED_OUT'){authUser=null;setTimeout(startGuestSession,0);}});
-startGuestSession();
+enterPreviewMode();
+document.addEventListener('submit',e=>{if(document.body.classList.contains('preview-mode')){e.preventDefault();e.stopImmediatePropagation();showToast('This feature will be enabled after the platform is complete.');}},true);
+document.addEventListener('click',e=>{if(!document.body.classList.contains('preview-mode'))return;const btn=e.target.closest('button');if(!btn)return;const action=btn.getAttribute('onclick')||'';if(/openComposer|openStoryComposer|markNotificationsRead|openAdmin|follow|like|savePost|sharePost|reportPost/i.test(action)){e.preventDefault();e.stopImmediatePropagation();showToast('This feature will be enabled after the platform is complete.');}},true);
 
 async function loadSocialData(){
  const uid=myId();if(!uid)return;
