@@ -934,4 +934,12 @@ window.addEventListener('storage',e=>{if(e.key==='smart-money-social-auth-v1'&&!
  body.chat-open.chat-conversation .message-window .chatbox{flex:1 1 0%!important;min-height:0!important;height:auto!important;max-height:none!important;overflow-y:auto!important}
 }
 </style>
+
+<style id="chat-latest-message-raised">
+/* Keep the newest bubble comfortably above the lower edge of the chat viewport. */
+.message-window .chatbox{padding-bottom:52px!important;scroll-padding-bottom:52px!important}
+@media(max-width:760px){
+ body.chat-open.chat-conversation .message-window .chatbox{padding-bottom:52px!important;scroll-padding-bottom:52px!important}
+}
+</style>
 </body></html>
