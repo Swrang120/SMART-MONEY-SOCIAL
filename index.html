@@ -1308,7 +1308,7 @@ function addSocialLogout(){
 }
 async function loadSocialData(){
  const uid=myId();if(!uid)return;
- const [profiles,privateProfileRes,posts,likes,comments,follows,saved,stories,storyLikes,storyReplies,notifs]=await Promise.all([
+ const [profiles,privateProfileRes,posts,likes,comments,follows,saved,stories,storyLikes,storyViews,storyReplies,notifs]=await Promise.all([
   supabaseClient.from('social_profiles').select('*'),
   supabaseClient.from('social_profile_private').select('*').eq('user_id',uid).maybeSingle(),
   supabaseClient.from('social_posts').select('*').order('created_at',{ascending:false}).limit(200),
@@ -1318,10 +1318,11 @@ async function loadSocialData(){
   supabaseClient.from('social_saved_posts').select('*').eq('user_id',uid),
   supabaseClient.from('social_stories').select('*').order('created_at',{ascending:false}),
   supabaseClient.from('social_story_likes').select('*'),
+  supabaseClient.from('social_story_views').select('story_id,viewer_id,viewed_at'),
   supabaseClient.from('social_story_replies').select('*').order('created_at',{ascending:true}),
   supabaseClient.from('social_notifications').select('*').eq('user_id',uid).order('created_at',{ascending:false}).limit(100)
  ]);
- for(const r of [profiles,privateProfileRes,posts,likes,comments,follows,saved,stories,storyLikes,storyReplies,notifs])if(r.error)throw r.error;
+ for(const r of [profiles,privateProfileRes,posts,likes,comments,follows,saved,stories,storyLikes,storyViews,storyReplies,notifs])if(r.error)throw r.error;
  const accessRes=await supabaseClient.from('social_access').select('access_status').eq('user_id',uid).maybeSingle();if(accessRes.error)throw accessRes.error;canPublish=isAdmin||accessRes.data?.access_status==='approved';const accessNotice=$('accessNotice');if(accessNotice)accessNotice.textContent=canPublish?'Your Social account is active. You can publish posts and stories.':'Your account is active. Posting and Stories will be available after Social admin approval.';
  const ownPrivateProfile=privateProfileRes.data||{};
  people=(profiles.data||[]).map(p=>({...p,...(p.user_id===uid?ownPrivateProfile:{}),id:p.user_id,name:p.display_name||p.username||'Community Member',handle:'@'+(p.username||'member'),bio:p.bio||'',photo:'',cover:'',avatar:'U',verified:p.user_id===uid}));
@@ -1332,7 +1333,7 @@ async function loadSocialData(){
  db.posts=(posts.data||[]).map(p=>({id:p.id,user:p.user_id,title:p.title||'',category:p.category||'General',hideLikeCount:!!p.hide_like_count,commentsEnabled:p.comments_enabled!==false,text:p.body||'',media:p.media_path?signed[p.media_path]||'':'',mediaPath:p.media_path,kind:(p.media_type||'').startsWith('video')?'video':(p.media_type?'image':''),likes:(likes.data||[]).filter(l=>l.post_id===p.id).map(l=>l.user_id),comments:(comments.data||[]).filter(c=>c.post_id===p.id).map(c=>({id:c.id,user:c.user_id,text:c.body,time:new Date(c.created_at).getTime()})),created:new Date(p.created_at).getTime(),status:p.moderation_status}));
  db.following=(follows.data||[]).filter(f=>f.follower_id===uid).map(f=>f.following_id);db.followersById={};db.followingById={};(follows.data||[]).forEach(f=>{db.followersById[f.following_id]=(db.followersById[f.following_id]||0)+1;db.followingById[f.follower_id]=(db.followingById[f.follower_id]||0)+1;});
  db.saved=(saved.data||[]).map(x=>x.post_id);
- db.stories=(stories.data||[]).filter(s=>new Date(s.expires_at).getTime()>Date.now()).map(s=>({id:s.id,user:s.user_id,media:signed[s.media_path]||'',mediaPath:s.media_path,kind:s.media_type.startsWith('video')?'video':'image',caption:s.caption,created:new Date(s.created_at).getTime(),status:s.moderation_status,likes:(storyLikes.data||[]).filter(l=>l.story_id===s.id).map(l=>l.user_id),replies:(storyReplies.data||[]).filter(r=>r.story_id===s.id).map(r=>({id:r.id,user:r.user_id,text:r.body,time:new Date(r.created_at).getTime()}))}));
+ db.stories=(stories.data||[]).filter(s=>new Date(s.expires_at).getTime()>Date.now()).map(s=>({id:s.id,user:s.user_id,media:signed[s.media_path]||'',mediaPath:s.media_path,kind:s.media_type.startsWith('video/')?'video':'image',caption:s.caption,created:new Date(s.created_at).getTime(),status:s.moderation_status,likes:(storyLikes.data||[]).filter(l=>l.story_id===s.id).map(l=>l.user_id),views:(storyViews.data||[]).filter(v=>v.story_id===s.id).length,replies:(storyReplies.data||[]).filter(r=>r.story_id===s.id).map(r=>({id:r.id,user:r.user_id,text:r.body,time:new Date(r.created_at).getTime()}))}));
  db.notifications=(notifs.data||[]).map(n=>({id:n.id,to:uid,from:n.actor_id,text:n.message,icon:n.kind,read:n.is_read,time:new Date(n.created_at).getTime()}));
  db.reported=[];
  renderAll();
@@ -1344,6 +1345,7 @@ function subscribeSocialRealtime(){
   .on('postgres_changes',{event:'*',schema:'public',table:'social_posts'},queueSocialRefresh)
   .on('postgres_changes',{event:'*',schema:'public',table:'social_stories'},queueSocialRefresh)
   .on('postgres_changes',{event:'*',schema:'public',table:'social_story_likes'},queueSocialRefresh)
+  .on('postgres_changes',{event:'*',schema:'public',table:'social_story_views'},queueSocialRefresh)
   .on('postgres_changes',{event:'*',schema:'public',table:'social_story_replies'},queueSocialRefresh)
   .on('postgres_changes',{event:'*',schema:'public',table:'social_profiles'},queueSocialRefresh)
   .on('postgres_changes',{event:'*',schema:'public',table:'social_likes'},queueSocialRefresh)
@@ -1400,13 +1402,17 @@ function openStoryComposer(){if(!myId()){showToast('Please sign in to publish a 
 async function publishStory(){const f=$('storyFile')?.files?.[0];if(!f){showToast('Choose a photo or video');return;}try{const path=await uploadMedia(f,'stories');const {error}=await supabaseClient.from('social_stories').insert({user_id:myId(),media_path:path,media_type:f.type.startsWith('video/')?'video':'image',caption:$('storyCaption').value.trim(),moderation_status:'published',expires_at:new Date(Date.now()+24*60*60*1000).toISOString()});if(error)throw error;closeModal();showToast('Your story is public now and will expire after 24 hours.');await loadSocialData();}catch(e){showToast(e.message||'Story upload failed');}}
 function viewStory(id){
  const s=db.stories.find(x=>x.id===id);if(!s)return;
+ if(s.user!==myId()&&s.status==='published')trackStoryView(id);
  const media=s.kind==='video'?'<video src="'+safe(s.media)+'" controls autoplay playsinline style="width:100%;max-height:65vh;object-fit:contain;border-radius:14px;background:#111"></video>':'<img src="'+safe(s.media)+'" alt="Story" style="width:100%;max-height:65vh;object-fit:contain;border-radius:14px;background:#111">';
  const own=s.user===myId(),liked=(s.likes||[]).includes(myId());
  const moderation=s.status==='pending'?'<div class="badge">PENDING REVIEW</div>':'';
  const adminActions=isAdmin&&s.status!=='published'?'<div class="modal-actions"><button class="primary" onclick="moderateStory(\''+id+'\',\'published\');closeModal()">Approve story</button><button class="soft" onclick="moderateStory(\''+id+'\',\'rejected\');closeModal()">Reject</button></div>':'';
  const replies=(s.replies||[]).map(r=>'<div class="story-reply-row"><b>'+safe(person(r.user).name)+'</b><span>'+safe(r.text)+'</span><small>'+ago(r.time)+'</small></div>').join('');
  const interactions=s.status==='published'&&!own?'<div class="story-actions"><button class="soft '+(liked?'liked':'')+'" onclick="toggleStoryLike(\''+id+'\')">'+(liked?'♥ Liked':'♡ Like')+' · '+(s.likes||[]).length+'</button><button class="soft" onclick="messageMember(\''+s.user+'\')">✉ Message</button></div><div class="story-replies"><b>Replies</b><div id="storyRepliesList">'+(replies||'<div class="tiny muted">Be the first to reply.</div>')+'</div><div class="composer"><input id="storyReplyInput" maxlength="1000" placeholder="Reply to this story…"><button class="primary" onclick="replyToStory(\''+id+'\')">Send</button></div></div>':'';
- openModal('<div style="display:flex;justify-content:space-between;align-items:center"><b>◉ '+safe(person(s.user).name)+' · Story</b><button class="post-menu" onclick="closeModal()">✕</button></div>'+moderation+'<div style="margin:14px 0">'+media+'</div><p>'+safe(s.caption||'')+'</p><div class="tiny muted">⏳ Story expires 24 hours after approval</div>'+interactions+(own?'<div class="modal-actions"><button class="soft" style="color:var(--red)" onclick="deleteStory(\''+id+'\')">Delete my story</button></div>':'')+adminActions);
+ openModal('<div style="display:flex;justify-content:space-between;align-items:center"><b>◉ '+safe(person(s.user).name)+' · Story</b><button class="post-menu" onclick="closeModal()">✕</button></div>'+moderation+'<div style="margin:14px 0">'+media+'</div><p>'+safe(s.caption||'')+'</p><div class="tiny muted">⏳ Story expires 24 hours after upload</div>'+(own?'<div class="story-stats" style="display:flex;gap:12px;flex-wrap:wrap;padding:10px 12px;margin:10px 0;background:#f5f1ff;border:1px solid #e5dcfb;border-radius:12px"><b>👁 '+(s.views||0)+' views</b><b>♥ '+(s.likes||[]).length+' likes</b></div>':'')+interactions+(own?'<div class="modal-actions"><button class="soft" style="color:var(--red)" onclick="deleteStory(\''+id+'\')">Delete my story</button></div>':'')+adminActions);
+}
+async function trackStoryView(id){
+ try{const {error}=await supabaseClient.from('social_story_views').upsert({story_id:id,viewer_id:myId()},{onConflict:'story_id,viewer_id',ignoreDuplicates:true});if(error)throw error;}catch(e){console.warn('Story view could not be recorded:',e.message);}
 }
 async function toggleStoryLike(id){
  const story=db.stories.find(x=>x.id===id);if(!story||story.status!=='published'||story.user===myId())return;
