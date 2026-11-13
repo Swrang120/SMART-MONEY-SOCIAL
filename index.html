@@ -666,7 +666,54 @@ body{min-width:320px}
  .premium-action svg{width:18px;height:18px}
 }
 
-</style></head>
+</style>
+<style id="social-final-layout-fix">
+/* Final responsive contract: desktop site, phone app, no horizontal overflow. */
+html,body{width:100%!important;max-width:100%!important;overflow-x:hidden!important}
+body{min-width:320px!important}
+.app{width:100%!important;max-width:1440px!important;margin:0 auto!important}
+.top{width:100%!important;min-width:0!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important}
+.brand{min-width:0!important;flex:1 1 auto!important}
+.top-actions{display:flex!important;flex:0 0 auto!important;align-items:center!important;gap:8px!important;white-space:nowrap!important}
+.layout{width:100%!important;min-width:0!important;align-items:start!important}
+.layout>*,main,.view{min-width:0!important;max-width:100%!important}
+.mobile-nav{display:none!important}
+.preview-banner,.guest-mode-label,.guest-pill{display:none!important}
+@media(min-width:1101px){
+ .app{padding:16px 26px 44px!important}
+ .layout{display:grid!important;grid-template-columns:240px minmax(0,700px) 280px!important;justify-content:center!important;gap:24px!important}
+ .side,.right{display:block!important}
+ .mobile-nav{display:none!important}
+}
+@media(min-width:761px) and (max-width:1100px){
+ .app{padding:14px 18px 44px!important}
+ .layout{display:grid!important;grid-template-columns:210px minmax(0,1fr)!important;gap:16px!important}
+ .side{display:block!important}.right{display:none!important}
+ .mobile-nav{display:none!important}
+}
+@media(max-width:760px){
+ .app{width:100%!important;max-width:100%!important;padding:0 10px calc(94px + env(safe-area-inset-bottom))!important}
+ .top{height:66px!important;min-height:66px!important;padding:0 8px!important;gap:6px!important}
+ .brand{gap:7px!important;overflow:hidden!important}
+ .brand-logo-image{width:39px!important;height:39px!important;min-width:39px!important;flex:0 0 39px!important}
+ .brand>div:last-child{font-size:clamp(10px,3vw,14px)!important;white-space:nowrap!important}
+ .brand small{font-size:clamp(7px,2vw,9px)!important;letter-spacing:1.2px!important}
+ .top-actions{gap:4px!important}
+ .premium-action{width:clamp(32px,9.7vw,41px)!important;height:clamp(32px,9.7vw,41px)!important;min-width:clamp(32px,9.7vw,41px)!important;flex:0 0 clamp(32px,9.7vw,41px)!important;border-radius:12px!important}
+ .premium-action svg{width:19px!important;height:19px!important}
+ .layout{display:block!important;padding-top:12px!important}
+ .layout>.side,.layout>.right{display:none!important}
+ main,.view{width:100%!important}
+ .card{width:100%!important;max-width:100%!important}
+ .mobile-nav{display:flex!important;position:fixed!important;left:0!important;right:0!important;bottom:0!important;width:100%!important;max-width:100%!important;z-index:1000!important;transform:none!important;justify-content:space-around!important;gap:2px!important;padding:7px 3px calc(7px + env(safe-area-inset-bottom))!important}
+ .mobile-nav button{flex:1 1 0!important;min-width:0!important;padding:5px 1px!important;font-size:clamp(8px,2.5vw,11px)!important}
+ .composer{min-width:0!important;flex-wrap:wrap!important}
+ .composer input{min-width:0!important;flex:1 1 0!important}
+ .feedbar{max-width:100%!important;overflow-x:auto!important}
+ .post-media{max-width:100%!important;height:auto!important}
+}
+</style>
+</head>
 <body>
 
 <div class="app">
@@ -747,7 +794,7 @@ $('socialLoginForm').onsubmit=async e=>{e.preventDefault();authMessage('Signing 
 $('socialSignupForm').onsubmit=async e=>{e.preventDefault();const email=$('signupEmail').value.trim(),password=$('signupPassword').value;if(password!==$('signupConfirm').value){authMessage('Passwords do not match.');return;}if(password.length<8){authMessage('Use at least 8 characters for the password.');return;}authMessage('Creating account…');const {data,error}=await supabaseClient.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname}});if(error){authMessage(error.message);return;}if(data.session){await activateSocialUser(data.user);}else{authMessage('Account created. Check your Gmail inbox, confirm your email, then log in.');}};
 }g.style.display='grid';if(message)authMessage(message);}
 async function ensureSocialProfile(user){const {data,error}=await supabaseClient.from('social_profiles').select('user_id').eq('user_id',user.id).maybeSingle();if(error)throw error;if(!data){const local=(user.email||'member').split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g,'').slice(0,16)||'member';const {error:insertError}=await supabaseClient.from('social_profiles').insert({user_id:user.id,username:local+'_'+user.id.slice(0,6),display_name:local,bio:''});if(insertError)throw insertError;}}
-async function activateSocialUser(user){authUser=user;isAdmin=['admin','super_admin'].includes(user?.app_metadata?.role);try{await ensureSocialProfile(user);$('authGate')?.remove();document.body.classList.remove('preview-mode');const app=document.querySelector('.app');if(app)app.style.display='';const nav=document.querySelector('.mobile-nav');if(nav)nav.style.display='';await loadSocialData();subscribeSocialRealtime();renderAll();const route=new URLSearchParams(location.search);if(route.get('settings')==='1')showView('settings');else if(route.get('notifications')==='1')showView('notifications');else if(route.get('profile')==='1')openProfile();else if(route.get('messages')==='1')location.href=SOCIAL_BASE+'community.html?messages=1';addSocialLogout();}catch(e){console.error(e);showAuthGate('Account setup could not finish: '+(e.message||'Please retry.'));}}
+async function activateSocialUser(user){authUser=user;isAdmin=['admin','super_admin'].includes(user?.app_metadata?.role);try{await ensureSocialProfile(user);$('authGate')?.remove();document.body.classList.remove('preview-mode');const app=document.querySelector('.app');if(app)app.style.display='';const nav=document.querySelector('.mobile-nav');if(nav)nav.style.display='';await loadSocialData();subscribeSocialRealtime();renderAll();const routeUrl=new URL(window.location.href);const route=routeUrl.searchParams;let initialView='home';if(route.get('settings')==='1')initialView='settings';else if(route.get('notifications')==='1')initialView='notifications';else if(route.get('profile')==='1')initialView='profile';else if(route.get('messages')==='1'){history.replaceState({},'',routeUrl.pathname);location.replace(SOCIAL_BASE+'community.html?messages=1');return;}if(routeUrl.search){history.replaceState({},'',routeUrl.pathname);}if(initialView==='profile')openProfile();else showView(initialView);addSocialLogout();}catch(e){console.error(e);showAuthGate('Account setup could not finish: '+(e.message||'Please retry.'));}}
 async function logoutSocial(){const {error}=await supabaseClient.auth.signOut({scope:'local'});if(error){showToast(error.message);return;}authUser=null;canPublish=false;isAdmin=false;showAuthGate('You have been logged out.');}
 function addSocialLogout(){const host=document.querySelector('.top-actions');if(host&&!$('socialLogoutBtn')){const b=document.createElement('button');b.id='socialLogoutBtn';b.className='iconbtn premium-action';b.textContent='↪';b.title='Logout';b.onclick=logoutSocial;host.appendChild(b);}}
 async function loadSocialData(){
