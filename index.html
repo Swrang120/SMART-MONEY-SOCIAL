@@ -1378,13 +1378,42 @@ function subscribeSocialRealtime(){
 function queueSocialRefresh(){clearTimeout(socialRealtimeTimer);socialRealtimeTimer=setTimeout(()=>loadSocialData().catch(e=>console.error('Social realtime refresh:',e)),350);}
 function toggleMobileMenu(force){const panel=$('mobileMenuPanel'),button=document.querySelector('.mobile-menu-trigger');if(!panel)return;const open=typeof force==='boolean'?force:!panel.classList.contains('open');panel.classList.toggle('open',open);panel.setAttribute('aria-hidden',String(!open));button?.setAttribute('aria-expanded',String(open));}
 function mobileMenuGo(view){toggleMobileMenu(false);showView(view);}
+let activeStandaloneSetting=null;
+function restoreStandaloneSetting(){
+ if(!activeStandaloneSetting)return;
+ const {node,placeholder}=activeStandaloneSetting;
+ if(placeholder?.parentNode)placeholder.parentNode.insertBefore(node,placeholder);
+ placeholder?.remove();
+ activeStandaloneSetting=null;
+}
+function closeStandaloneSetting(){
+ restoreStandaloneSetting();
+ showView('home');
+ toggleMobileMenu(true);
+}
 function mobileMenuSettings(section){
- const ids={interactions:0,'account-privacy':1,'content-preferences':2};
- toggleMobileMenu(false);showView('settings');
- const cards=document.querySelectorAll('#view-settings .settings-accordion');
- if(section in ids){cards.forEach((card,i)=>card.open=i===ids[section]);setTimeout(()=>cards[ids[section]]?.scrollIntoView({behavior:'smooth',block:'start'}),100);return;}
- const targets={'profile-information':'#view-settings .settings-secondary-grid .settings-card:nth-child(1)','account':'#view-settings .settings-secondary-grid .settings-card:nth-child(2)','about':'#view-settings .settings-secondary-grid .settings-card:nth-child(3)'};
- const target=document.querySelector(targets[section]);if(target)setTimeout(()=>target.scrollIntoView({behavior:'smooth',block:'center'}),100);
+ const config={
+  interactions:{title:'Interactions & Messages',selector:'#view-settings .settings-accordion:nth-child(1)',accordion:true},
+  'account-privacy':{title:'Account Privacy',selector:'#view-settings .settings-accordion:nth-child(2)',accordion:true},
+  'content-preferences':{title:'Content Preferences',selector:'#view-settings .settings-accordion:nth-child(3)',accordion:true},
+  'profile-information':{title:'Profile Information',selector:'#view-settings .settings-secondary-grid .settings-card:nth-child(1)'},
+  account:{title:'Account & Login',selector:'#view-settings .settings-secondary-grid .settings-card:nth-child(2)'},
+  about:{title:'About & Reset Preferences',selector:'#view-settings .settings-secondary-grid .settings-card:nth-child(3)'}
+ };
+ const item=config[section];if(!item)return;
+ toggleMobileMenu(false);
+ restoreStandaloneSetting();
+ const node=document.querySelector(item.selector);if(!node){showToast('This setting is temporarily unavailable');return;}
+ let page=$('view-setting-detail');
+ if(!page){page=document.createElement('section');page.id='view-setting-detail';page.className='view';$('view-help')?.parentNode.insertBefore(page,$('view-help'));}
+ page.innerHTML='<div class="section-head"><div><h2>'+item.title+'</h2><div class="tiny muted">Manage this setting separately</div></div><button class="soft" onclick="closeStandaloneSetting()">← Menu</button></div><div id="settingDetailContent"></div>';
+ const placeholder=document.createComment('setting-position-'+section);
+ node.parentNode.insertBefore(placeholder,node);
+ $('settingDetailContent').appendChild(node);
+ activeStandaloneSetting={node,placeholder};
+ if(item.accordion)node.open=true;
+ showView('setting-detail');
+ loadSocialSettings();loadPrivacySettings();
 }
 function showView(v){toggleMobileMenu(false);document.querySelectorAll('.view').forEach(e=>e.classList.remove('active'));$('view-'+v)?.classList.add('active');document.querySelectorAll('[data-view]').forEach(e=>e.classList.toggle('active',e.dataset.view===v));if(v==='dashboard')renderCoinDashboard();if(v==='profile')renderProfile();if(v==='notifications')renderNotifications();if(v==='explore')renderExplore();if(v==='saved')renderSaved();if(v==='settings'){loadSocialSettings();loadPrivacySettings();}window.scrollTo({top:0,behavior:'smooth'});}
 function openSearch(){showView('explore');const input=$('searchInput');if(input){setTimeout(()=>{input.focus({preventScroll:true});input.scrollIntoView({behavior:'smooth',block:'center'});},120);}}
