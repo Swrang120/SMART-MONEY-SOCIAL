@@ -751,6 +751,71 @@ body,button,input,textarea,select{font-family:'Roboto',Arial,sans-serif!importan
  .profile-main .profile-identity h2{font-size:clamp(16px,4.8vw,20px)!important}
  .profile-main .profile-handle{font-size:12px!important}
 }
+
+/* PROFILE HEADER SIZE REFINEMENT — stronger display name and clearer edit control */
+.profile-main{
+ grid-template-columns:88px minmax(0,1fr)!important;
+ column-gap:16px!important;
+ row-gap:12px!important;
+}
+.profile-main .profile-identity h2{
+ font-size:clamp(23px,2.4vw,30px)!important;
+ font-weight:950!important;
+ line-height:1.14!important;
+ letter-spacing:.45px!important;
+}
+.profile-main .profile-handle{
+ font-size:14px!important;
+ font-weight:700!important;
+ letter-spacing:.25px!important;
+}
+.profile-main .profile-edit-btn{
+ display:inline-flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ gap:9px!important;
+ min-height:50px!important;
+ padding:12px 20px!important;
+ border-radius:15px!important;
+ font-size:14px!important;
+ font-weight:900!important;
+ letter-spacing:.2px!important;
+}
+.profile-main .profile-edit-icon{
+ display:inline-grid!important;
+ place-items:center!important;
+ width:27px!important;height:27px!important;
+ border-radius:9px!important;
+ background:#4c3520!important;
+ color:#f6e5bd!important;
+ font-size:21px!important;
+ line-height:1!important;
+ box-shadow:inset 0 1px 0 #ffffff40!important;
+}
+@media(max-width:560px){
+ .profile-main{
+  grid-template-columns:76px minmax(0,1fr)!important;
+  column-gap:13px!important;
+  row-gap:11px!important;
+ }
+ .profile-main .profile-identity h2{
+  font-size:clamp(21px,5.8vw,26px)!important;
+  line-height:1.12!important;
+ }
+ .profile-main .profile-handle{font-size:13px!important}
+ .profile-main .profile-edit-btn{
+  min-height:48px!important;
+  padding:11px 17px!important;
+  font-size:14px!important;
+ }
+ .profile-main .profile-edit-icon{
+  width:26px!important;height:26px!important;font-size:20px!important;
+ }
+}
+@media(max-width:360px){
+ .profile-main .profile-identity h2{font-size:21px!important}
+ .profile-main .profile-edit-btn{min-height:46px!important;padding:10px 14px!important}
+}
 </style><style>#authGate{position:fixed;inset:0;z-index:99999;display:none;place-items:center;padding:20px;background:radial-gradient(circle at 10% 10%,#17466a,#071426 60%,#050b18);color:#f4f8ff;font-family:system-ui,sans-serif}.auth-card{width:min(440px,100%);padding:30px 24px;border:1px solid #315a7c;border-radius:25px;background:linear-gradient(150deg,#142f4c,#0a192e);box-shadow:0 24px 80px #0009}.auth-brand{font-weight:900;letter-spacing:2px;font-size:19px}.auth-brand span{display:block;color:#75dcff;font-size:10px;letter-spacing:4px}.auth-card h1{font-size:29px;margin:25px 0 4px}.auth-card p{color:#b5c9dd}.auth-card form label{display:grid;gap:7px;margin:14px 0;font-size:13px;font-weight:700}.auth-card input{width:100%;box-sizing:border-box;padding:14px;border:1px solid #3c6384;border-radius:13px;background:#08172a;color:white;font-size:16px}.auth-submit{width:100%;padding:15px;border-radius:14px;background:linear-gradient(120deg,#58d8f3,#397de7);color:#061528;font-weight:900;font-size:16px;margin-top:12px}.auth-google{width:100%;margin:16px 0 8px;min-height:48px;border:1px solid #d8dce5;border-radius:12px;background:#fff;color:#20242d;font-weight:750;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px}.auth-google:disabled{opacity:.65;cursor:wait}.auth-divider{display:flex;align-items:center;gap:12px;color:#9298a5;font-size:11px;font-weight:800;letter-spacing:1.4px;margin:5px 0 13px}.auth-divider:before,.auth-divider:after{content:"";height:1px;background:#e6e8ee;flex:1}.auth-switch{width:100%;margin:15px 0;background:transparent;color:#78dcff;font-weight:800}.auth-card small{display:block;color:#91a9c1;line-height:1.6;text-align:center}#authMessage{min-height:24px;color:#9de8ff;font-size:13px}
 /* FINAL RESPONSIVE FRAME — desktop website / mobile-app layout */
 *,*::before,*::after{box-sizing:border-box}
@@ -1242,7 +1307,7 @@ function renderProfile(){
   [p.social_link_1,p.social_link_2].filter(Boolean).slice(0,2).forEach((u,n)=>publicBits.push('<a class="profile-social-link" href="'+safe(u)+'" target="_blank" rel="noopener">Social link '+(n+1)+' ↗</a>'));
  }
  const cover=p.cover?'<img class="profile-cover-image" src="'+safe(p.cover)+'" alt="Profile banner">':'';
- $('profileView').innerHTML='<article class="card profile-hero-card"><div class="profile-cover profile-cover-premium">'+cover+'</div><div class="profile-main"><div class="profile-avatar-wrap">'+avatar(p)+'</div><div class="profile-identity"><h2>'+safe(p.name||'My Profile')+'</h2><div class="profile-handle">'+safe(p.handle||'@your_username')+'</div></div>'+(own?'<button class="primary profile-edit-btn" onclick="editProfile()">✎ Edit Profile</button>':'<button class="follow '+(db.following.includes(p.id)?'on':'')+'" onclick="toggleFollow(\''+p.id+'\')">'+(db.following.includes(p.id)?'Following':'＋ Follow')+'</button><button class="soft" onclick="messageMember(\''+p.id+'\')">✉ Message</button>')+'</div><p class="profile-bio">'+safe(p.bio||'Add a short introduction so people can get to know you.')+'</p>'+(publicBits.length?'<div class="profile-public-details">'+publicBits.join('<span class="profile-detail-sep">•</span>')+'</div>':'')+'<div class="profile-stats"><div><b>'+posts.length+'</b><span>Posts</span></div><div><b>'+followersCount+'</b><span>Followers</span></div><div><b>'+followingCount+'</b><span>Following</span></div></div></article><div class="section-head profile-post-heading"><h2>'+(own?'Your Posts':safe(p.name)+' · Posts')+'</h2><span class="tiny muted">'+posts.length+' shared</span></div>'+(posts.length?posts.map(postCard).join(''):'<div class="card empty profile-empty"><div class="big">✦</div><b>No posts yet</b><p>Photos and updates you share will appear here.</p>'+(own?'<button class="primary" onclick="showView(\'home\')">Create your first post</button>':'')+'</div>');
+ $('profileView').innerHTML='<article class="card profile-hero-card"><div class="profile-cover profile-cover-premium">'+cover+'</div><div class="profile-main"><div class="profile-avatar-wrap">'+avatar(p)+'</div><div class="profile-identity"><h2>'+safe(p.name||'My Profile')+'</h2><div class="profile-handle">'+safe(p.handle||'@your_username')+'</div></div>'+(own?'<button class="primary profile-edit-btn" onclick="editProfile()"><span class="profile-edit-icon" aria-hidden="true">✎</span><span>Edit Profile</span></button>':'<button class="follow '+(db.following.includes(p.id)?'on':'')+'" onclick="toggleFollow(\''+p.id+'\')">'+(db.following.includes(p.id)?'Following':'＋ Follow')+'</button><button class="soft" onclick="messageMember(\''+p.id+'\')">✉ Message</button>')+'</div><p class="profile-bio">'+safe(p.bio||'Add a short introduction so people can get to know you.')+'</p>'+(publicBits.length?'<div class="profile-public-details">'+publicBits.join('<span class="profile-detail-sep">•</span>')+'</div>':'')+'<div class="profile-stats"><div><b>'+posts.length+'</b><span>Posts</span></div><div><b>'+followersCount+'</b><span>Followers</span></div><div><b>'+followingCount+'</b><span>Following</span></div></div></article><div class="section-head profile-post-heading"><h2>'+(own?'Your Posts':safe(p.name)+' · Posts')+'</h2><span class="tiny muted">'+posts.length+' shared</span></div>'+(posts.length?posts.map(postCard).join(''):'<div class="card empty profile-empty"><div class="big">✦</div><b>No posts yet</b><p>Photos and updates you share will appear here.</p>'+(own?'<button class="primary" onclick="showView(\'home\')">Create your first post</button>':'')+'</div>');
 }function editProfile(){const p=person(myId());openModal('<h3>🖼️ Profile appearance</h3><p class="tiny muted">Only your profile photo and banner can be changed here. Username, bio and profile details are managed in Settings.</p><div class="field"><label>Profile photo</label><input type="file" id="profilePhoto" accept="image/jpeg,image/png,image/webp,image/gif"></div><div class="field"><label>Profile banner / cover</label><input type="file" id="profileCover" accept="image/jpeg,image/png,image/webp"></div><div class="modal-actions"><button class="soft" onclick="closeModal()">Cancel</button><button class="primary" onclick="saveProfile()">Save appearance</button></div>');}
 function editProfileDetails(){const p=person(myId());openModal('<h3>✍️ Profile information</h3><p class="tiny muted">Choose what should appear on your public profile. Private relationship status stays hidden.</p><div class="field"><label>Display name</label><input id="settingsProfileName" maxlength="60" value="'+safe(p.name)+'"></div><div class="field"><label>Username</label><input id="settingsProfileUsername" maxlength="30" value="'+safe(p.username||p.handle||'').replace(/^@/,'')+'" placeholder="your_username"></div><div class="field"><label>Bio</label><textarea id="settingsProfileBio" maxlength="500">'+safe(p.bio)+'</textarea></div><div class="field"><label>Relationship status</label><select id="settingsProfileRelationship"><option value="">Prefer not to say</option>'+['Single','In a relationship','Married','Engaged','It’s complicated'].map(x=>'<option value="'+x+'" '+(p.relationship_status===x?'selected':'')+'>'+x+'</option>').join('')+'</select></div><div class="field"><label>Relationship status visibility</label><select id="settingsProfileRelationshipVisibility"><option value="private" '+(p.relationship_visibility!=='public'?'selected':'')+'>Private — only me</option><option value="public" '+(p.relationship_visibility==='public'?'selected':'')+'>Show on my profile</option></select></div><div class="field"><label>Social media link 1 (optional)</label><input id="settingsProfileSocial1" type="url" maxlength="500" value="'+safe(p.social_link_1||'')+'" placeholder="https://..."></div><div class="field"><label>Social media link 2 (optional)</label><input id="settingsProfileSocial2" type="url" maxlength="500" value="'+safe(p.social_link_2||'')+'" placeholder="https://..."></div><div class="field"><label>Social links visibility</label><select id="settingsProfileSocialVisibility"><option value="private" '+(p.social_links_visibility!=='public'?'selected':'')+'>Private — only me</option><option value="public" '+(p.social_links_visibility==='public'?'selected':'')+'>Show on my profile</option></select></div><div class="modal-actions"><button class="soft" onclick="closeModal()">Cancel</button><button class="primary" onclick="saveProfileDetails()">Save profile details</button></div>');}
 async function saveProfileDetails(){
