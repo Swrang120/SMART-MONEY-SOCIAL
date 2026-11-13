@@ -873,11 +873,47 @@ body,button,input,textarea,select{font-family:'Roboto',Arial,sans-serif!importan
 .mobile-menu-panel.open{display:block}.mobile-menu-head{display:flex;align-items:center;justify-content:space-between;padding:4px 4px 10px;border-bottom:1px solid #e9e4f0;margin-bottom:7px}.mobile-menu-section-title{padding:12px 12px 5px;margin-top:5px;border-top:1px solid #e9e4f0;color:#9a7845;font-size:10px;font-weight:900;letter-spacing:1.2px}.mobile-menu-panel>button{display:flex;width:100%;padding:13px 12px;border:0;border-radius:11px;background:transparent;color:inherit;text-align:left;font:inherit;font-weight:700}.mobile-menu-panel>button:active,.mobile-menu-panel>button:hover{background:#f1ecfa}.mobile-menu-close{border:0;background:#f0ebf7;border-radius:9px;padding:7px 10px;color:#35264d}
 @media(max-width:680px){.mobile-nav{display:flex!important;justify-content:space-around;gap:2px;padding:6px 5px calc(6px + env(safe-area-inset-bottom))!important}.mobile-nav button{flex:1;min-width:0;font-size:10px!important;white-space:nowrap}.mobile-nav button b{font-size:19px!important;line-height:1.1}.mobile-menu-panel{bottom:calc(68px + env(safe-area-inset-bottom))}}
 @keyframes storyAutoProgress{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-/* Keep a blue verification badge visibly attached to every profile photo */
-.profile-avatar-wrap{position:relative!important}
-.profile-photo-blue-tick{position:absolute!important;right:-2px!important;bottom:1px!important;z-index:9!important;display:flex!important;align-items:center!important;justify-content:center!important;width:22px!important;height:22px!important;border:2px solid #10223b!important;border-radius:50%!important;background:#168bff!important;color:#fff!important;box-shadow:0 2px 6px #0008!important;pointer-events:none!important}
-.profile-photo-blue-tick svg{display:block!important;width:100%!important;height:100%!important}
-@media(max-width:560px){.profile-photo-blue-tick{width:20px!important;height:20px!important;right:-2px!important;bottom:0!important}}
+/* Blue verification badge: anchor to the photo's lower-left so it never overlaps
+   the green story dot (top-right) or the photo-edit control (bottom-right). */
+.profile-main>.profile-avatar-wrap{
+ position:relative!important;
+ display:inline-flex!important;
+ flex:0 0 auto!important;
+ overflow:visible!important;
+ isolation:isolate!important;
+}
+.profile-main>.profile-avatar-wrap>.profile-photo-blue-tick{
+ position:absolute!important;
+ left:-3px!important;
+ right:auto!important;
+ bottom:2px!important;
+ top:auto!important;
+ z-index:30!important;
+ display:flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ width:23px!important;
+ height:23px!important;
+ min-width:23px!important;
+ min-height:23px!important;
+ box-sizing:border-box!important;
+ border:2px solid #10223b!important;
+ border-radius:50%!important;
+ background:#168bff!important;
+ color:#fff!important;
+ box-shadow:0 2px 7px #000b!important;
+ pointer-events:none!important;
+}
+.profile-main>.profile-avatar-wrap>.profile-photo-blue-tick svg{
+ display:block!important;width:100%!important;height:100%!important;
+}
+@media(max-width:560px){
+ .profile-main>.profile-avatar-wrap>.profile-photo-blue-tick{
+  left:-2px!important;bottom:2px!important;
+  width:21px!important;height:21px!important;
+  min-width:21px!important;min-height:21px!important;
+ }
+}
 /* Blue verification badge on every profile header */
 .profile-name-with-badge{display:flex!important;align-items:center!important;gap:7px!important;flex-wrap:wrap!important}
 .profile-blue-tick{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:19px!important;height:19px!important;flex:0 0 19px!important;color:#168bff!important;vertical-align:middle!important;filter:drop-shadow(0 1px 2px rgba(0,0,0,.22))}
