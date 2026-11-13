@@ -356,9 +356,56 @@ html,body{background:#071411!important;color:#f3f5ed!important}body{background:r
 .field input,.field textarea,.field select,.search,.composer input{background:#0a1b17!important;border:1px solid #315344!important;color:#f3f5ed!important;border-radius:14px!important}.field input::placeholder,.field textarea::placeholder,.search::placeholder{color:#71877a!important}.field input:focus,.field textarea:focus,.field select:focus,.search:focus{outline:none!important;border-color:#d7b96e!important;box-shadow:0 0 0 3px #d7b96e24!important}.field label{color:#d7c48f!important;font-weight:700!important}.notice{background:#252c20!important;border:1px solid #8e7848!important;color:#e8d59e!important;border-radius:14px!important}.person{border-color:#294438!important}.chatitem{background:#172e26!important;border:1px solid #365848!important;color:#e6eee5!important;border-radius:14px!important}.chatitem.active{background:#2a3325!important;border-color:#a88a4d!important}.chatbox{background:#091813!important;border:1px solid #315344!important;border-radius:18px!important}.bubble{background:#1b382c!important;color:#e8f1e8!important;border:1px solid #315344!important;border-radius:16px!important}.bubble.mine{background:linear-gradient(130deg,#23634a,#174633)!important;color:#fff!important;border-color:#5ca27a!important}.link{color:#79d9b0!important}.tabs button.active{background:#d9bb73!important;color:#14251d!important;border:1px solid #f0d994!important}.community-post-image{border-radius:16px!important;border:1px solid #315344!important}.community-bottom-nav{background:#0c1d18f5!important;border-top:1px solid #3c5c48!important;box-shadow:0 -12px 36px #0006!important;backdrop-filter:blur(20px)!important}.community-bottom-nav button{color:#a4b4a8!important}.community-bottom-nav button:focus,.community-bottom-nav button:hover{color:#f4d88f!important;background:#d8b76b1c!important}
 .guest-boot{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:22px;background:radial-gradient(ellipse at 50% 0%,#1c604a88,transparent 48%),#071411}.guest-boot-card{width:min(440px,100%);padding:34px 28px;text-align:center;border:1px solid #55714c;border-radius:28px;background:linear-gradient(150deg,#173127,#0c1b17);box-shadow:0 28px 90px #0009}.guest-mark{width:66px;height:66px;margin:0 auto 16px;display:grid;place-items:center;border-radius:20px;background:linear-gradient(145deg,#f6dfa0,#b88738);color:#14251d;font-size:32px;font-weight:950}.guest-kicker{font-size:10px;letter-spacing:3px;color:#e3c77e;font-weight:900}.guest-boot-card h1{font-size:25px;margin:12px 0;color:#f5f2e7!important}.guest-boot-card p{color:#b2c3b4!important;line-height:1.7}.guest-help{font-size:12px!important}.guest-loader{height:3px;background:#294438;border-radius:9px;overflow:hidden;margin:22px auto 0;max-width:180px}.guest-loader i{display:block;width:42%;height:100%;background:linear-gradient(90deg,#d6b66b,#6de0aa);border-radius:9px;animation:guestLoad 1.25s ease-in-out infinite alternate}@keyframes guestLoad{from{transform:translateX(-35%)}to{transform:translateX(175%)}}
 @media(max-width:760px){.wrap{padding:11px!important}.grid{grid-template-columns:1fr!important;gap:13px!important;margin-top:13px!important}.topin{padding:11px 13px!important}.brand{font-size:14px!important}.card{padding:15px!important;border-radius:18px!important}.profile-cover{height:165px!important}.stats{justify-content:space-around!important;gap:8px!important}.chatbox{height:55vh!important}}
-.preview-banner{position:sticky;top:0;z-index:1200;padding:10px 16px;text-align:center;background:linear-gradient(100deg,#173d30,#264a39);color:#f1d58c;font-size:12px;font-weight:900;letter-spacing:.7px;border-bottom:1px solid #c7a65c66}.preview-banner span{display:block;color:#d5e4d7;font-size:11px;font-weight:500;letter-spacing:0;margin-top:3px}</style></head><body>
-<header class="top"><div class="topin"><div class="brand">SMART MONEY SOCIAL<span>COMMUNITY · PROFILE · MESSAGES</span></div><div class="actions"><button class="soft" onclick="location.href=SOCIAL_BASE">Home Feed</button><button class="soft" onclick="showPane('profile')">My Profile</button><button class="soft" onclick="showPane('messages')">Messages</button><button class="soft" onclick="location.href=SOCIAL_BASE+'?settings=1'">Settings</button><span class="guest-mode-label">● PREVIEW MODE</span></div></div></header>
-<div class="preview-banner">✨ SMART MONEY SOCIAL · PREVIEW MODE <span>Login & account features will be added after the platform is complete.</span></div>
+.preview-banner{position:sticky;top:0;z-index:1200;padding:10px 16px;text-align:center;background:linear-gradient(100deg,#173d30,#264a39);color:#f1d58c;font-size:12px;font-weight:900;letter-spacing:.7px;border-bottom:1px solid #c7a65c66}.preview-banner span{display:block;color:#d5e4d7;font-size:11px;font-weight:500;letter-spacing:0;margin-top:3px}
+/* NEBULA SIGNATURE — same fixed-width Social frame as Home */
+:root{--bg:#050b18;--card:#0e1b31;--ink:#f2f7ff;--muted:#a9bad1;--line:#294361;--violet:#49d9ee;--soft:#132541;--red:#ff718f}
+html,body{min-height:100%;background:#050b18!important;color:#f2f7ff!important}
+body{margin:0!important;background:radial-gradient(ellipse at 50% -15%,#164b7770 0,transparent 40%),radial-gradient(ellipse at 100% 55%,#44318b30 0,transparent 38%),linear-gradient(160deg,#050b18,#09162a 55%,#07101f)!important;font:16px/1.55 Roboto,Arial,system-ui,sans-serif!important}
+.top{position:sticky!important;top:0!important;z-index:30!important;background:linear-gradient(100deg,#08172bf5,#102642f2)!important;border:0!important;border-bottom:1px solid #3c658b!important;box-shadow:0 12px 32px #0008!important;backdrop-filter:blur(22px)!important}
+.topin{width:100%!important;max-width:760px!important;min-height:78px!important;margin:0 auto!important;padding:10px 15px!important;display:flex!important;align-items:center!important;gap:12px!important}
+.brand{font-size:17px!important;font-weight:950!important;letter-spacing:1px!important;color:#f4f8ff!important}
+.brand:before{content:none!important}
+.brand span{display:block!important;margin:3px 0 0!important;color:#77dff3!important;font-size:10px!important;letter-spacing:2px!important}
+.topin>.actions{display:flex!important;gap:6px!important;flex-wrap:nowrap!important;overflow:auto!important}
+.topin>.actions button{white-space:nowrap!important;padding:9px 11px!important;font-size:12px!important}
+.wrap{width:100%!important;max-width:760px!important;margin:0 auto!important;padding:16px 16px 112px!important}
+.grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:14px!important;margin-top:8px!important}
+.grid>aside{display:grid!important;grid-template-columns:minmax(0,1fr)!important;position:static!important;gap:12px!important}
+.grid>aside .card:nth-child(2){display:block!important}
+.grid>aside>.notice{display:block!important}
+.grid>section{min-width:0!important;width:100%!important}
+.card{width:100%!important;min-width:0!important;background:linear-gradient(145deg,#142b49,#0d1c32)!important;border:1px solid #345779!important;border-radius:22px!important;padding:19px!important;box-shadow:0 16px 40px #0005,inset 0 1px #ffffff12!important;color:#edf6ff!important}
+h2,h3{color:#f2f7ff!important;font-weight:900!important}
+h2{font-size:25px!important}h3{font-size:19px!important}
+.muted,.tiny{color:#a9bad1!important}
+button{font-family:inherit!important;min-height:44px!important;border-radius:15px!important}
+.primary{background:linear-gradient(115deg,#63e7f2,#368cf2 70%,#5d72e8)!important;color:#071a30!important;border:1px solid #a3f4ff!important;font-weight:900!important;box-shadow:0 9px 24px #26bce74a!important}
+.soft,.tabs button{background:linear-gradient(145deg,#193452,#10233d)!important;border:1px solid #3a6085!important;color:#dff6ff!important}
+.danger{background:#3a1b31!important;color:#ff9db2!important;border:1px solid #81435d!important}
+.field input,.field textarea,.field select,.search,.composer input{width:100%!important;background:#08172a!important;color:#f2f7ff!important;border:1px solid #385a7c!important;border-radius:14px!important;font-size:16px!important}
+.field label{color:#a9d8ed!important;font-weight:750!important}
+.avatar{background:linear-gradient(145deg,#64e5f1,#387de5)!important;color:#07172c!important;border:2px solid #7deaff!important}
+.profile-cover{background:linear-gradient(120deg,#102e50,#285a8a 55%,#594b9c)!important;border:1px solid #4d81a9!important}
+.stats{display:flex!important;justify-content:space-around!important;gap:8px!important;border-top:1px solid #294967!important}
+.stats b{color:#78e9f7!important;font-size:20px!important}
+.person{border-color:#294967!important}
+.chatitem{background:#10233d!important;border:1px solid #345779!important;color:#eaf6ff!important;border-radius:15px!important}
+.chatitem.active{background:#1a4161!important;border-color:#5edff0!important}
+.chatbox{background:#08172a!important;border:1px solid #345779!important;border-radius:17px!important}
+.bubble{background:#1b3553!important;color:#eaf6ff!important}
+.bubble.mine{background:linear-gradient(130deg,#267ba8,#4656ad)!important;color:#fff!important}
+.link{color:#7ceaff!important}
+.notice{background:#142b49!important;border:1px solid #345779!important;color:#b9e7f4!important;border-radius:15px!important}
+.community-post-image{background:#08172a!important;border:1px solid #345779!important;border-radius:16px!important}
+.community-bottom-nav{position:fixed!important;left:50%!important;bottom:0!important;transform:translateX(-50%)!important;width:min(760px,100%)!important;z-index:80!important;display:flex!important;justify-content:space-around!important;gap:2px!important;padding:9px 5px calc(9px + env(safe-area-inset-bottom))!important;background:#08172bf2!important;border:1px solid #345779!important;border-bottom:0!important;border-radius:22px 22px 0 0!important;box-shadow:0 -12px 36px #0008!important;backdrop-filter:blur(24px)!important}
+.community-bottom-nav button{flex:1!important;min-height:58px!important;display:grid!important;justify-items:center!important;align-content:center!important;gap:3px!important;background:transparent!important;border:0!important;color:#a9bfd5!important;font-size:11px!important;font-weight:800!important}
+.community-bottom-nav button span:first-child{font-size:22px!important}
+.community-bottom-nav button:focus,.community-bottom-nav button:hover{color:#83eaff!important;background:#1b4266!important}
+.preview-banner,.guest-mode-label{display:none!important}
+@media(min-width:761px){.wrap{padding-left:18px!important;padding-right:18px!important}.grid{grid-template-columns:minmax(0,1fr)!important}.community-bottom-nav{display:flex!important}}
+@media(max-width:760px){.wrap{padding:12px 12px 112px!important}.topin{min-height:70px!important;padding:9px 12px!important}.brand{font-size:14px!important}.brand span{font-size:9px!important}.topin>.actions button{font-size:10px!important;padding:8px!important}.card{padding:16px!important;border-radius:19px!important}.profile-cover{height:160px!important}.chatbox{height:55vh!important}}
+</style></head><body>
+<header class="top"><div class="topin"><div class="brand">SMART MONEY SOCIAL<span>COMMUNITY · PROFILE · MESSAGES</span></div><div class="actions"><button class="soft" onclick="location.href=SOCIAL_BASE">Home Feed</button><button class="soft" onclick="showPane('profile')">My Profile</button><button class="soft" onclick="showPane('messages')">Messages</button><button class="soft" onclick="location.href=SOCIAL_BASE+'?settings=1'">Settings</button></div></div></header>
 <main id="app" class="wrap"><div class="grid"><aside>
  <section class="card"><h3>Community</h3><input class="search" id="peopleSearch" placeholder="Search people or college..." oninput="renderPeople()"><div id="peopleList"></div></section>
  <section class="card"><h3>Messaging</h3><div id="chatList" class="chatlist"></div></section>
