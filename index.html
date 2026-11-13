@@ -397,8 +397,15 @@ body{background:radial-gradient(ellipse at 50% -12%,#1d3c68 0,transparent 43%),l
 .mobile-nav button.active{background:#193c60!important;color:#75ddff!important}
 @media(min-width:561px){.app{border-color:#203c5b!important}}
 
+
+/* Permanent Smart Money Social brand artwork */
+.social-brand-hero{width:100%;max-width:560px;margin:10px auto 12px;padding:8px 10px;display:flex;justify-content:center;align-items:center;background:radial-gradient(ellipse at center,#142d57 0%,#081426 72%);border:1px solid #244d82;border-radius:20px;box-shadow:0 8px 28px #006bff22;overflow:hidden}
+.social-brand-hero img{display:block;width:100%;height:auto;max-height:210px;object-fit:contain;object-position:center}
+@media(max-width:560px){.social-brand-hero{margin:7px auto 9px;padding:5px 7px;border-radius:15px}.social-brand-hero img{max-height:170px}}
+
 </style></head>
 <body>
+<div class="social-brand-hero"><img src="./assets/smart-money-social-logo.jpg" alt="Smart Money Social — Share, Connect, Engage"></div>
 <div class="preview-banner">✨ SMART MONEY SOCIAL · PREVIEW MODE <span>Login & account features will be added after the platform is complete.</span></div>
 <div class="app">
 <header class="top"><div class="brand"><div class="logo">S</div><div>SMART MONEY <small>SOCIAL COMMUNITY</small></div></div><div class="top-actions"><span class="pill tiny guest-pill" id="accountPill">Preview mode</span><button class="iconbtn" onclick="showView('notifications')" title="Notifications">♧</button><button class="iconbtn" onclick="window.location.href=SOCIAL_BASE+'community.html?messages=1'" title="Messages">✉</button><button class="iconbtn" onclick="showView('settings')" title="Settings">⚙</button><button class="iconbtn" onclick="openProfile()" title="Profile">👤</button><span class="guest-mode-label">● PREVIEW MODE</span></div></header>
