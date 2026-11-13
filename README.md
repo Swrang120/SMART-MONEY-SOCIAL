@@ -24,19 +24,19 @@ A GitHub Actions workflow deploys the repository root on every push to `main`.
 3. Push to `main` or run **Deploy Smart Money Social to GitHub Pages** from the Actions tab.
 4. Site URL: https://swrang120.github.io/SMART-MONEY-SOCIAL/
 
-## Backend dependency
+## Backend and authentication
 
-The frontend is currently in **Preview Mode**. Login, signup, guest sessions and auth storage are intentionally not initialized. Account-dependent actions (posting, uploading, likes, follows, profiles and messaging) remain paused until the platform UI and feature set are complete and the authentication phase is explicitly started. The existing Social Supabase project configuration is retained for later integration. It expects these Social-only tables:
+Social uses its own Supabase client session (email + password login/signup) and the existing Social-only tables. New accounts may need to confirm their email before logging in, depending on the project's existing email-confirmation setting. No anonymous/guest login is used.
+
+The messaging page requires a signed-in Social account. It lists the profiles the current user follows automatically, along with existing conversations. Selecting a person opens a private text conversation; unread counts, message read state, block controls and realtime message refresh are supported by the current UI/database policies.
+
+Social data tables:
 
 `social_access`, `social_profiles`, `social_posts`, `social_stories`, `social_likes`, `social_comments`, `social_follows`, `social_saved_posts`, `social_reports`, `social_notifications`, `social_messages`, `social_message_blocks`.
 
-It also expects the private Storage bucket `smart-money-social`.
+Storage uses the private bucket `smart-money-social`.
 
-**Do not disable RLS or make the bucket public.** Any missing table, policy or storage rule must be handled as a Social-scoped migration only, with a backup and explicit approval. Do not alter main Smart Money auth, tables, payment gateway, packages, withdrawals or Academy.
-
-### Authentication plan
-
-No login, signup or anonymous/guest authentication is active during this build phase. Do not enable Supabase Anonymous Sign-Ins or change project-level Auth settings for this preview. Authentication will be designed and integrated only after the Social platform is complete.
+**Do not disable RLS or make the bucket public.** Do not change the main Smart Money application's authentication, tables, payment gateway, packages, withdrawals or Academy.
 
 ## Media constraints
 
