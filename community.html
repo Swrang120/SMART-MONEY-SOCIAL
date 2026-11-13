@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#111827"><title>Smart Money Social — Messages</title><script>if(!new URLSearchParams(location.search).has('messages')&&!new URLSearchParams(location.search).has('profile'))location.replace(new URL('.',location.href).pathname);</script>
+<style>
+:root{--bg:#f3f4f8;--card:#fff;--ink:#202437;--muted:#747b90;--line:#e6e8ef;--violet:#6655c7;--soft:#f0effb;--red:#c7465b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer;border:0;border-radius:11px;padding:10px 14px}.primary{background:linear-gradient(130deg,#7969df,#5142ad);color:white;font-weight:750}.soft{background:var(--soft);color:#5142ad}.danger{background:#fff0f1;color:var(--red)}.muted{color:var(--muted)}.tiny{font-size:12px}.wrap{max-width:1120px;margin:auto;padding:16px}.top{position:sticky;top:0;background:#ffffffed;backdrop-filter:blur(16px);border-bottom:1px solid var(--line);z-index:5}.topin{max-width:1120px;margin:auto;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{font-weight:900;letter-spacing:.4px}.brand span{display:block;color:var(--muted);font-size:10px;letter-spacing:2px}.grid{display:grid;grid-template-columns:270px 1fr;gap:18px;margin-top:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:17px;margin-bottom:14px;box-shadow:0 4px 18px #20243708}.profile-cover{height:180px;border-radius:14px;background:linear-gradient(120deg,#252b4d,#7768c9,#e6c9a2);background-position:center;background-size:cover;position:relative}.profile-cover button{position:absolute;right:10px;bottom:10px;background:#ffffffdf}.avatar{width:64px;height:64px;border-radius:50%;background:#e9e7fb;display:grid;place-items:center;color:#5648b0;font-size:23px;font-weight:850;overflow:hidden;border:4px solid white;flex-shrink:0}.avatar img{width:100%;height:100%;object-fit:cover}.profilehead{display:flex;align-items:end;gap:13px;margin-top:-34px;padding:0 12px;position:relative}.profilehead .avatar{width:88px;height:88px}.row{display:flex;align-items:center;gap:10px}.between{justify-content:space-between}.grow{flex:1;min-width:0}.field{margin:12px 0;display:grid;gap:5px}.field label{font-size:12px;color:var(--muted)}.field input,.field textarea,.field select,.search{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:11px;background:#fafbfe;color:var(--ink)}textarea{min-height:85px;resize:vertical}.stats{display:flex;gap:24px;padding:14px 12px}.stats b{display:block;font-size:19px}.actions{display:flex;gap:8px;flex-wrap:wrap}.tabs{display:flex;gap:8px;margin-bottom:12px}.tabs button.active{background:#e9e6ff;color:#5142ad;font-weight:800}.person{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}.person:last-child{border:0}.chatlist{display:grid;gap:6px}.chatitem{text-align:left;background:#f8f8fc;border:1px solid var(--line);display:flex;align-items:center;gap:10px}.chatitem.active{border-color:#887be0;background:#f1efff}.chatbox{height:380px;overflow:auto;border:1px solid var(--line);border-radius:14px;padding:12px;background:#fafbfe;display:flex;flex-direction:column;gap:9px}.bubble{max-width:82%;padding:10px 12px;border-radius:14px;background:#e9eaf1;align-self:flex-start;overflow-wrap:anywhere}.bubble.mine{background:#6655c7;color:#fff;align-self:flex-end}.composer{display:flex;gap:8px;margin-top:10px}.composer input{flex:1;min-width:0;border:1px solid var(--line);border-radius:11px;padding:12px}.notice{padding:11px;border-radius:12px;background:#f5f3ff;color:#5142ad;font-size:12px;margin:12px 0}.hidden{display:none!important}.auth{max-width:440px;margin:12vh auto;padding:28px}.link{color:#5747bb;overflow-wrap:anywhere}h2,h3{margin:0 0 12px}.empty{text-align:center;padding:35px;color:var(--muted)}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.wrap{padding:10px}.profile-cover{height:145px}.chatbox{height:55vh}.topin{padding:10px}.stats{gap:17px}}
+
+/* Premium mobile-first login screen */
+body.auth-screen{min-height:100vh;background:radial-gradient(ellipse at 12% 8%,#eeeaff 0,transparent 38%),radial-gradient(ellipse at 90% 90%,#dce8ff 0,transparent 40%),linear-gradient(145deg,#f9faff,#eef1fa)}
+body.auth-screen>.top{display:none!important}
+body.auth-screen #login{width:min(470px,calc(100% - 30px));margin:clamp(70px,16vh,150px) auto 30px;padding:30px 25px;border:1px solid #e8e6f5;border-radius:26px;box-shadow:0 24px 70px #34306a18;background:#ffffffed}
+body.auth-screen #login:before{content:'✦';display:grid;place-items:center;width:58px;height:58px;margin:0 auto 18px;border-radius:19px;background:linear-gradient(135deg,#7969df,#4936a5);color:white;font-size:27px;box-shadow:0 10px 24px #6655c744}
+body.auth-screen #login h2{text-align:center;font-size:25px;letter-spacing:-.5px;margin-bottom:7px;color:#24233b}
+body.auth-screen #login>p{text-align:center;font-size:14px;line-height:1.6;margin:0 auto 18px;max-width:330px}
+body.auth-screen #login .notice{padding:13px 15px;border:1px solid #ece9ff;background:#f7f5ff;border-radius:14px;line-height:1.6}
+body.auth-screen #login button{min-height:54px;border-radius:15px;font-size:15px;box-shadow:0 9px 22px #6655c733}
+@media(max-width:480px){body.auth-screen #login{margin-top:clamp(55px,13vh,110px);padding:27px 20px}}
+
+/* SMART MONEY SOCIAL — premium purple & gold redesign */
+:root{--bg:#080616;--card:#15102b;--ink:#f7f3ff;--muted:#b6accd;--line:#33264e;--violet:#8b4dff;--soft:#261843;--red:#ff647d}
+html{background:#080616;scroll-behavior:smooth}
+body{background:radial-gradient(ellipse at 12% -8%,#32136a 0,transparent 38%),radial-gradient(ellipse at 100% 30%,#17104a 0,transparent 34%),#080616;color:var(--ink);min-height:100vh}
+.top{background:#0c0820eF;border-bottom:1px solid #39265c;box-shadow:0 10px 35px #0006}
+.topin{max-width:1240px;padding:14px 20px}
+.brand{font-size:18px;color:#fff;letter-spacing:.8px}
+.brand:before{content:'♛';display:inline-grid;place-items:center;width:34px;height:34px;margin-right:10px;border-radius:11px;background:linear-gradient(145deg,#ffe28a,#bd7a12);color:#291344;font-size:21px;vertical-align:middle;box-shadow:0 5px 18px #f5b93b44}
+.brand span{margin-left:44px;color:#d6b96f;font-size:9px}
+.wrap{max-width:1240px;padding:22px}
+.grid{grid-template-columns:310px minmax(0,1fr);gap:22px;margin-top:22px}
+.card{background:linear-gradient(155deg,#1b1434,#100c22);border:1px solid #3a2a58;border-radius:22px;padding:20px;box-shadow:0 16px 45px #0005,inset 0 1px #ffffff08}
+h2,h3{color:#fff;letter-spacing:-.35px}
+h2{font-size:25px}
+h3{font-size:18px}
+.muted{color:#b9afcf}
+.tiny{font-size:12px}
+button{border-radius:13px;transition:transform .18s ease,filter .18s ease,box-shadow .18s ease}
+button:hover{filter:brightness(1.12);transform:translateY(-1px)}
+.primary{background:linear-gradient(110deg,#ffe08a,#e8a82c 52%,#bd7913);color:#26133c;font-weight:850;box-shadow:0 9px 24px #d99b2940}
+.soft{background:#2b1b49;color:#f5dc9b;border:1px solid #60448a}
+.danger{background:#3a172c;color:#ff9bad;border:1px solid #71334c}
+.search,.field input,.field textarea,.field select,.composer input{background:#0d0920;border:1px solid #47335f;color:#fff;border-radius:13px}
+.search::placeholder,.composer input::placeholder,.field input::placeholder{color:#887b9e}
+.field label{color:#d2c3e9}
+.notice{background:#211638;border:1px solid #4a3470;color:#dfd1f6;border-radius:14px}
+.person{border-bottom-color:#35264e}
+.chatitem{background:#100b22;border-color:#3a2a58;color:#f5efff}
+.chatitem.active{border-color:#d4a13c;background:#2a1d3c}
+.chatbox{background:#0c081b;border-color:#3b2a59}
+.bubble{background:#302344;color:#f8f1ff}
+.bubble.mine{background:linear-gradient(130deg,#7d43df,#5125a3);color:white}
+.profile-cover{height:220px;border-radius:17px;background:linear-gradient(120deg,#28104d,#6638a7 55%,#e1ad47);border:1px solid #73518c;box-shadow:inset 0 -45px 80px #10072288}
+.profile-cover button{background:#fff0c9;color:#38204b;font-weight:800}
+.profilehead{padding:0 16px;gap:16px}
+.profilehead .avatar{border:4px solid #17102c;box-shadow:0 0 0 2px #d6a33e}
+.avatar{background:linear-gradient(135deg,#ffe49b,#b87a1a);color:#2a1742}
+.stats{border-top:1px solid #35264e;margin-top:16px}
+.stats b{color:#f6d78c;font-size:22px}
+.link{color:#e6bd66}
+.tabs button.active{background:#51318a;color:#ffe29a}
+.empty{color:#b7a9cd}
+.composer input{min-height:46px}
+#login.card{background:linear-gradient(155deg,#211344,#100a26 65%,#28174b);border:1px solid #674a8e;box-shadow:0 28px 90px #0009,0 0 50px #7439d52b}
+body.auth-screen{background:radial-gradient(ellipse at 50% 8%,#482078 0,transparent 42%),radial-gradient(ellipse at 100% 100%,#31204e 0,transparent 40%),#080616}
+body.auth-screen #login{margin:clamp(48px,10vh,100px) auto 30px;padding:34px 28px;border-radius:28px}
+body.auth-screen #login:before{content:'♛';width:76px;height:76px;border-radius:24px;background:linear-gradient(145deg,#ffe59b,#d39320 65%,#8f5311);color:#30164a;font-size:39px;box-shadow:0 12px 32px #d89d3b55}
+body.auth-screen #login h2{font-size:29px;background:linear-gradient(90deg,#fff,#f4d78e);-webkit-background-clip:text;background-clip:text;color:transparent}
+body.auth-screen #login>p{color:#c7bbdc}
+body.auth-screen #login .notice{background:#24173b;border-color:#4b3670;color:#dfd2f3}
+body.auth-screen #login button{min-height:58px;font-size:16px}
+#login .primary{width:100%;margin-top:8px}
+#profilePane>.card:first-child{overflow:hidden}
+@media(max-width:760px){
+ .topin{padding:11px 13px;flex-wrap:wrap}
+ .brand{font-size:15px}
+ .brand span{margin-left:43px}
+ .topin>.actions{width:100%;overflow:auto;flex-wrap:nowrap}
+ .topin>.actions button{white-space:nowrap;padding:9px 11px;font-size:12px}
+ .grid{grid-template-columns:1fr;gap:12px;margin-top:12px}
+ .wrap{padding:10px}
+ .card{padding:15px;border-radius:18px}
+ .profile-cover{height:155px}
+ .profilehead{padding:0 8px;gap:10px}
+ .profilehead .avatar{width:74px;height:74px}
+ .stats{justify-content:space-around;gap:8px;padding:13px 5px}
+ .stats b{font-size:19px}
+ .auth{width:calc(100% - 24px)}
+ body.auth-screen #login{margin-top:clamp(42px,9vh,80px);padding:28px 20px}
+}
+
+
+/* FINAL COLOR GRADE — obsidian, royal violet & champagne gold */
+:root{--bg:#070511;--card:#171027;--ink:#fbf8ff;--muted:#bdb2d3;--line:#40305d;--violet:#9b5cff;--soft:#291a45;--red:#ff6684}
+body{background:
+ radial-gradient(ellipse at 8% 0%,#48207855 0,transparent 34%),
+ radial-gradient(ellipse at 95% 12%,#173d7350 0,transparent 31%),
+ radial-gradient(ellipse at 55% 100%,#8a4d171c 0,transparent 42%),#070511}
+.top{background:linear-gradient(100deg,#090617f5,#17102cf5 55%,#0b0b20f5);border-bottom:1px solid #6e4b8c66;box-shadow:0 8px 32px #0009}
+.brand{background:linear-gradient(90deg,#fff8e8,#f6d27d 52%,#c58a35);-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand:before{background:linear-gradient(145deg,#fff1b8,#e6b84f 52%,#9f641b);box-shadow:0 0 0 1px #ffe6a366,0 8px 25px #e2a52b55}
+.card{background:linear-gradient(145deg,#201638 0%,#151027 48%,#100c20 100%);border-color:#594075;box-shadow:0 18px 48px #0007,inset 0 1px #ffffff10}
+.primary{background:linear-gradient(110deg,#fff0b2 0%,#f5ce6a 28%,#d99b32 68%,#a96619 100%);color:#21102f;border:1px solid #ffe9a5;box-shadow:0 8px 24px #d79b354d,inset 0 1px #fff9d5}
+.soft{background:linear-gradient(135deg,#382354,#211633);color:#f8dfa0;border:1px solid #75549a}
+.notice{background:linear-gradient(110deg,#2b1b43,#1b1633);border-color:#624781;color:#e7d9f8}
+.search,.field input,.field textarea,.field select,.composer input{background:linear-gradient(135deg,#0d091b,#171027);border-color:#59436f;box-shadow:inset 0 2px 7px #0005}
+.search:focus,.field input:focus,.field textarea:focus,.field select:focus,.composer input:focus{outline:none;border-color:#d8ae59;box-shadow:0 0 0 3px #d8ae5925}
+.profile-cover{background:linear-gradient(115deg,#210b48 0%,#552b8e 37%,#263b70 68%,#b47a2d 100%);border:1px solid #a77a4d;box-shadow:inset 0 -65px 90px #090514a8,0 10px 28px #0005}
+.profile-cover button{background:linear-gradient(110deg,#fff0b5,#e0aa42);color:#29163d;border:1px solid #fff0bd}
+.avatar{background:linear-gradient(145deg,#fff0b1,#dba13d 55%,#8e511c);color:#27133c;box-shadow:0 0 0 2px #e7bb65}
+.profilehead .avatar{box-shadow:0 0 0 2px #e7bb65,0 5px 18px #0008}
+.stats b{background:linear-gradient(90deg,#fff0b1,#d9a441);-webkit-background-clip:text;background-clip:text;color:transparent}
+.chatitem{background:linear-gradient(120deg,#1c1430,#120d22);border-color:#4d3866}
+.chatitem.active{background:linear-gradient(120deg,#392454,#241739);border-color:#e2b85d;box-shadow:0 0 0 1px #e2b85d30}
+.bubble.mine{background:linear-gradient(130deg,#9256e9,#6335b3 65%,#442276);box-shadow:0 5px 15px #6f42bb44}
+.tabs button.active{background:linear-gradient(110deg,#4a2a70,#30204c);color:#ffe6a4;border:1px solid #8763a8}
+.link{color:#f2ca76}
+body.auth-screen{background:radial-gradient(ellipse at 50% 4%,#54258b66 0,transparent 40%),radial-gradient(ellipse at 90% 90%,#164b6950 0,transparent 34%),#070511}
+body.auth-screen #login{background:linear-gradient(145deg,#251641,#17102b 58%,#100c20);border:1px solid #76549b;box-shadow:0 28px 90px #000b,0 0 60px #8747d52b,inset 0 1px #ffffff18}
+body.auth-screen #login:before{background:linear-gradient(145deg,#fff3bd,#e9b94f 56%,#a86b1d);color:#29143e;box-shadow:0 12px 32px #d99c3c66,inset 0 1px #fff8d9}
+body.auth-screen #login h2{background:linear-gradient(90deg,#fff,#f8dda0 55%,#e3b65a);-webkit-background-clip:text;background-clip:text;color:transparent}
+body.auth-screen #login .notice{background:linear-gradient(110deg,#2b1b43,#1a1530);border-color:#63477e;color:#e7d9f8}
+@media(max-width:760px){.card{box-shadow:0 12px 32px #0007,inset 0 1px #ffffff0c}.top{box-shadow:0 6px 20px #0008}}
+
+.community-post{display:grid;gap:10px}.community-post p{margin:0;line-height:1.55}.community-post-image{display:block;width:100%;max-height:560px;object-fit:contain;background:#090615;border:1px solid #4c3965;border-radius:15px}.community-post .avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}#communityPostPhoto{width:100%;padding:10px;border:1px dashed #9b7bbd;border-radius:12px;background:#100b20;color:#eee}@media(max-width:760px){.community-post-image{max-height:420px}}
+/* Social-network layout: familiar feed, clean cards, responsive navigation */
+:root{--bg:#eef1f6;--card:#fff;--ink:#202435;--muted:#737b8d;--line:#e5e8ef;--violet:#6655c7;--soft:#f0effb}
+html,body{background:#eef1f6;color:#202435}
+body{background:#eef1f6}
+.top{background:#fff;box-shadow:0 2px 12px #17203a12;border-bottom:1px solid #e6e9f0}
+.topin{max-width:1380px;min-height:66px;padding:9px 22px}
+.brand{color:#26345b;font-size:19px;letter-spacing:-.5px}
+.brand:before{content:'S';width:38px;height:38px;border-radius:13px;background:linear-gradient(135deg,#6b5ce7,#2e80d7);color:white;box-shadow:none}
+.brand span{margin-left:48px;color:#8991a4;letter-spacing:1.3px}
+.wrap{max-width:1380px;padding:20px 22px}
+.grid{grid-template-columns:minmax(230px,280px) minmax(0,680px);justify-content:center;gap:22px;align-items:start}
+.grid>aside{position:sticky;top:86px}
+.grid>section{min-width:0}
+.card{background:#fff;border:1px solid #e5e8ef;border-radius:15px;padding:17px;box-shadow:0 2px 9px #1b29400b}
+.grid>aside .card{border-radius:15px}
+.grid>aside h3{font-size:16px;color:#27314a}
+h2{font-size:22px;color:#20283c}
+h3{color:#26314a}
+.muted,.tiny{color:#778196}
+.search,.field input,.field textarea,.field select,.composer input{background:#f5f7fb;color:#202435;border:1px solid #e2e6ef;border-radius:12px}
+.field label{color:#68748b}
+.primary{background:linear-gradient(120deg,#6558d8,#397fce);color:white;box-shadow:0 4px 12px #4b69bf2c}
+.soft{background:#f0f2fa;color:#43537b;border:1px solid #e3e7f0}
+.notice{background:#f5f7ff;border:1px solid #e4e9fa;color:#586582}
+.person{border-color:#edf0f5}
+.chatitem{background:#f7f8fc;color:#34405b;border:1px solid #e8ebf2}
+.chatitem.active{background:#eef1ff;border-color:#9b9aeb}
+#feedPane> .card:first-child{padding:19px 20px}
+#communityPostText{min-height:76px;background:#f6f7fb;border-radius:14px}
+#communityPostPhoto{background:#f7f8fc;color:#48536b;border:1px dashed #aeb8cb;border-radius:12px;padding:11px;width:100%}
+.community-post{padding:0;overflow:hidden;gap:0;border-radius:15px}
+.community-post>.row{padding:14px 16px}
+.community-post>p{padding:2px 16px 13px}
+.community-post-image{width:100%;max-height:680px;object-fit:contain;background:#f1f2f5;border:0;border-top:1px solid #eef0f4;border-bottom:1px solid #eef0f4;border-radius:0}
+.community-post .avatar{border:0;background:#e8ecff;color:#4d5db0}
+.profile-cover{border-radius:13px}
+.chatbox{background:#f7f8fc;border-color:#e6e9f0}
+.bubble{background:#e9edf5;color:#28334a}
+.bubble.mine{background:#397fce;color:white}
+.link{color:#386fc4}
+.tabs button.active{background:#e9edff;color:#4658b6}
+body.auth-screen{background:linear-gradient(145deg,#f4f6fc,#e9eef9)}
+body.auth-screen #login{background:#fff;border:1px solid #e5e9f2;box-shadow:0 18px 55px #263b6417}
+body.auth-screen #login:before{background:linear-gradient(135deg,#6b5ce7,#2e80d7);box-shadow:none}
+body.auth-screen #login h2{color:#27314a;background:none}
+body.auth-screen #login .notice{background:#f5f7ff;border-color:#e4e9fa;color:#596681}
+body.auth-screen #login button{box-shadow:0 5px 16px #5269b52b}
+@media(max-width:900px){.grid{grid-template-columns:220px minmax(0,1fr);gap:13px}.wrap{padding:13px}}
+@media(max-width:700px){.topin{padding:9px 12px;gap:7px}.brand{font-size:15px}.brand span{font-size:8px}.topin>.actions{width:auto;flex-wrap:nowrap;overflow-x:auto}.topin>.actions button{white-space:nowrap;font-size:11px;padding:8px 9px}.wrap{padding:10px}.grid{grid-template-columns:1fr;gap:10px;margin-top:10px}.grid>aside{position:static;display:grid;grid-template-columns:1fr;gap:0}.grid>aside .card:nth-child(2){display:none}.grid>aside>.notice{display:none}.card{border-radius:13px;padding:14px}.community-post{padding:0}.community-post>.row{padding:12px}.community-post>p{padding:2px 12px 12px}.community-post-image{max-height:520px}.profile-cover{height:145px}}
+
+/* Social messaging portal — match the main Smart Money Social light/purple UI */
+:root{--bg:#f4f5f8;--card:#fff;--ink:#242235;--muted:#777b8d;--line:#e7e8ef;--violet:#7556d9;--soft:#f1edff;--red:#d94d68}
+html,body{background:#f4f5f8!important;color:#242235!important}
+.top{background:#fff!important;border-bottom:1px solid #e7e8ef!important;box-shadow:0 3px 18px #2422350b!important}
+.brand,.brand span{color:#29243d!important;background:none!important}
+.brand:before{content:'S'!important;background:linear-gradient(145deg,#a78bfa,#7046d2)!important;color:#fff!important;box-shadow:none!important}
+.card{background:#fff!important;border:1px solid #e7e8ef!important;box-shadow:0 4px 18px #2422350a!important}
+.primary{background:linear-gradient(135deg,#a78bfa,#7046d2)!important;color:#fff!important;box-shadow:0 7px 20px #7556d922!important}
+.soft{background:#f1edff!important;color:#5c45b2!important;border:1px solid #e4dcff!important}
+.danger{background:#fff0f2!important;color:#c83e5a!important;border:1px solid #f6d8df!important}
+.search,.field input,.field textarea,.field select,.composer input{background:#fafaff!important;color:#242235!important;border-color:#e4e5ed!important}
+.notice{background:#f5f2ff!important;border-color:#e2dafa!important;color:#5b4b9d!important}
+.chatbox{background:#f8f9fc!important;border-color:#e7e8ef!important}
+.bubble{background:#eef0f6!important;color:#29243d!important}
+.bubble.mine{background:#7556d9!important;color:#fff!important}
+.profile-cover{background:linear-gradient(120deg,#e7e9f5,#dce7f8,#eee6f5)!important;border:1px solid #e1e4ef!important}
+.avatar{background:linear-gradient(135deg,#eee9ff,#dce7ff)!important;color:#5b4b9d!important;border-color:#fff!important}
+@media(max-width:760px){.grid{grid-template-columns:1fr!important}.topin>.actions{overflow:auto;flex-wrap:nowrap}.topin>.actions button{white-space:nowrap}}
+
+/* SOCIAL PROFILE + COMMUNITY PREMIUM GRADE v2 */
+:root{--bg:#f5f6fc;--card:#fff;--ink:#25233a;--muted:#77758d;--line:#e7e6f1;--violet:#7654d8;--soft:#f1edff;--red:#d84e70}
+html,body{background:#f5f6fc!important;color:#25233a!important}
+body{background:radial-gradient(ellipse at 8% 0%,#e8e0ff 0,transparent 34%),radial-gradient(ellipse at 95% 14%,#dcecff 0,transparent 32%),linear-gradient(180deg,#f8f8ff,#f1f3fa)!important}
+.top{background:#ffffffed!important;border-bottom:1px solid #e7e6f1!important;box-shadow:0 8px 28px #30205d0d!important}
+.brand{color:#28243e!important;font-size:17px!important;letter-spacing:.5px!important}.brand span{color:#81749f!important}
+.brand:before{background:linear-gradient(145deg,#a78bfa,#6843ca)!important;color:#fff!important;box-shadow:0 7px 18px #7855d933!important}
+.wrap{max-width:1240px!important;padding:22px!important}.grid{grid-template-columns:290px minmax(0,1fr)!important;gap:22px!important;margin-top:22px!important}
+.card{background:linear-gradient(155deg,#fff,#fcfbff)!important;border:1px solid #e7e4f2!important;border-radius:22px!important;box-shadow:0 12px 34px #32215d0b,0 2px 6px #32215d05!important;padding:20px!important}
+h2,h3{color:#292540!important;letter-spacing:-.35px!important}h2{font-size:25px!important}h3{font-size:18px!important}
+.muted,.tiny{color:#77758d!important}.primary{background:linear-gradient(120deg,#9d7af5,#7049d0)!important;color:#fff!important;box-shadow:0 9px 22px #7955d52b!important;font-weight:800!important}.soft{background:#f1edff!important;color:#5f45b4!important;border:1px solid #e2d9ff!important}.danger{background:#fff0f3!important;color:#c83e61!important;border:1px solid #f4d9e1!important}
+.search,.field input,.field textarea,.field select,.composer input{background:#fbfaff!important;color:#292540!important;border:1px solid #e4e1ef!important;border-radius:13px!important}.field label{color:#655d7c!important;font-weight:700!important}.notice{background:#f5f1ff!important;border:1px solid #e6dcff!important;color:#594a8d!important;border-radius:14px!important}
+.person{border-bottom-color:#eeebf5!important}.chatbox{background:#f8f9fd!important;border-color:#e7e6f1!important}.bubble{background:#eeeef7!important;color:#292540!important}.bubble.mine{background:linear-gradient(130deg,#8e69e8,#6845c4)!important;color:#fff!important}
+.profile-cover{height:250px!important;border:1px solid #dcd2f1!important;border-radius:18px!important;background:linear-gradient(115deg,#c8d7ff,#bba8ef 48%,#f1d9c4)!important;box-shadow:inset 0 -60px 90px #29204420!important;overflow:hidden!important}.profile-cover button{background:#ffffffed!important;color:#51418e!important;border:1px solid #e5def6!important;border-radius:12px!important;font-weight:800!important;box-shadow:0 5px 18px #2c1d5015!important}
+.profilehead{padding:0 18px!important;gap:16px!important;margin-top:-43px!important}.profilehead .avatar{width:104px!important;height:104px!important;border:5px solid #fff!important;box-shadow:0 4px 20px #2e205522,0 0 0 1px #e5dff1!important;background:linear-gradient(135deg,#e8ddff,#dceaff)!important;color:#6849bd!important}
+#bio{font-size:14px!important;line-height:1.7!important;color:#39344f!important;padding:12px 18px 0!important}#profileDetails{padding:8px 18px!important;line-height:1.9!important;color:#6f6687!important}.stats{border-top:1px solid #eeeaf5!important;margin-top:14px!important;padding:16px 18px!important}.stats b{color:#6849c5!important;font-size:22px!important}.stats span{color:#77758d!important}
+.community-post{border:1px solid #e9e6f2!important;border-radius:18px!important;background:#fff!important;box-shadow:0 10px 30px #32215d0a!important;overflow:hidden!important}.community-post-image{border-radius:0!important;max-height:620px!important;object-fit:contain!important;background:#f6f5fa!important}
+#modalHost .card{background:#fff!important;color:#292540!important}.link{color:#6849c5!important}
+.community-bottom-nav{display:none}
+@media(max-width:760px){.wrap{padding:10px 10px 94px!important}.grid{grid-template-columns:1fr!important;gap:12px!important;margin-top:12px!important}.card{padding:15px!important;border-radius:17px!important}.profile-cover{height:178px!important;border-radius:15px!important}.profilehead{margin-top:-39px!important;padding:0 8px!important;gap:11px!important}.profilehead .avatar{width:84px!important;height:84px!important}.profilehead h2{font-size:21px!important}.stats{justify-content:space-around;gap:6px!important;padding:13px 4px!important}.stats b{font-size:19px!important}.topin{padding:10px 12px!important}.brand{font-size:14px!important}.topin>.actions{max-width:58vw!important;overflow:auto!important;flex-wrap:nowrap!important}.topin>.actions button{white-space:nowrap!important;font-size:11px!important;padding:8px 9px!important}.community-bottom-nav{position:fixed;display:grid;grid-template-columns:repeat(4,1fr);left:10px;right:10px;bottom:calc(9px + env(safe-area-inset-bottom));z-index:20;padding:8px 6px;background:#ffffffed;border:1px solid #e7e3f1;border-radius:19px;box-shadow:0 12px 35px #2c20502b;backdrop-filter:blur(18px)}.community-bottom-nav button{border:0;background:transparent;color:#77718d;padding:7px 2px;border-radius:12px;font-size:10px;font-weight:750;display:grid;gap:3px;justify-items:center}.community-bottom-nav button span:first-child{font-size:19px}.community-bottom-nav button.active{background:#f1edff;color:#6849c5}.chatbox{height:52vh!important}}
+
+/* SMART MONEY SOCIAL — matching premium profile & messages */
+:root{--bg:#f5f2fa;--card:#fff;--ink:#281d37;--muted:#81768f;--line:#e9e1f0;--violet:#7651a8;--soft:#f7f1fa;--red:#c7465b}
+html{background:#f5f2fa;scroll-behavior:smooth}
+body{background:radial-gradient(ellipse at 0% 0%,#eadff6 0,transparent 34%),radial-gradient(ellipse at 100% 4%,#e6edf8 0,transparent 30%),linear-gradient(180deg,#faf8fc,#f3f1f7)!important;color:#281d37!important}
+.top{background:#fffdfef2!important;border-bottom:1px solid #e9e1f0!important;box-shadow:0 8px 30px #2b193c0b!important}
+.topin{max-width:1320px!important;padding:14px 22px!important}
+.brand{color:#2b1d3a!important;font-size:17px!important;letter-spacing:.8px!important}
+.brand:before{background:linear-gradient(145deg,#e4c98d,#a87532)!important;color:#2b1b36!important;box-shadow:0 8px 22px #b78a4333!important}
+.brand span{color:#9a7845!important}
+.wrap{max-width:1320px!important;padding:22px!important}
+.grid{grid-template-columns:300px minmax(0,1fr)!important;gap:22px!important;margin-top:22px!important}
+.card{background:#fff!important;border:1px solid #ebe4f0!important;border-radius:22px!important;padding:20px!important;box-shadow:0 12px 34px #3320440a,0 2px 8px #33204405!important}
+h2,h3{color:#2b2039!important;letter-spacing:-.4px!important}
+.muted{color:#81768f!important}
+button{border-radius:13px!important;transition:transform .18s ease,box-shadow .18s ease,filter .18s ease!important}
+button:hover{filter:brightness(1.02);transform:translateY(-1px)}
+.primary{background:linear-gradient(120deg,#cba767,#a77a3e)!important;color:#fff!important;box-shadow:0 8px 20px #ad82452b!important}
+.soft{background:#f7f1fa!important;color:#7651a8!important;border:1px solid #e8dcef!important}
+.danger{background:#fff1f3!important;color:#bf4761!important;border:1px solid #f4d9df!important}
+.search,.field input,.field textarea,.field select,.composer input{background:#fbf9fd!important;border:1px solid #e8e0ed!important;color:#30233d!important;border-radius:13px!important}
+.field label{color:#766b80!important}
+.notice{background:#f8f3fb!important;border:1px solid #eadff0!important;color:#685578!important;border-radius:14px!important}
+.person{border-bottom-color:#f0eaf3!important}
+.chatitem{background:#faf7fc!important;border-color:#e9e1ef!important;color:#332540!important}
+.chatitem.active{border-color:#d7c4e6!important;background:#f5eef9!important}
+.chatbox{background:#faf8fc!important;border-color:#e9e1ef!important}
+.bubble{background:#eee8f3!important;color:#332540!important}
+.bubble.mine{background:linear-gradient(130deg,#8968a8,#674681)!important;color:#fff!important}
+.profile-cover{height:230px!important;border-radius:18px!important;background:radial-gradient(ellipse at 15% 20%,#f2dfb7 0,transparent 32%),linear-gradient(115deg,#49345e,#80629b 52%,#d0ae76)!important;border:1px solid #e6d9ed!important;box-shadow:inset 0 -45px 80px #21142a18!important}
+.profile-cover button{background:#fffaf1!important;color:#6e4d31!important;font-weight:800!important;border:1px solid #ead9b7!important}
+.profilehead .avatar{border:4px solid #fff!important;box-shadow:0 0 0 3px #d5b77c!important}
+.avatar{background:linear-gradient(145deg,#e8d6ae,#b58b54)!important;color:#392744!important}
+.stats{border-top:1px solid #f0eaf3!important}
+.stats b{color:#a77a3e!important}
+.link{color:#7651a8!important}
+.tabs button.active{background:#f3edf9!important;color:#68478f!important}
+.auth{box-shadow:0 22px 70px #33204412!important}
+body.auth-screen{background:radial-gradient(ellipse at 0% 0%,#eadff6 0,transparent 38%),radial-gradient(ellipse at 100% 100%,#e6edf8 0,transparent 40%),#f7f4fa!important}
+body.auth-screen #login{background:#fff!important;border:1px solid #ebe4f0!important;box-shadow:0 24px 70px #33204416!important}
+body.auth-screen #login:before{background:linear-gradient(145deg,#e4c98d,#a87532)!important;color:#2b1b36!important;box-shadow:0 10px 26px #b78a4333!important}
+body.auth-screen #login h2{background:none!important;color:#2b2039!important}
+body.auth-screen #login>p{color:#81768f!important}
+body.auth-screen #login .notice{background:#f8f3fb!important;border-color:#eadff0!important;color:#685578!important}
+body.auth-screen #login button{box-shadow:0 8px 20px #ad82452b!important}
+.community-bottom-nav{background:#fffdfef5!important;border-top:1px solid #e9e1f0!important;box-shadow:0 -8px 28px #30203d0b!important}
+.community-bottom-nav button{color:#776b83!important}
+.community-bottom-nav button:focus,.community-bottom-nav button:hover{color:#a77a3e!important;background:#faf6fb!important}
+@media(max-width:760px){.wrap{padding:10px!important}.grid{grid-template-columns:1fr!important;gap:12px!important;margin-top:12px!important}.card{padding:15px!important;border-radius:18px!important}.profile-cover{height:165px!important}.topin{padding:11px 13px!important}.brand{font-size:15px!important}.stats{justify-content:space-around!important;gap:8px!important}.stats b{font-size:19px!important}.chatbox{height:55vh!important}}
+
+/* SIGNATURE PREMIUM — matching Social community visual system */
+:root{--bg:#f5f1f7;--card:#fff;--ink:#30243a;--muted:#83788a;--line:#eadfea;--violet:#563b62;--soft:#f6eff7;--red:#c7465b}
+html,body{background:#f5f1f7!important;color:#30243a!important}
+body{background:radial-gradient(ellipse at 5% 0%,#eee2f0 0,transparent 36%),radial-gradient(ellipse at 100% 10%,#f5ead7 0,transparent 32%),#f7f4f8!important}
+.top{background:linear-gradient(100deg,#382344,#4b3155 58%,#34213f)!important;border:0!important;box-shadow:0 8px 26px #34213f24!important}
+.brand{color:#fff!important}.brand span{color:#f0dfbb!important}
+.brand:before{background:linear-gradient(145deg,#f8e4b1,#c3974c)!important;color:#392344!important;box-shadow:0 5px 18px #e0bd7544!important}
+.wrap{max-width:1240px!important}
+.grid{grid-template-columns:300px minmax(0,1fr)!important;gap:20px!important}
+.card{background:#fff!important;border:1px solid #eadfea!important;border-radius:20px!important;box-shadow:0 10px 30px #3923440c!important}
+h2,h3{color:#392744!important}
+.muted,.tiny{color:#83788a!important}
+.primary{background:linear-gradient(115deg,#4d3159,#382344)!important;color:#fff!important;border:1px solid #b99250!important;box-shadow:0 7px 18px #38234420!important}
+.soft{background:#f6eff7!important;color:#563b62!important;border:1px solid #e6d9e9!important}
+.danger{background:#fff0f1!important;color:#b4233b!important;border:1px solid #f0cbd2!important}
+.search,.field input,.field textarea,.field select,.composer input{background:#fbf9fb!important;color:#30243a!important;border:1px solid #e7dce9!important;box-shadow:none!important}
+.search:focus,.field input:focus,.field textarea:focus,.field select:focus,.composer input:focus{outline:none!important;border-color:#bd9654!important;box-shadow:0 0 0 3px #bd965422!important}
+.field label{color:#75677d!important}
+.notice{background:#f8f2f8!important;border:1px solid #eadfea!important;color:#5e4968!important}
+.person{border-bottom-color:#eee5ef!important}
+.chatitem{background:#faf7fa!important;border-color:#eadfea!important;color:#30243a!important}
+.chatitem.active{border-color:#c7a66b!important;background:#f8f0df!important}
+.chatbox{background:#fbf9fb!important;border-color:#eadfea!important}
+.bubble{background:#f0eaf2!important;color:#392744!important}
+.bubble.mine{background:linear-gradient(130deg,#684b72,#493052)!important;color:#fff!important}
+.profile-cover{height:220px!important;border-radius:17px!important;background:linear-gradient(115deg,#3b2548,#795b83 54%,#d4b579)!important;border:1px solid #e1d0b2!important;box-shadow:inset 0 -45px 70px #24152e30!important}
+.profile-cover button{background:linear-gradient(110deg,#f8e4b1,#c3974c)!important;color:#392344!important;font-weight:800!important}
+.profilehead .avatar{border:4px solid #fff!important;box-shadow:0 0 0 3px #d5b77c!important}
+.avatar{background:linear-gradient(145deg,#f8e4b1,#c3974c)!important;color:#392344!important}
+.stats{border-top:1px solid #eadfea!important}
+.stats b{color:#a77a3e!important}
+.link{color:#7651a8!important}
+.tabs button.active{background:#f4edf5!important;color:#563b62!important;border:1px solid #e6d9e9!important}
+.auth{box-shadow:0 22px 70px #39234412!important}
+body.auth-screen{background:radial-gradient(ellipse at 0% 0%,#eee2f0 0,transparent 38%),radial-gradient(ellipse at 100% 100%,#f5ead7 0,transparent 40%),#f7f4f8!important}
+body.auth-screen #login{background:#fff!important;border:1px solid #eadfea!important;box-shadow:0 24px 70px #39234416!important}
+body.auth-screen #login:before{background:linear-gradient(145deg,#f8e4b1,#c3974c)!important;color:#392344!important;box-shadow:0 10px 26px #b78a4333!important}
+body.auth-screen #login h2{background:none!important;color:#392744!important}
+body.auth-screen #login>p{color:#83788a!important}
+body.auth-screen #login .notice{background:#f8f2f8!important;border-color:#eadfea!important;color:#5e4968!important}
+body.auth-screen #login button{box-shadow:0 8px 20px #39234418!important}
+.community-bottom-nav{background:#fffdfef5!important;border-top:1px solid #eadfea!important;box-shadow:0 -8px 26px #39234412!important}
+.community-bottom-nav button{color:#83788a!important}
+.community-bottom-nav button:focus,.community-bottom-nav button:hover{color:#a77a3e!important;background:#faf6fb!important}
+@media(max-width:760px){.wrap{padding:10px!important}.grid{grid-template-columns:1fr!important;gap:12px!important;margin-top:12px!important}.card{padding:15px!important;border-radius:18px!important}.profile-cover{height:165px!important}.topin{padding:11px 13px!important}.brand{font-size:15px!important}.stats{justify-content:space-around!important;gap:8px!important}.stats b{font-size:19px!important}.chatbox{height:55vh!important}}
+
+
+/* SIGNATURE EDITION — matching midnight emerald, pearl and champagne */
+:root{--bg:#f4f2eb;--card:#fffdf8;--ink:#172b25;--muted:#718078;--line:#e4dfd1;--violet:#1e5b45;--soft:#eaf0e8;--red:#c95b62}
+html{background:#f4f2eb}
+body{background:radial-gradient(ellipse at 8% 0%,#e9dfc7 0,transparent 34%),radial-gradient(ellipse at 100% 20%,#dce9df 0,transparent 34%),#f4f2eb;color:#172b25}
+.top{background:#102b24f2;border-bottom:1px solid #c5a45d66;box-shadow:0 12px 32px #13281f20}
+.topin{max-width:1260px;padding:15px 22px}
+.brand{color:#fff;font-size:18px;letter-spacing:1px}
+.brand span{color:#dfc17b}
+.brand:before{background:linear-gradient(145deg,#f2d994,#a97b32);color:#18372b;box-shadow:0 6px 22px #d5b36a44}
+.wrap{max-width:1260px;padding:24px}
+.grid{grid-template-columns:300px minmax(0,1fr);gap:23px}
+.card{background:linear-gradient(160deg,#fffefb,#f8f5ec);border:1px solid #e6dfcf;border-radius:22px;box-shadow:0 12px 34px #20392c0c,0 2px 5px #20392c08}
+.profile-cover{background:linear-gradient(115deg,#102f26,#28634d 52%,#d1ad67)!important;border:1px solid #c7a45f55}
+.avatar{background:linear-gradient(145deg,#d9bd7a,#2c7058);color:#fff;border:4px solid #fff}
+.profilehead .avatar{box-shadow:0 8px 22px #173b2b25}
+h2,h3{color:#173d30}
+.muted{color:#718078}
+.primary{background:linear-gradient(135deg,#cba65d,#a77b35)!important;color:#172b25!important;border:1px solid #e3c985!important;box-shadow:0 8px 20px #a77b3530;font-weight:850}
+.soft{background:#eaf0e8;color:#245b46;border:1px solid #d5e1d4}
+.danger{background:#fff0ef;color:#b34f52}
+.field input,.field textarea,.field select,.search,.composer input{background:#faf9f4;border:1px solid #e4dfd2;color:#1b3028;border-radius:13px}
+.field input:focus,.field textarea:focus,.field select:focus,.search:focus{outline:2px solid #c9aa6a55;border-color:#b58a43}
+.notice{background:#f4efdf;color:#725526;border:1px solid #e8d9b7;border-radius:14px}
+.tabs button{background:#f2f0e8;color:#65766d}
+.tabs button.active{background:#173e32;color:#f5dfaa}
+.chatitem{background:#f7f7f0;border:1px solid #e6e2d6;color:#23382e}
+.chatitem.active{background:#eaf0e8;border-color:#a9c3ae}
+.chatbox{background:#f8f8f2;border:1px solid #e4dfd2}
+.bubble{background:#e9eee7;color:#20392d;border:1px solid #dce6da}
+.bubble.mine{background:#173e32;color:#fff7e7;border-color:#285d49}
+.person{border-color:#ece6d9}
+.link{color:#946d2f}
+body.auth-screen{background:radial-gradient(ellipse at 12% 8%,#e9dfc7 0,transparent 38%),radial-gradient(ellipse at 90% 90%,#dce9df 0,transparent 40%),#f4f2eb}
+body.auth-screen #login{border:1px solid #e6dfcf;box-shadow:0 24px 70px #173b2b18;background:#fffdf8}
+body.auth-screen #login:before{background:linear-gradient(145deg,#f2d994,#a97b32);color:#18372b;box-shadow:0 10px 24px #b58a4344}
+body.auth-screen #login h2{color:#173d30}
+body.auth-screen #login .notice{border-color:#e8d9b7;background:#f4efdf;color:#725526}
+body.auth-screen #login button{box-shadow:0 9px 22px #a77b3533}
+@media(max-width:760px){.wrap{padding:12px}.grid{grid-template-columns:1fr;gap:14px}.topin{padding:12px}.chatbox{height:55vh}.card{border-radius:18px}}
+
+
+/* OBSIDIAN AURORA — community and messaging visual system */
+:root{--bg:#071411;--card:#10221d;--ink:#f3f5ed;--muted:#a4b4a8;--line:#29463a;--violet:#e7c77e;--soft:#172e26;--red:#ff7f91}
+html,body{background:#071411!important;color:#f3f5ed!important}body{background:radial-gradient(ellipse at 12% -8%,#1b604766 0,transparent 35%),radial-gradient(ellipse at 100% 18%,#b48b3a22 0,transparent 28%),linear-gradient(155deg,#071411,#0b1b17 52%,#101b20)!important;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif!important}.top{background:linear-gradient(100deg,#0a1c17f5,#102820f2 58%,#17241ff2)!important;border-bottom:1px solid #42634c66!important;box-shadow:0 16px 40px #0005!important;backdrop-filter:blur(22px)!important}.topin{max-width:1320px!important;padding:15px 24px!important}.brand{color:#f8f5e9!important;font-size:17px!important;letter-spacing:1px!important}.brand span{color:#d9bd79!important}.wrap{max-width:1320px!important;padding:25px!important}.grid{grid-template-columns:310px minmax(0,1fr)!important;gap:24px!important;margin-top:20px!important}
+.card{background:linear-gradient(148deg,#142a23f5,#0e201cf5)!important;border:1px solid #315344!important;border-radius:22px!important;box-shadow:0 16px 42px #0003,inset 0 1px #ffffff09!important;color:#f2f5ed!important;padding:20px!important}.card h2,.card h3,.card h4{color:#f6f4e9!important}.muted,.tiny{color:#a4b4a8!important}.primary{background:linear-gradient(115deg,#f2d991,#c69b4d 58%,#a77b37)!important;color:#14251d!important;border:1px solid #f7e6b4!important;font-weight:850!important;box-shadow:0 9px 25px #d1a54a35!important;border-radius:14px!important}.soft,.tabs button{background:#172e26!important;border:1px solid #365848!important;color:#dce8dc!important;border-radius:13px!important}.danger{background:#402329!important;color:#ffabb2!important;border:1px solid #8b4853!important}.guest-mode-label{font-size:10px;font-weight:850;letter-spacing:1.5px;color:#77d7a9;border:1px solid #39775b;background:#10291f;padding:9px 12px;border-radius:999px}
+.avatar{background:linear-gradient(145deg,#f0d58e,#9b7739 52%,#27634b)!important;color:#10251d!important;border:1px solid #d8bd78!important;box-shadow:0 5px 18px #0003!important}.profile-cover{background:linear-gradient(115deg,#0d3327,#23644c 48%,#c49a50)!important;border:1px solid #8e7848!important;box-shadow:inset 0 -55px 85px #06120d88!important}.profilehead .avatar{border:4px solid #10221d!important;box-shadow:0 0 0 1px #d4b56d!important}.stats{border-top:1px solid #2c493a!important}.stats b{color:#f0d38e!important}
+.field input,.field textarea,.field select,.search,.composer input{background:#0a1b17!important;border:1px solid #315344!important;color:#f3f5ed!important;border-radius:14px!important}.field input::placeholder,.field textarea::placeholder,.search::placeholder{color:#71877a!important}.field input:focus,.field textarea:focus,.field select:focus,.search:focus{outline:none!important;border-color:#d7b96e!important;box-shadow:0 0 0 3px #d7b96e24!important}.field label{color:#d7c48f!important;font-weight:700!important}.notice{background:#252c20!important;border:1px solid #8e7848!important;color:#e8d59e!important;border-radius:14px!important}.person{border-color:#294438!important}.chatitem{background:#172e26!important;border:1px solid #365848!important;color:#e6eee5!important;border-radius:14px!important}.chatitem.active{background:#2a3325!important;border-color:#a88a4d!important}.chatbox{background:#091813!important;border:1px solid #315344!important;border-radius:18px!important}.bubble{background:#1b382c!important;color:#e8f1e8!important;border:1px solid #315344!important;border-radius:16px!important}.bubble.mine{background:linear-gradient(130deg,#23634a,#174633)!important;color:#fff!important;border-color:#5ca27a!important}.link{color:#79d9b0!important}.tabs button.active{background:#d9bb73!important;color:#14251d!important;border:1px solid #f0d994!important}.community-post-image{border-radius:16px!important;border:1px solid #315344!important}.community-bottom-nav{background:#0c1d18f5!important;border-top:1px solid #3c5c48!important;box-shadow:0 -12px 36px #0006!important;backdrop-filter:blur(20px)!important}.community-bottom-nav button{color:#a4b4a8!important}.community-bottom-nav button:focus,.community-bottom-nav button:hover{color:#f4d88f!important;background:#d8b76b1c!important}
+.guest-boot{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:22px;background:radial-gradient(ellipse at 50% 0%,#1c604a88,transparent 48%),#071411}.guest-boot-card{width:min(440px,100%);padding:34px 28px;text-align:center;border:1px solid #55714c;border-radius:28px;background:linear-gradient(150deg,#173127,#0c1b17);box-shadow:0 28px 90px #0009}.guest-mark{width:66px;height:66px;margin:0 auto 16px;display:grid;place-items:center;border-radius:20px;background:linear-gradient(145deg,#f6dfa0,#b88738);color:#14251d;font-size:32px;font-weight:950}.guest-kicker{font-size:10px;letter-spacing:3px;color:#e3c77e;font-weight:900}.guest-boot-card h1{font-size:25px;margin:12px 0;color:#f5f2e7!important}.guest-boot-card p{color:#b2c3b4!important;line-height:1.7}.guest-help{font-size:12px!important}.guest-loader{height:3px;background:#294438;border-radius:9px;overflow:hidden;margin:22px auto 0;max-width:180px}.guest-loader i{display:block;width:42%;height:100%;background:linear-gradient(90deg,#d6b66b,#6de0aa);border-radius:9px;animation:guestLoad 1.25s ease-in-out infinite alternate}@keyframes guestLoad{from{transform:translateX(-35%)}to{transform:translateX(175%)}}
+@media(max-width:760px){.wrap{padding:11px!important}.grid{grid-template-columns:1fr!important;gap:13px!important;margin-top:13px!important}.topin{padding:11px 13px!important}.brand{font-size:14px!important}.card{padding:15px!important;border-radius:18px!important}.profile-cover{height:165px!important}.stats{justify-content:space-around!important;gap:8px!important}.chatbox{height:55vh!important}}
+</style></head><body>
+<header class="top"><div class="topin"><div class="brand">SMART MONEY SOCIAL<span>COMMUNITY · PROFILE · MESSAGES</span></div><div class="actions"><button class="soft" onclick="location.href=SOCIAL_BASE">Open Social Feed</button><button class="soft" onclick="showPane('profile')">My Profile</button><button class="soft" onclick="showPane('messages')">Messages</button><span class="guest-mode-label">● GUEST MODE</span></div></div></header>
+<section id="guestBootScreen" class="guest-boot"><div class="guest-boot-card"><div class="guest-mark">S</div><div class="guest-kicker">SMART MONEY SOCIAL</div><h1>Opening Community</h1><p id="guestBootMessage">Preparing your secure guest session…</p><div class="guest-loader"><i></i></div></div></section>
+<main id="app" class="wrap"><div class="grid"><aside>
+ <section class="card"><h3>Community</h3><input class="search" id="peopleSearch" placeholder="Search people or college..." oninput="renderPeople()"><div id="peopleList"></div></section>
+ <section class="card"><h3>Messaging</h3><div id="chatList" class="chatlist"></div></section>
+ <div class="notice">Stay respectful. Only message people you know or who are comfortable hearing from you. You can block and report unwanted contact.</div>
+</aside><section>
+ <div id="feedPane">
+  <div class="card"><div class="row between"><div><h2>Community Feed</h2><p class="muted tiny">Share a photo or update. New posts appear publicly after admin approval.</p></div><span class="tiny muted">📷 Photos + Text</span></div>
+   <form onsubmit="createCommunityPost(event)" style="margin-top:12px"><div class="field"><label>What's happening?</label><textarea id="communityPostText" maxlength="1500" placeholder="Write something for the community..." style="min-height:86px"></textarea></div><div class="field"><label>Upload a photo (optional)</label><input id="communityPostPhoto" type="file" accept="image/jpeg,image/png,image/webp,image/gif"><div id="communityPhotoPreview" class="tiny muted">JPG, PNG, WebP or GIF · Max 8 MB</div></div><div class="actions" style="justify-content:flex-end"><button class="primary" type="submit" id="communityPostSubmit">📤 Share Post</button></div></form>
+  </div><div id="communityPosts" style="display:grid;gap:14px"></div>
+ </div>
+ <div id="profilePane">
+  <div class="card"><div id="cover" class="profile-cover"><button onclick="document.getElementById('coverFile').click()">＋ Change banner</button></div><input id="coverFile" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" onchange="uploadCover()">
+   <div class="profilehead"><div id="avatar" class="avatar">S</div><div class="grow"><h2 id="displayName">My profile</h2><div class="muted tiny" id="handle">@member</div></div><button class="soft" onclick="editProfile()">Edit</button></div>
+   <div id="bio" style="padding:10px 12px 0"></div><div id="profileDetails" class="tiny muted" style="padding:4px 12px"></div><div class="stats"><div><b id="postCount">0</b><span class="tiny muted">Posts</span></div><div><b id="followerCount">0</b><span class="tiny muted">Followers</span></div><div><b id="followingCount">0</b><span class="tiny muted">Following</span></div></div>
+   <div class="actions"><button class="primary" onclick="shareProfile()">↗ Share profile</button><button class="soft" onclick="showPane('messages')">✉ Messages</button></div>
+  </div><div class="card"><h3>Profile preview</h3><p class="muted tiny">Your banner, bio, college, link and optional relationship status appear here according to your privacy choice.</p></div>
+ </div>
+ <div id="messagesPane" class="hidden"><div class="card"><div class="row between"><div><h2>Messages</h2><div class="tiny muted" id="chatWith">Choose a person to start chatting</div></div><button class="soft" onclick="showPane('profile')">Profile</button></div><div id="chatMessages" class="chatbox"><div class="empty">Select a person from the community list.</div></div><form class="composer" onsubmit="sendMessage(event)"><input id="messageText" maxlength="2000" placeholder="Write a message..." autocomplete="off"><button class="primary">Send</button></form><div class="actions" style="margin-top:9px"><button class="danger tiny" onclick="blockCurrent()">Block this person</button></div></div></div>
+</section></div></main>
+<nav class="community-bottom-nav" aria-label="Social navigation"><button onclick="location.href=SOCIAL_BASE"><span>⌂</span><span>Home</span></button><button onclick="document.getElementById('peopleSearch').focus();window.scrollTo({top:0,behavior:'smooth'})"><span>⌕</span><span>Search</span></button><button onclick="showPane('profile')"><span>◎</span><span>Profile</span></button><button onclick="showPane('messages')"><span>✉</span><span>Messages</span></button></nav><div id="modalHost"></div>
+<script>
+const SUPABASE_URL='https://rvprrulkjegvicbnjuft.supabase.co',SUPABASE_PUBLISHABLE_KEY='sb_publishable_IdI5j4Q4qcd-1knRMVeGKw_O3Ek42ZJ',BUCKET='smart-money-social';
+const SOCIAL_BASE=new URL('.',window.location.href).pathname;
+function loadSupabaseSdk(src){return new Promise((resolve,reject)=>{const tag=document.createElement('script');tag.src=src;tag.async=true;tag.onload=()=>window.supabase?.createClient?resolve():reject(new Error('Supabase SDK loaded without createClient'));tag.onerror=()=>reject(new Error('Could not load Supabase SDK from '+src));document.head.appendChild(tag)})}
+const supabaseReady=(async()=>{await loadSupabaseSdk('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2');const createClientFn=window.supabase&&window.supabase.createClient;if(typeof createClientFn!=='function')throw new Error('Supabase SDK did not initialize. Please refresh and retry.');const parsed=new window.URL(SUPABASE_URL);if(parsed.protocol!=='https:'||!parsed.hostname.endsWith('.supabase.co'))throw new Error('Social Supabase URL configuration is invalid.');window.socialClient=createClientFn(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{storageKey:'smart-money-social-auth-v1',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});return window.socialClient})();
+
+let me=null,myProfile=null,profiles=[],currentPeer=null,channel=null,messages=[];
+const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function showPane(which){$('feedPane').classList.toggle('hidden',which!=='feed');$('profilePane').classList.toggle('hidden',which!=='profile');$('messagesPane').classList.toggle('hidden',which!=='messages');if(which==='feed')loadCommunityPosts().catch(e=>console.error('Feed refresh failed:',e));}
+function showGuestError(message){
+ const box=$('guestBootScreen');if(!box)return;
+ box.innerHTML='<div class="guest-boot-card"><div class="guest-mark">S</div><div class="guest-kicker">SMART MONEY SOCIAL</div><h1>One quick setup needed</h1><p>'+esc(message||'Guest session could not start.')+'</p><p class="guest-help">Enable Anonymous Sign-Ins in Supabase → Authentication → Providers, then tap retry. No Google or email login will be shown.</p><button class="primary" onclick="startGuestCommunity()">Retry</button></div>';
+}
+async function startGuestCommunity(){
+ try{
+  await supabaseReady;
+  const {data,error}=await window.socialClient.auth.getSession();if(error)throw error;
+  if(data.session?.user){await start(data.session.user);return;}
+  const {data:guest,error:guestError}=await window.socialClient.auth.signInAnonymously({options:{data:{display_name:'Social Guest'}}});
+  if(guestError)throw guestError;if(!guest?.user)throw new Error('Supabase did not create a guest session.');
+  await start(guest.user);
+ }catch(error){console.error('Community guest session failed:',error);showGuestError(error.message||'Please retry.');}
+}
+async function signed(path){if(!path)return '';const {data,error}=await window.socialClient.storage.from(BUCKET).createSignedUrl(path,3600);if(error){console.warn(error);return ''}return data.signedUrl}
+async function start(user){me=user;$('guestBootScreen').classList.add('hidden');$('app').classList.remove('hidden');try{await ensureMe();await refreshProfiles();renderPeople();const sharedId=new URLSearchParams(location.search).get('profile');if(sharedId&&sharedId!==me.id){await renderSharedProfile(sharedId);showPane('profile')}else{await renderMine();await loadCommunityPosts();showPane('feed')}await loadChatList();subscribe();if(new URLSearchParams(location.search).get('messages')==='1')showPane('messages');}catch(err){console.error('Community startup failed:',err);me=null;$('app').classList.add('hidden');$('guestBootScreen').classList.remove('hidden');showGuestError('Community could not load: '+(err.message||'Please retry.'));}}
+async function loadCommunityPosts(){if(!me)return;const host=$('communityPosts');host.innerHTML='<div class="card muted">Loading community photos…</div>';const results=await Promise.all([window.socialClient.from('social_posts').select('*').order('created_at',{ascending:false}).limit(100),window.socialClient.from('social_profiles').select('user_id,username,display_name,avatar_path')]);const posts=results[0].data||[],peopleRows=results[1].data||[];if(results[0].error)throw results[0].error;if(results[1].error)throw results[1].error;const visible=posts.filter(p=>p.moderation_status==='published'||p.user_id===me.id);const profileMap=new Map(peopleRows.map(p=>[p.user_id,p]));const paths=[...visible.map(p=>p.media_path),...peopleRows.map(p=>p.avatar_path)].filter(Boolean);const signedMap={};await Promise.all([...new Set(paths)].map(async path=>{const result=await window.socialClient.storage.from(BUCKET).createSignedUrl(path,3600);if(!result.error)signedMap[path]=result.data.signedUrl}));host.innerHTML=visible.length?visible.map(p=>{const u=profileMap.get(p.user_id)||{};const img=p.media_path&&signedMap[p.media_path]?'<img class="community-post-image" loading="lazy" src="'+esc(signedMap[p.media_path])+'" alt="Community photo">':'';const avatar=u.avatar_path&&signedMap[u.avatar_path]?'<img src="'+esc(signedMap[u.avatar_path])+'" alt="">':esc((u.display_name||'U').slice(0,1).toUpperCase());return '<article class="card community-post"><div class="row" style="gap:11px;align-items:center"><div class="avatar" style="width:42px;height:42px">'+avatar+'</div><div class="grow"><b>'+esc(u.display_name||u.username||'Community Member')+'</b><div class="tiny muted">'+new Date(p.created_at).toLocaleString()+'</div></div>'+(p.user_id===me.id&&p.moderation_status!=='published'?'<span class="tiny">🕒 Pending review</span>':'')+'</div><p style="white-space:pre-wrap;overflow-wrap:anywhere">'+esc(p.body||'')+'</p>'+img+'</article>'}).join(''):'<div class="card empty"><h3>📷 No photos yet</h3><p class="muted">Be the first to share a photo or update. Other members’ approved posts will appear here.</p></div>';}
+async function createCommunityPost(e){e.preventDefault();const body=$('communityPostText').value.trim(),file=$('communityPostPhoto').files[0],btn=$('communityPostSubmit');if(!body&&!file){alert('Write something or choose a photo first.');return;}if(file&&(!['image/jpeg','image/png','image/webp','image/gif'].includes(file.type)||file.size>8*1024*1024)){alert('Choose a JPG, PNG, WebP or GIF photo under 8 MB.');return;}btn.disabled=true;btn.textContent='Uploading…';let path=null;try{if(file){const ext=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');path=me.id+'/posts/'+crypto.randomUUID()+'.'+ext;const up=await window.socialClient.storage.from(BUCKET).upload(path,file,{contentType:file.type,upsert:false});if(up.error)throw up.error;}const ins=await window.socialClient.from('social_posts').insert({user_id:me.id,body,media_path:path,media_type:file?.type||null,moderation_status:'pending'});if(ins.error){if(path)await window.socialClient.storage.from(BUCKET).remove([path]);throw ins.error;}$('communityPostText').value='';$('communityPostPhoto').value='';$('communityPhotoPreview').textContent='JPG, PNG, WebP or GIF · Max 8 MB';await loadCommunityPosts();alert('Post submitted! Your photo will be visible to everyone after admin approval.');}catch(err){console.error(err);alert('Upload failed: '+(err.message||'Please try again.'));}finally{btn.disabled=false;btn.textContent='📤 Share Post';}}
+async function ensureMe(){let {data,error}=await window.socialClient.from('social_profiles').select('*').eq('user_id',me.id).maybeSingle();if(error)throw error;if(!data){let name=me.user_metadata?.full_name||me.user_metadata?.name||me.email?.split('@')[0]||'Community Guest';let username=name.toLowerCase().replace(/[^a-z0-9_]+/g,'_').slice(0,20)+'_'+me.id.slice(0,5);let ins=await window.socialClient.from('social_profiles').insert({user_id:me.id,username,display_name:name,bio:''}).select().single();if(ins.error)throw ins.error;data=ins.data}myProfile=data;}
+async function refreshProfiles(){let {data,error}=await window.socialClient.from('social_profiles').select('*').order('display_name');if(error)throw error;profiles=data||[];}
+async function renderMine(){const p=myProfile;$('displayName').textContent=p.display_name||p.username;$('handle').textContent='@'+p.username;$('bio').textContent=p.bio||'Add a short introduction about yourself.';$('profileDetails').innerHTML=[p.college&&p.college_visibility!=='private'?'🎓 '+esc(p.college):'',p.website_url&&p.website_visibility!=='private'?'🔗 <a class="link" target="_blank" rel="noopener" href="'+esc(p.website_url)+'">'+esc(p.website_url)+'</a>':'',p.relationship_status&&p.relationship_visibility==='public'?'♥ '+esc(p.relationship_status):''].filter(Boolean).join(' · ');$('avatar').innerHTML=p.avatar_path?'<img src="'+esc(await signed(p.avatar_path))+'">':esc((p.display_name||'S').slice(0,1).toUpperCase());if(p.cover_path)$('cover').style.backgroundImage='url("'+await signed(p.cover_path)+'")';else $('cover').style.backgroundImage='linear-gradient(120deg,#252b4d,#7768c9,#e6c9a2)';const [posts,followers,following]=await Promise.all([window.socialClient.from('social_posts').select('id',{count:'exact',head:true}).eq('user_id',me.id),window.socialClient.from('social_follows').select('follower_id',{count:'exact',head:true}).eq('following_id',me.id),window.socialClient.from('social_follows').select('following_id',{count:'exact',head:true}).eq('follower_id',me.id)]);$('postCount').textContent=posts.count||0;$('followerCount').textContent=followers.count||0;$('followingCount').textContent=following.count||0;}
+async function renderSharedProfile(id){const p=profiles.find(x=>x.user_id===id);if(!p){$('displayName').textContent='Profile unavailable';$('handle').textContent='This profile may be private or unavailable.';$('bio').textContent='';return;}showPane('profile');$('displayName').textContent=p.display_name||p.username;$('handle').textContent='@'+p.username;$('bio').textContent=p.bio||'No bio added yet.';$('profileDetails').innerHTML=[p.college&&p.college_visibility!=='private'?'🎓 '+esc(p.college):'',p.website_url&&p.website_visibility!=='private'?'🔗 <a class="link" target="_blank" rel="noopener" href="'+esc(p.website_url)+'">'+esc(p.website_url)+'</a>':'',p.relationship_status&&p.relationship_visibility==='public'?'♥ '+esc(p.relationship_status):''].filter(Boolean).join(' · ');$('avatar').innerHTML=p.avatar_path?'<img src="'+esc(await signed(p.avatar_path))+'">':esc((p.display_name||'U').slice(0,1).toUpperCase());$('cover').style.backgroundImage=p.cover_path?'url("'+await signed(p.cover_path)+'")':'linear-gradient(120deg,#252b4d,#7768c9,#e6c9a2)';$('cover').querySelector('button').classList.add('hidden');$('profilePane').querySelector('.profilehead button').classList.add('hidden');$('profilePane').querySelector('.actions .primary').classList.add('hidden');$('profilePane').querySelector('.actions .soft').onclick=()=>startChat(p.user_id);$('profilePane').querySelector('.actions .soft').textContent='✉ Message';const [posts,followers,following]=await Promise.all([window.socialClient.from('social_posts').select('id',{count:'exact',head:true}).eq('user_id',id),window.socialClient.from('social_follows').select('follower_id',{count:'exact',head:true}).eq('following_id',id),window.socialClient.from('social_follows').select('following_id',{count:'exact',head:true}).eq('follower_id',id)]);$('postCount').textContent=posts.count||0;$('followerCount').textContent=followers.count||0;$('followingCount').textContent=following.count||0;$('profilePane').querySelectorAll('.card')[1].classList.add('hidden');}
+function editProfile(){const p=myProfile;$('modalHost').innerHTML='<div style="position:fixed;inset:0;background:#101827aa;display:grid;place-items:center;padding:14px;z-index:10"><form class="card" style="width:min(540px,100%);max-height:90vh;overflow:auto" onsubmit="saveProfile(event)"><h2>Edit profile</h2><div class="field"><label>Display name</label><input id="eName" maxlength="60" value="'+esc(p.display_name)+'"></div><div class="field"><label>Bio</label><textarea id="eBio" maxlength="500">'+esc(p.bio)+'</textarea></div><div class="field"><label>Website / any public link</label><input id="eLink" type="url" placeholder="https://..." value="'+esc(p.website_url||'')+'"></div><div class="field"><label>Website visibility</label><select id="eWebsiteVisibility"><option value="public" '+(p.website_visibility!=='private'?'selected':'')+'>Public</option><option value="private" '+(p.website_visibility==='private'?'selected':'')+'>Private — only me</option></select></div><div class="field"><label>College / School (search or enter name)</label><input id="eCollege" list="collegeList" maxlength="120" placeholder="Start typing a college name..." value="'+esc(p.college||'')+'"><datalist id="collegeList">'+['Dhemaji College','Dibrugarh University','Gauhati University','Cotton University','Tezpur University','Assam University','IIT Guwahati','NIT Silchar'].map(x=>'<option value="'+x+'">').join('')+'</datalist></div><div class="field"><label>College visibility</label><select id="eCollegeVisibility"><option value="public" '+(p.college_visibility!=='private'?'selected':'')+'>Public</option><option value="private" '+(p.college_visibility==='private'?'selected':'')+'>Private — only me</option></select></div><div class="field"><label>Relationship status (optional)</label><select id="eRelationship"><option value="">Prefer not to say</option>'+['Single','In a Relationship','Engaged','Married','It’s Complicated'].map(x=>'<option '+(p.relationship_status===x?'selected':'')+'>'+x+'</option>').join('')+'</select></div><div class="field"><label>Relationship status visibility</label><select id="eVisibility"><option value="private" '+(p.relationship_visibility!=='public'?'selected':'')+'>Only me (private)</option><option value="public" '+(p.relationship_visibility==='public'?'selected':'')+'>Public on profile</option></select></div><div class="notice">Privacy tip: College, website and relationship status can be hidden. Date of birth, phone number and Gmail are not displayed publicly on member profiles.</div><div class="field"><label>Profile photo</label><input id="eAvatar" type="file" accept="image/jpeg,image/png,image/webp"></div><div class="actions" style="justify-content:flex-end"><button type="button" class="soft" onclick="closeModal()">Cancel</button><button class="primary">Save profile</button></div></form></div>'}
+function closeModal(){$('modalHost').innerHTML=''}
+async function uploadToProfile(file,tag){if(!file)return null;if(!['image/jpeg','image/png','image/webp'].includes(file.type))throw Error('Use JPG, PNG or WebP image.');if(file.size>8*1024*1024)throw Error('Image must be under 8 MB.');let ext=file.name.split('.').pop().toLowerCase().replace(/[^a-z0-9]/g,'');let path=me.id+'/profile/'+crypto.randomUUID()+'-'+tag+'.'+ext;let {error}=await window.socialClient.storage.from(BUCKET).upload(path,file,{contentType:file.type});if(error)throw error;return path}
+async function saveProfile(e){e.preventDefault();try{const f=$('eAvatar').files[0],updates={display_name:$('eName').value.trim(),bio:$('eBio').value.trim(),website_url:$('eLink').value.trim()||null,college:$('eCollege').value.trim()||null,college_visibility:$('eCollegeVisibility').value,website_visibility:$('eWebsiteVisibility').value,relationship_status:$('eRelationship').value||null,relationship_visibility:$('eVisibility').value,updated_at:new Date().toISOString()};if(updates.website_url&&!/^https?:\/\//i.test(updates.website_url))throw Error('Website link must start with https:// or http://');if(f)updates.avatar_path=await uploadToProfile(f,'avatar');const {error}=await window.socialClient.from('social_profiles').update(updates).eq('user_id',me.id);if(error)throw error;myProfile={...myProfile,...updates};closeModal();await renderMine();alert('Profile saved');}catch(err){alert(err.message)}}
+async function uploadCover(){try{let f=$('coverFile').files[0];let path=await uploadToProfile(f,'cover');let {error}=await window.socialClient.from('social_profiles').update({cover_path:path,updated_at:new Date().toISOString()}).eq('user_id',me.id);if(error)throw error;myProfile.cover_path=path;await renderMine();alert('Banner updated')}catch(e){alert(e.message)}}
+async function shareProfile(){const url=location.origin+location.pathname+'?profile='+me.id;try{if(navigator.share)await navigator.share({title:myProfile.display_name+' on Smart Money Social',text:'View my Social profile',url});else{await navigator.clipboard.writeText(url);alert('Profile link copied')}}catch(e){}}
+function renderPeople(){const q=$('peopleSearch').value.toLowerCase();const list=profiles.filter(p=>p.user_id!==me.id&&((p.display_name+' '+p.username+' '+(p.college||'')).toLowerCase().includes(q)));$('peopleList').innerHTML=list.map(p=>'<div class="person"><div class="avatar" style="width:42px;height:42px">'+esc((p.display_name||'U')[0])+'</div><div class="grow"><b>'+esc(p.display_name||p.username)+'</b><div class="tiny muted">@'+esc(p.username)+' '+(p.college?'· '+esc(p.college):'')+'</div></div><button class="soft tiny" onclick="startChat(\''+p.user_id+'\')">Message</button></div>').join('')||'<div class="empty">No matching members.</div>'}
+async function startChat(id){currentPeer=profiles.find(p=>p.user_id===id);if(!currentPeer)return;showPane('messages');$('chatWith').textContent='Chat with '+currentPeer.display_name+' · Only you and this person can read messages';await loadMessages();await loadChatList();}
+async function loadMessages(){if(!currentPeer)return;const peer=currentPeer.user_id;const {data,error}=await window.socialClient.from('social_messages').select('*').or('and(sender_id.eq.'+me.id+',recipient_id.eq.'+peer+'),and(sender_id.eq.'+peer+',recipient_id.eq.'+me.id+')').order('created_at',{ascending:true}).limit(200);if(error)throw error;messages=data||[];$('chatMessages').innerHTML=messages.map(m=>'<div class="bubble '+(m.sender_id===me.id?'mine':'')+'">'+esc(m.body)+'<div style="font-size:10px;opacity:.7;text-align:right">'+new Date(m.created_at).toLocaleString()+'</div></div>').join('')||'<div class="empty">Say hello. Keep personal details private.</div>';$('chatMessages').scrollTop=$('chatMessages').scrollHeight;await window.socialClient.from('social_messages').update({read_at:new Date().toISOString()}).eq('recipient_id',me.id).eq('sender_id',peer).is('read_at',null)}
+async function sendMessage(e){e.preventDefault();const body=$('messageText').value.trim();if(!body||!currentPeer)return;try{const {error}=await window.socialClient.from('social_messages').insert({sender_id:me.id,recipient_id:currentPeer.user_id,body});if(error)throw error;$('messageText').value='';await loadMessages();await loadChatList()}catch(err){alert(err.message)}}
+async function loadChatList(){const {data,error}=await window.socialClient.from('social_messages').select('sender_id,recipient_id,body,created_at').or('sender_id.eq.'+me.id+',recipient_id.eq.'+me.id).order('created_at',{ascending:false}).limit(300);if(error){console.warn(error);return}const ids=[...new Set((data||[]).map(m=>m.sender_id===me.id?m.recipient_id:m.sender_id))];$('chatList').innerHTML=ids.map(id=>{const p=profiles.find(x=>x.user_id===id),last=data.find(m=>(m.sender_id===id&&m.recipient_id===me.id)||(m.sender_id===me.id&&m.recipient_id===id));return '<button class="chatitem '+(currentPeer?.user_id===id?'active':'')+'" onclick="startChat(\''+id+'\')"><div class="avatar" style="width:38px;height:38px">'+esc((p?.display_name||'U')[0])+'</div><span class="grow"><b>'+esc(p?.display_name||'Community member')+'</b><small class="muted" style="display:block">'+esc(last?.body||'Message')+'</small></span></button>'}).join('')||'<p class="tiny muted">Your conversations will appear here.</p>'}
+async function blockCurrent(){if(!currentPeer)return;if(!confirm('Block this person? They will not be able to send you messages.'))return;const {error}=await window.socialClient.from('social_message_blocks').insert({blocker_id:me.id,blocked_id:currentPeer.user_id});if(error){alert(error.message);return}alert('This person is blocked.');currentPeer=null;$('chatMessages').innerHTML='<div class="empty">Conversation blocked.</div>';await loadChatList()}
+function subscribe(){if(channel)window.socialClient.removeChannel(channel);channel=window.socialClient.channel('social-community-preview-'+me.id).on('postgres_changes',{event:'*',schema:'public',table:'social_messages'},async payload=>{if(currentPeer&&(payload.new?.sender_id===currentPeer.user_id||payload.new?.recipient_id===currentPeer.user_id))await loadMessages();await loadChatList()}).on('postgres_changes',{event:'*',schema:'public',table:'social_profiles'},async()=>{await refreshProfiles();renderPeople()}).subscribe()}
+startGuestCommunity();
+supabaseReady.then(client=>client.auth.onAuthStateChange((event,session)=>{if(session?.user&&!me)setTimeout(()=>start(session.user),0);if(event==='SIGNED_OUT')location.reload()})).catch(e=>console.error('Social SDK initialization failed:',e));
+</script></body></html>
