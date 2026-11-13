@@ -493,12 +493,17 @@ main,.feed,.content{display:block!important;width:100%!important;min-width:0!imp
  .mobile-nav{width:100%!important}
 }
 
+
+/* Brand mark: uploaded artwork sits inside the existing S logo position */
+.brand .logo.brand-logo-image{width:52px!important;height:52px!important;min-width:52px!important;padding:0!important;overflow:hidden!important;border-radius:15px!important;background:#07172b!important;border:1px solid #55d4f2!important;box-shadow:0 0 18px #238fe955!important}
+.brand .logo.brand-logo-image img{display:block!important;width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;border-radius:14px!important}
+.preview-banner{display:none!important}
+
 </style></head>
 <body>
-<div class="social-brand-hero"><img src="./smart-money-social-logo.jpg" alt="Smart Money Social — Share, Connect, Engage"></div>
 
 <div class="app">
-<header class="top"><div class="brand"><div class="logo">S</div><div>SMART MONEY <small>SOCIAL COMMUNITY</small></div></div><div class="top-actions"><button class="iconbtn" onclick="showView('notifications')" title="Notifications">♧</button><button class="iconbtn" onclick="window.location.href=SOCIAL_BASE+'community.html?messages=1'" title="Messages">✉</button><button class="iconbtn" onclick="showView('settings')" title="Settings">⚙</button><button class="iconbtn" onclick="openProfile()" title="Profile">👤</button></div></header>
+<header class="top"><div class="brand"><div class="logo brand-logo-image"><img src="./smart-money-social-logo.jpg" alt="Smart Money Social logo"></div><div>SMART MONEY <small>SOCIAL COMMUNITY</small></div></div><div class="top-actions"><button class="iconbtn" onclick="showView('notifications')" title="Notifications">♧</button><button class="iconbtn" onclick="window.location.href=SOCIAL_BASE+'community.html?messages=1'" title="Messages">✉</button><button class="iconbtn" onclick="showView('settings')" title="Settings">⚙</button><button class="iconbtn" onclick="openProfile()" title="Profile">👤</button></div></header>
 <div class="layout">
 <aside class="side"><div class="card"><div class="side-profile"><div class="avatar" id="sideAvatar">S</div><div><b id="sideName">Swrang Creator</b><div class="tiny muted">Smart Money member</div></div></div><nav class="nav" id="sideNav"><button class="active" data-view="home" onclick="showView('home')"><span class="ico">⌂</span> Home Feed</button><button data-view="explore" onclick="showView('explore')"><span class="ico">⌕</span> Explore</button><button onclick="openComposer()"><span class="ico">＋</span> Create Post</button><button data-view="notifications" onclick="showView('notifications')"><span class="ico">♧</span> Notifications</button><button data-view="profile" onclick="openProfile()"><span class="ico">◉</span> My Profile</button><button data-view="saved" onclick="showView('saved')"><span class="ico">▣</span> Saved Posts</button><button onclick="window.location.href=SOCIAL_BASE+'community.html?messages=1'"><span class="ico">✉</span> Messages</button><button data-view="settings" onclick="showView('settings')"><span class="ico">⚙</span> Settings & Privacy</button><button data-view="help" onclick="showView('help')"><span class="ico">❔</span> Help & Support</button></nav></div><div class="preview-note" id="accessNotice">Connected to Smart Money Social.</div></aside>
 <main>
