@@ -1146,8 +1146,9 @@ body{min-width:320px!important}
  .profile-post-heading h2{font-size:17px!important}
 }
 
-.profile-avatar-story{cursor:pointer;outline:3px solid #e7b84d;outline-offset:3px;border-radius:50%}
-.profile-avatar-story:focus-visible{outline:3px solid #f4d27a;outline-offset:5px}
+.profile-avatar-wrap.profile-avatar-story{cursor:pointer;position:relative}
+.profile-avatar-wrap.profile-avatar-story:after{content:"";position:absolute;top:5px;right:5px;width:11px;height:11px;border-radius:50%;background:#22c55e;border:2px solid #10223b;box-shadow:0 1px 5px #0008;pointer-events:none;z-index:4}
+.profile-avatar-wrap.profile-avatar-story:focus-visible{outline:2px solid #22c55e;outline-offset:3px;border-radius:50%}
 </style>
 </head>
 <body>
