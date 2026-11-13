@@ -1030,6 +1030,65 @@ body{min-width:320px!important}
  .profile-main{padding-bottom:28px!important}
  .profile-identity{transform:translateY(28px)!important}
 }
+
+/* FINAL STRUCTURAL FIX: avatar overlaps cover; identity starts in a new row below it */
+.profile-main{
+ display:grid!important;
+ grid-template-columns:minmax(76px,88px) minmax(0,1fr)!important;
+ grid-template-rows:auto auto auto!important;
+ align-items:start!important;
+ column-gap:14px!important;
+ row-gap:10px!important;
+ margin-top:-35px!important;
+ padding:0 14px 14px!important;
+}
+.profile-main>.profile-avatar-wrap{
+ grid-column:1!important;grid-row:1!important;
+ align-self:start!important;
+}
+.profile-main>.profile-identity{
+ grid-column:1 / -1!important;grid-row:2!important;
+ align-self:start!important;
+ width:100%!important;min-width:0!important;
+ margin:0!important;padding:8px 0 0!important;
+ transform:none!important;
+}
+.profile-main>.profile-identity h2{
+ font-size:clamp(23px,2.4vw,30px)!important;
+ line-height:1.14!important;font-weight:950!important;
+ margin:0 0 5px!important;
+ overflow-wrap:anywhere!important;white-space:normal!important;
+}
+.profile-main>.profile-identity .profile-handle{font-size:14px!important}
+.profile-main>.profile-edit-btn,
+.profile-main>.follow,
+.profile-main>.soft{
+ grid-column:1 / -1!important;grid-row:3!important;
+ justify-self:start!important;align-self:start!important;
+ margin:0!important;transform:none!important;
+}
+.profile-main>.profile-edit-btn{
+ min-height:48px!important;padding:11px 18px!important;
+ font-size:14px!important;gap:9px!important;
+}
+.profile-edit-icon{font-size:22px!important;line-height:1!important}
+@media(max-width:560px){
+ .profile-main{
+  grid-template-columns:76px minmax(0,1fr)!important;
+  margin-top:-37px!important;padding:0 4px 14px!important;
+  column-gap:12px!important;row-gap:9px!important;
+ }
+ .profile-main>.profile-avatar-wrap{grid-column:1!important;grid-row:1!important}
+ .profile-main>.profile-identity{
+  grid-column:1 / -1!important;grid-row:2!important;
+  padding:7px 0 0!important;margin:0!important;transform:none!important;
+ }
+ .profile-main>.profile-identity h2{font-size:clamp(21px,5.8vw,26px)!important}
+ .profile-main>.profile-identity .profile-handle{font-size:13px!important}
+ .profile-main>.profile-edit-btn,
+ .profile-main>.follow,
+ .profile-main>.soft{grid-column:1 / -1!important;grid-row:3!important}
+}
 </style>
 </head>
 <body>
