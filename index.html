@@ -1166,8 +1166,38 @@ body{min-width:320px!important}
  .profile-post-heading h2{font-size:17px!important}
 }
 
-.profile-avatar-wrap.profile-avatar-story{cursor:pointer;position:relative}
-.profile-avatar-wrap.profile-avatar-story:after{content:"";position:absolute;top:5px;right:5px;width:11px;height:11px;border-radius:50%;background:#22c55e;border:2px solid #10223b;box-shadow:0 1px 5px #0008;pointer-events:none;z-index:4}
+/* Story indicator stays anchored to the profile photo, not the surrounding header. */
+.profile-main>.profile-avatar-wrap.profile-avatar-story{
+ position:relative!important;
+ width:88px!important;height:88px!important;
+ min-width:88px!important;min-height:88px!important;
+ flex:0 0 88px!important;
+ display:block!important;
+}
+.profile-main>.profile-avatar-wrap.profile-avatar-story>.avatar{
+ display:block!important;width:88px!important;height:88px!important;
+}
+.profile-main>.profile-avatar-wrap.profile-avatar-story:after{
+ content:""!important;position:absolute!important;
+ top:4px!important;right:4px!important;bottom:auto!important;left:auto!important;
+ width:12px!important;height:12px!important;
+ border-radius:50%!important;background:#22c55e!important;
+ border:2px solid #10223b!important;
+ box-shadow:0 1px 5px #0008!important;
+ pointer-events:none!important;z-index:6!important;
+}
+@media(max-width:560px){
+ .profile-main>.profile-avatar-wrap.profile-avatar-story{
+  width:76px!important;height:76px!important;
+  min-width:76px!important;min-height:76px!important;flex-basis:76px!important;
+ }
+ .profile-main>.profile-avatar-wrap.profile-avatar-story>.avatar{
+  width:76px!important;height:76px!important;
+ }
+ .profile-main>.profile-avatar-wrap.profile-avatar-story:after{
+  top:3px!important;right:3px!important;
+ }
+}
 .profile-avatar-wrap.profile-avatar-story:focus-visible{outline:2px solid #22c55e;outline-offset:3px;border-radius:50%}
 </style>
 <style>.post-text-card{min-height:210px!important;padding:28px 22px!important;margin:14px 0!important;border-radius:20px!important;display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;text-align:center!important;color:#fff!important;font-size:20px!important;font-weight:750!important;line-height:1.55!important;white-space:pre-wrap!important;overflow-wrap:anywhere!important;box-shadow:inset 0 0 0 1px #ffffff35,0 12px 28px #0002!important}.post-text-card strong{font-size:23px!important;color:inherit!important}.post-text-card .badge{background:#ffffff24!important;color:inherit!important;border-color:#ffffff55!important}.post-style-preview{min-height:115px;margin-top:12px;padding:22px 16px;border-radius:16px;display:grid;place-items:center;text-align:center;color:#fff;font-weight:800;font-size:18px;white-space:pre-wrap;overflow-wrap:anywhere;box-shadow:inset 0 0 0 1px #ffffff55}.bg-none{background:#64748b!important}.bg-sunset{background:linear-gradient(135deg,#ff7e5f,#feb47b)!important}.bg-ocean{background:linear-gradient(135deg,#0575e6,#00f2fe)!important}.bg-forest{background:linear-gradient(135deg,#134e5e,#71b280)!important}.bg-aurora{background:linear-gradient(135deg,#4776e6,#8e54e9,#20c997)!important}.bg-lavender{background:linear-gradient(135deg,#a18cd1,#fbc2eb)!important}.bg-rose{background:linear-gradient(135deg,#ee9ca7,#ffdde1)!important;color:#632b45!important}.bg-gold{background:linear-gradient(135deg,#8e6b25,#e8c878,#9b6b24)!important}.bg-midnight{background:radial-gradient(circle at 20% 20%,#354b75,#10152d 65%,#080b18)!important}.bg-citrus{background:linear-gradient(135deg,#f7971e,#ffd200)!important;color:#42300a!important}.bg-mountain{background:linear-gradient(135deg,#536976,#8aa4b0,#b8c6db)!important;color:#172c3c!important}.bg-cosmic{background:radial-gradient(circle at 80% 20%,#c850c0,#4158d0 45%,#090979)!important}.bg-paper{background:linear-gradient(135deg,#f6e7c8,#e4cda5)!important;color:#44331f!important}</style><style>.post-type-choices{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}.post-type-choice{border:1px solid var(--line,#ddd);background:var(--card,#fff);color:inherit;border-radius:16px;padding:20px 14px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:9px;cursor:pointer;min-height:170px}.post-type-choice:active{transform:scale(.98)}.post-type-choice span{font-size:34px}.post-type-choice b{font-size:17px}.post-type-choice small{font-size:12px;line-height:1.5;color:var(--muted,#777)}@media(max-width:520px){.post-type-choices{grid-template-columns:1fr}.post-type-choice{min-height:130px}}</style>
