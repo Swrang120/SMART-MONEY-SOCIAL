@@ -1884,7 +1884,7 @@ async function adminUploadStoryMusic(){
   const duration=await new Promise((resolve,reject)=>{probe.onloadedmetadata=()=>resolve(Number.isFinite(probe.duration)?probe.duration:null);probe.onerror=()=>reject(new Error('Audio metadata read nahi ho paya.'));});
   URL.revokeObjectURL(objectUrl);
   const path=myId()+'/stories/library/'+Date.now()+'-'+Math.random().toString(36).slice(2,9)+'.'+ext;
-  const {error:uploadError}=await supabaseClient.storage.from(bucket).upload(path,file,{contentType:file.type||'audio/'+ext,upsert:false});if(uploadError)throw uploadError;
+  const mimeByExt={mp3:'audio/mpeg',m4a:'audio/mp4',wav:'audio/wav',ogg:'audio/ogg',aac:'audio/aac',webm:'audio/webm'};const {error:uploadError}=await supabaseClient.storage.from(bucket).upload(path,file,{contentType:file.type||mimeByExt[ext],upsert:false});if(uploadError)throw uploadError;
   const {error}=await supabaseClient.from('social_story_music_library').insert({title,artist,file_path:path,duration_seconds:duration,created_by:myId(),is_active:true});
   if(error){await supabaseClient.storage.from(bucket).remove([path]);throw error;}
   showToast('Story music library mein add ho gaya.');openAdmin();
