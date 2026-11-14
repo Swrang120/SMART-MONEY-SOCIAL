@@ -2,10 +2,17 @@
 <style>
 :root{--n:#102b25;--g:#1b493b;--gold:#d8b66c;--ink:#202b27;--muted:#718078;--line:#e5ebe7;--bg:#f3f6f4;--red:#a83e35}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 Inter,system-ui,Arial}header{height:66px;background:linear-gradient(110deg,var(--n),var(--g));color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 max(14px,calc((100vw - 1200px)/2));border-bottom:2px solid var(--gold);position:sticky;top:0;z-index:5}.brand{font-weight:900;letter-spacing:.6px}.brand small{display:block;color:#d8e5de;font-size:10px;letter-spacing:1.4px}.tag{font-size:10px;color:#f0d99e;font-weight:900;letter-spacing:1px}.wrap{max-width:1200px;margin:24px auto;padding:0 16px 55px}.intro{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:18px}.intro h1{font-size:clamp(24px,4vw,34px);margin:0}.intro p,.desc{color:var(--muted);font-size:12px;margin:4px 0 12px}.pill{background:#eaf3ed;color:#27563e;border:1px solid #cfe2d5;border-radius:99px;padding:7px 10px;font-size:10px;font-weight:900}.notice{padding:12px 14px;border:1px solid #d7e6db;background:#f4fbf6;color:#355b43;border-radius:12px;margin-bottom:18px}.notice.warn{background:#fff8eb;border-color:#ead8ad;color:#765923}.grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:16px}.metric,.panel{background:white;border:1px solid var(--line);border-radius:15px;box-shadow:0 5px 18px #173c2b08}.metric{padding:14px}.metric span{display:block;color:var(--muted);font-size:11px}.metric b{display:block;font-size:25px;color:var(--g);margin-top:4px}.columns{display:grid;grid-template-columns:1fr 1fr;gap:14px}.panel{padding:17px;min-width:0}.full{grid-column:1/-1}.panel-head{display:flex;justify-content:space-between;align-items:center;gap:8px}.panel h2{font-size:16px;margin:0}.badge{font-size:10px;font-weight:900;background:#eef3ef;color:#64756b;border-radius:99px;padding:5px 8px}.badge.hot{background:#ffebd1;color:#87510b}button,input{font:inherit}button{border:1px solid #dbe5df;border-radius:9px;padding:8px 10px;background:#f4f7f5;color:#345246;font-size:11px;font-weight:800;cursor:pointer}button.primary{background:#1c4b3b;color:white;border-color:#1c4b3b}button.gold{background:#fff8e9;color:#785d22;border-color:#ead8ad}button.danger{background:#fff2f0;color:#9b3028;border-color:#f0c7c2}.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{display:grid;gap:5px;margin:8px 0}.field label{font-size:11px;font-weight:800;color:#53675d}.field input{width:100%;padding:9px;border:1px solid var(--line);border-radius:9px;background:#fafcfb}.empty{padding:13px;border:1px dashed #d9e3dd;border-radius:10px;color:#87948d;background:#fbfdfb;font-size:12px}.list{display:grid;gap:9px}.report,.track{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fcfdfc}.report.priority{border-color:#e6c982;background:#fffaf0}.rhead{display:flex;justify-content:space-between;gap:10px}.rmeta,.rline,.track small{font-size:11px;color:var(--muted)}.rline{padding:6px 0;border-top:1px solid var(--line);margin-top:7px}.actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}.track{display:flex;align-items:center;gap:10px}.track img{width:58px;height:58px;object-fit:cover;border-radius:9px;background:#edf2ee}.track .info{flex:1;min-width:0}.track b{display:block}.track audio{width:100%;height:30px;margin-top:4px}#loading{padding:28px;text-align:center;color:var(--muted)}#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#17392e;color:white;padding:10px 15px;border-radius:10px;display:none;z-index:10;font-size:12px;max-width:90vw}.hidden{display:none!important}.locked{opacity:.62;filter:saturate(.65);pointer-events:none}.locked input,.locked button{cursor:not-allowed!important}.statebar{padding:11px 13px;border-radius:11px;background:#fff6e5;border:1px solid #ead7a8;color:#725820;font-size:12px;margin:0 0 14px}.statebar.ok{background:#eff9f1;border-color:#cde4d2;color:#28583b}.art{width:74px;height:74px;object-fit:cover;border-radius:9px;display:none}@media(max-width:850px){.grid{grid-template-columns:repeat(3,1fr)}.columns{grid-template-columns:1fr}}@media(max-width:560px){header{height:58px;padding:0 12px}.brand{font-size:12px}.tag{font-size:8px}.wrap{padding:0 10px 40px;margin:16px auto}.intro{align-items:start;flex-direction:column}.grid{grid-template-columns:repeat(2,1fr);gap:8px}.metric{padding:11px}.metric b{font-size:22px}.panel{padding:13px}.fields{grid-template-columns:1fr}.track img{width:50px;height:50px}}
 </style></head><body>
-<header><div class="brand">SMART MONEY SOCIAL<small>ADMINISTRATION CONSOLE</small></div><div class="tag">CONTROL CENTER</div></header>
+<header><div class="brand">SMART MONEY SOCIAL<small>ADMINISTRATION CONSOLE</small></div><div style="display:flex;align-items:center;gap:10px"><div class="tag">CONTROL CENTER</div><button id="adminLogout" class="hidden" type="button">Sign Out</button></div></header>
 <main class="wrap"><div class="intro"><div><h1>Admin Dashboard</h1><p>Member safety, report review and original Story Music.</p></div><span class="pill" id="sessionBadge">Checking session…</span></div>
-<div class="notice" id="notice">Uses the Social Website's existing signed-in session. No separate Admin Panel login or password. Server checks admin permission before every action.</div>
-<div id="loading">Connecting securely…</div><div id="dashboard" class="locked">
+<div class="notice" id="notice">Sign in with your admin Gmail and password. The server verifies the account's Admin role before enabling controls. Your password is sent only to Supabase Auth, never stored in this page or source code.</div>
+<form id="adminLogin" class="panel" style="max-width:440px;margin:0 auto 18px">
+<h2 style="margin:0 0 8px">Admin Sign In</h2>
+<div class="field"><label for="adminEmail">Admin Gmail</label><input id="adminEmail" type="email" autocomplete="username" required placeholder="admin@gmail.com"></div>
+<div class="field"><label for="adminPassword">Password</label><input id="adminPassword" type="password" autocomplete="current-password" required placeholder="Enter your password"></div>
+<button class="primary" id="loginBtn" type="submit" style="width:100%">Sign In Securely</button>
+<div id="loginError" class="desc" role="alert"></div>
+</form>
+<div id="loading" class="hidden">Connecting securely…</div><div id="dashboard" class="locked">
 <div class="statebar" id="accessState">Checking your existing Social Website session…</div><section class="grid"><div class="metric"><span>Total Members</span><b id="members">—</b></div><div class="metric"><span>Pending Posts</span><b id="posts">—</b></div><div class="metric"><span>Pending Stories</span><b id="stories">—</b></div><div class="metric"><span>Open Reports</span><b id="reports">—</b></div><div class="metric"><span>Review Queue · 2+</span><b id="queue">—</b></div></section>
 <section class="columns"><article class="panel full"><div class="panel-head"><h2>🚩 User Reports & Review Queue</h2><span class="badge">2+ REPORTS = PRIORITY REVIEW</span></div><p class="desc">Two or more different people reporting the same member put the case in priority review. Reports alone never suspend an account; review the evidence and decide.</p><div id="reportList" class="list"><div class="empty">Loading reports…</div></div></article>
 <article class="panel full"><div class="panel-head"><h2>🔓 Suspended Accounts</h2><span class="badge">RESTORE AFTER REVIEW</span></div><p class="desc">Restore access if a suspension is overturned after review.</p><div id="suspendedList" class="list"><div class="empty">No suspended accounts loaded.</div></div></article>
@@ -30,5 +37,47 @@ async function restoreAccount(id){const reason=prompt('Enter the reason for rest
 async function toggleTrack(id,active){try{const r=await call('toggle_music',{track_id:id,is_active:active});toast(r.message);await refresh()}catch(e){toast(e.message)}}
 $('artwork').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;if(f.size>5*1024*1024){toast('Artwork must be under 5 MB');e.target.value='';return}try{const b=await createImageBitmap(f);if(Math.abs(b.width-b.height)>8){toast('Use a square cover image. Recommended: 3000 × 3000 px.');e.target.value='';return}$('artPreview').src=URL.createObjectURL(f);$('artPreview').style.display='block'}catch{toast('Cannot read artwork image');e.target.value=''}});
 $('musicForm').addEventListener('submit',async e=>{e.preventDefault();const audio=$('audio').files[0],art=$('artwork').files[0];if(!audio||!art)return;const btn=$('uploadBtn');btn.disabled=true;btn.textContent='Uploading…';try{const duration=await new Promise(resolve=>{const a=new Audio();a.onloadedmetadata=()=>resolve(Number.isFinite(a.duration)?a.duration:0);a.onerror=()=>resolve(0);a.src=URL.createObjectURL(audio)});const f=new FormData();f.append('title',$('title').value.trim());f.append('artist',$('artist').value.trim());f.append('audio',audio);f.append('artwork',art);f.append('duration_seconds',String(duration));const r=await call('upload_music',null,f);toast(r.message);$('musicForm').reset();$('artPreview').style.display='none';await refresh()}catch(err){toast(err.message)}finally{btn.disabled=false;btn.textContent='＋ Publish Music'}});
-(async()=>{try{const {data,error}=await client.auth.getSession();if(error)throw error;if(!data.session){$('loading').classList.add('hidden');$('sessionBadge').textContent='SESSION REQUIRED';$('accessState').innerHTML='Open the <a href="./">Social Website</a> and sign in with your existing account, then return here. No separate Admin Panel login is used. Preview is visible; actions stay locked until the server verifies an Admin session.';return}token=data.session.access_token;$('sessionBadge').textContent='Existing Social session';$('loading').textContent='Verifying Admin permissions…';await refresh();$('sessionBadge').textContent='ADMIN VERIFIED · '+(state.admin.name||'Admin')}catch(e){$('loading').classList.add('hidden');$('sessionBadge').textContent='NOT VERIFIED';$('accessState').textContent='Could not load live Admin data: '+(e.message||'Unknown error')+'. Preview is visible, but actions remain locked.';$('notice').classList.add('warn')}})();
+async function showAdminSession(session){
+ token=session.access_token;
+ $('adminLogin').classList.add('hidden');
+ $('adminLogout').classList.remove('hidden');
+ $('loading').classList.remove('hidden');
+ $('loading').textContent='Verifying Admin permissions…';
+ try{
+   await refresh();
+   $('sessionBadge').textContent='ADMIN VERIFIED · '+(state.admin.name||'Admin');
+ }catch(err){
+   token='';
+   await client.auth.signOut();
+   $('adminLogin').classList.remove('hidden');
+   $('adminLogout').classList.add('hidden');
+   $('loading').classList.add('hidden');
+   $('sessionBadge').textContent='NOT VERIFIED';
+   $('loginError').textContent=err.message||'This Gmail account is not authorized as Admin.';
+   $('accessState').textContent='Admin verification failed. Sign in with an account that has the Admin role.';
+   $('notice').classList.add('warn');
+ }
+}
+$('adminLogin').addEventListener('submit',async e=>{
+ e.preventDefault();
+ const btn=$('loginBtn');btn.disabled=true;btn.textContent='Signing in…';$('loginError').textContent='';
+ try{
+   const {data,error}=await client.auth.signInWithPassword({email:$('adminEmail').value.trim(),password:$('adminPassword').value});
+   if(error) throw error;
+   if(!data.session) throw new Error('Sign-in did not return a valid session.');
+   $('adminPassword').value='';
+   await showAdminSession(data.session);
+ }catch(err){$('loginError').textContent=err.message||'Sign-in failed.';toast(err.message||'Sign-in failed');}
+ finally{btn.disabled=false;btn.textContent='Sign In Securely'}
+});
+$('adminLogout').addEventListener('click',async()=>{
+ await client.auth.signOut();token='';$('dashboard').classList.add('locked');$('adminLogin').classList.remove('hidden');$('adminLogout').classList.add('hidden');$('sessionBadge').textContent='SIGNED OUT';$('accessState').className='statebar';$('accessState').textContent='Sign in with an authorized Admin Gmail to unlock controls.';$('loading').classList.add('hidden');
+});
+(async()=>{
+ try{
+   const {data,error}=await client.auth.getSession();if(error)throw error;
+   if(data.session){await showAdminSession(data.session);}
+   else{$('loading').classList.add('hidden');$('sessionBadge').textContent='SIGN IN REQUIRED';$('accessState').textContent='Sign in with your Admin Gmail and password to load the dashboard.';}
+ }catch(err){$('loading').classList.add('hidden');$('sessionBadge').textContent='SIGN IN REQUIRED';$('accessState').textContent=err.message||'Unable to initialize sign-in.';}
+})();;
 </script></body></html>
