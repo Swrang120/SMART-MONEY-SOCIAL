@@ -1614,7 +1614,7 @@ async function loadSocialData(){
   supabaseClient.from('social_notifications').select('*').eq('user_id',uid).order('created_at',{ascending:false}).limit(100)
  ]);
  for(const r of [profiles,privateProfileRes,posts,likes,comments,commentLikes,follows,saved,stories,storyLikes,storyViews,storyReplies,notifs])if(r.error)throw r.error;
- const accessRes=await supabaseClient.from('social_access').select('access_status').eq('user_id',uid).maybeSingle();if(accessRes.error)throw accessRes.error;canPublish=isAdmin||accessRes.data?.access_status==='approved';const accessNotice=$('accessNotice');if(accessNotice)accessNotice.textContent=canPublish?'Your Social account is active. You can publish posts and stories.':'Your account is active. Posting and Stories will be available after Social admin approval.';
+ const accessRes=await supabaseClient.from('social_access').select('access_status').eq('user_id',uid).maybeSingle();if(accessRes.error)throw accessRes.error;const socialStatus=accessRes.data?.access_status;if(['suspended','banned'].includes(socialStatus)){alert('Your Smart Money Social account is suspended after an admin review. Please contact Support if you believe this is a mistake.');await supabaseClient.auth.signOut();return;}canPublish=isAdmin||socialStatus==='approved';const accessNotice=$('accessNotice');if(accessNotice)accessNotice.textContent=canPublish?'Your Social account is active. You can publish posts and stories.':'Your account is active. Posting and Stories will be available after Social admin approval.';
  const ownPrivateProfile=privateProfileRes.data||{};
  people=(profiles.data||[]).map(p=>({...p,...(p.user_id===uid?ownPrivateProfile:{}),id:p.user_id,name:cleanDisplayName(p.display_name||p.username||'Community Member')||p.username||'Community Member',handle:'@'+(p.username||'member'),bio:p.bio||'',photo:'',cover:'',avatar:'U',verified:p.user_id===uid}));
  const paths=[...(posts.data||[]).map(x=>x.media_path),...(stories.data||[]).flatMap(x=>[x.media_path,x.music_path]),...(profiles.data||[]).flatMap(x=>[x.avatar_path,x.cover_path])].filter(Boolean);
@@ -1804,15 +1804,16 @@ async function loadStoryMusicLibrary(){
  const host=$('storyMusicCatalog');if(!host)return;
  host.innerHTML='<div class="tiny muted">Loading music library…</div>';
  try{
-  const {data,error}=await supabaseClient.from('social_story_music_library').select('id,title,artist,file_path,duration_seconds').eq('is_active',true).order('created_at',{ascending:false});
+  const {data,error}=await supabaseClient.from('social_story_music_library').select('id,title,artist,file_path,artwork_path,duration_seconds').eq('is_active',true).order('created_at',{ascending:false});
   if(error)throw error;
   storyMusicCatalog=data||[];
-  if(!storyMusicCatalog.length){host.innerHTML='<div class="tiny muted">Abhi music available nahi hai. Admin jald tracks add karega.</div>';return;}
-  const {data:urls,error:urlError}=await supabaseClient.storage.from(bucket).createSignedUrls(storyMusicCatalog.map(x=>x.file_path),3600);
+  if(!storyMusicCatalog.length){host.innerHTML='<div class="tiny muted">No music is available yet. Admin will publish original tracks here.</div>';return;}
+  const mediaPaths=storyMusicCatalog.flatMap(x=>[x.file_path,x.artwork_path].filter(Boolean));
+  const {data:urls,error:urlError}=await supabaseClient.storage.from(bucket).createSignedUrls(mediaPaths,3600);
   if(urlError)throw urlError;
   const signed={};(urls||[]).forEach(x=>{if(x.path)signed[x.path]=x.signedUrl||'';});
-  storyMusicCatalog=storyMusicCatalog.map(x=>({...x,url:signed[x.file_path]||''}));
-  host.innerHTML=storyMusicCatalog.map(x=>'<button type="button" class="soft" data-story-track="'+x.id+'" onclick="selectStoryLibraryTrack(\''+x.id+'\')" style="display:flex;width:100%;align-items:center;justify-content:space-between;gap:10px;margin:6px 0;text-align:left;border:1px solid #e5dcfb"><span><b>'+safe(x.title)+'</b><small style="display:block">'+safe(x.artist||'Smart Money Music')+' · '+Math.min(30,Number(x.duration_seconds)||30).toFixed(0)+'s clip</small></span><span>▶ Select</span></button>').join('');
+  storyMusicCatalog=storyMusicCatalog.map(x=>({...x,url:signed[x.file_path]||'',artworkUrl:x.artwork_path?signed[x.artwork_path]||'':''}));
+  host.innerHTML=storyMusicCatalog.map(x=>'<button type="button" class="soft" data-story-track="'+x.id+'" onclick="selectStoryLibraryTrack(\''+x.id+'\')" style="display:flex;width:100%;align-items:center;justify-content:space-between;gap:10px;margin:7px 0;padding:8px;text-align:left;border:1px solid #e5dcfb;border-radius:12px"><span style="display:flex;align-items:center;gap:10px;min-width:0">'+(x.artworkUrl?'<img src="'+safe(x.artworkUrl)+'" alt="" style="width:48px;height:48px;object-fit:cover;border-radius:8px;flex:none">':'<span style="width:48px;height:48px;border-radius:8px;background:#f0edf7;display:grid;place-items:center;flex:none">♫</span>')+'<span style="min-width:0"><b style="display:block">'+safe(x.title)+'</b><small style="display:block">'+safe(x.artist||'Smart Money Music')+' · '+Math.min(30,Number(x.duration_seconds)||30).toFixed(0)+'s clip</small></span></span><span>▶ Select</span></button>').join('');
  }catch(e){host.innerHTML='<div class="tiny" style="color:#b33">Music library load nahi hui: '+safe(e.message||'Please retry')+'</div>';}
 }
 function selectStoryLibraryTrack(id){
