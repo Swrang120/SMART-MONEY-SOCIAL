@@ -1704,24 +1704,30 @@ function postCard(p){
 function renderFeed(){let list=[...db.posts].filter(p=>p.status==='published'||p.user===myId()||isAdmin);if(filter==='following')list=list.filter(p=>db.following.includes(p.user)||p.user===myId());if(filter==='trending')list.sort((a,b)=>(b.likes.length+(b.comments||[]).length*2)-(a.likes.length+(a.comments||[]).length*2));else list.sort((a,b)=>b.created-a.created);$('feed').innerHTML=list.length?list.map(postCard).join(''):'<div class="card empty"><div class="big">🌱</div>No published posts yet. Be the first to share an update.</div>';}
 
 async function renderCoinDashboard(){
- const mine=db.posts.filter(p=>p.user===myId()&&p.kind==='image'&&p.mediaPath);
- const mineIds=new Set(mine.map(p=>p.id));
+ const mine=db.posts.filter(p=>p.user===myId()&&p.kind==='image'&&p.mediaPath),mineIds=new Set(mine.map(p=>p.id));
  const events=(db.likeEvents||[]).filter(e=>mineIds.has(e.postId)&&e.user!==myId()).sort((a,b)=>b.time-a.time);
- const set=(id,v)=>{const el=$(id);if(el)el.textContent=v;};
- const myPosts=db.posts.filter(p=>p.user===myId());
- set('scoinTopBalance','…');set('scoinWalletBalance','…');set('scoinUsed','0');
- set('socialLikesReceived',events.length.toLocaleString('en-IN'));
- set('socialDemoEarning','0');set('socialWithdrawalStatus','Unavailable');
- try{const [walletRes,ledgerRes]=await Promise.all([supabaseClient.rpc('social_get_my_coin_wallet'),supabaseClient.from('social_coin_ledger').select('id,amount,entry_type,note,created_at').eq('user_id',myId()).order('created_at',{ascending:false}).limit(20)]);if(walletRes.error)throw walletRes.error;if(ledgerRes.error)throw ledgerRes.error;const balance=Number(walletRes.data||0);set('scoinTopBalance',balance.toLocaleString('en-IN'));set('scoinWalletBalance',balance.toLocaleString('en-IN'));set('socialDemoEarning',ledgerRes.data.filter(x=>x.amount>0).reduce((a,x)=>a+Number(x.amount),0).toLocaleString('en-IN'));window.socialCoinHistory=ledgerRes.data;}catch(e){console.warn('Test coin wallet unavailable:',e.message);set('scoinTopBalance','0');set('scoinWalletBalance','0');}
- set('dashPosts',myPosts.length.toLocaleString('en-IN'));
- set('dashFollowers',(db.followersById[myId()]||0).toLocaleString('en-IN'));
- set('dashFollowing',db.following.length.toLocaleString('en-IN'));
- set('dashLikes',myPosts.reduce((sum,p)=>sum+p.likes.length,0).toLocaleString('en-IN'));
- const host=$('socialLikeActivity');if(!host)return;
- if(!events.length){host.innerHTML='<div class="tiny muted">No likes on your photo posts yet.</div>';return;}
+ const set=(id,v)=>{const el=$(id);if(el)el.textContent=v;},myPosts=db.posts.filter(p=>p.user===myId());
+ ['scoinTopBalance','scoinWalletBalance','socialCashEarnings'].forEach(id=>set(id,'…'));
+ try{
+  const [walletRes,ledgerRes,earningRes]=await Promise.all([supabaseClient.rpc('social_get_my_coin_wallet'),supabaseClient.from('social_coin_ledger').select('id,amount,entry_type,note,created_at').eq('user_id',myId()).order('created_at',{ascending:false}).limit(30),supabaseClient.from('earnings').select('amount,earning_type,created_at').eq('user_id',myId()).order('created_at',{ascending:false}).limit(100)]);
+  if(walletRes.error)throw walletRes.error;if(ledgerRes.error)throw ledgerRes.error;if(earningRes.error)throw earningRes.error;
+  const coins=Number(walletRes.data||0),coinRows=ledgerRes.data||[],earnings=earningRes.data||[];
+  set('scoinTopBalance',coins.toLocaleString('en-IN'));set('scoinWalletBalance',coins.toLocaleString('en-IN'));
+  set('scoinUsed',Math.abs(coinRows.filter(x=>Number(x.amount)<0).reduce((n,x)=>n+Number(x.amount),0)).toLocaleString('en-IN'));
+  set('socialDemoEarning',coinRows.filter(x=>Number(x.amount)>0).reduce((n,x)=>n+Number(x.amount),0).toLocaleString('en-IN'));
+  const cash=earnings.reduce((n,x)=>n+Number(x.amount||0),0);set('socialCashEarnings',cash.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2}));
+  window.socialCoinHistory=coinRows;window.socialEarningHistory=earnings;
+ }catch(e){console.warn('Wallet data unavailable:',e.message);set('scoinTopBalance','0');set('scoinWalletBalance','0');set('socialCashEarnings','0.00');set('socialWithdrawalStatus','Setup needed');}
+ set('socialLikesReceived',events.length.toLocaleString('en-IN'));set('dashPosts',myPosts.length.toLocaleString('en-IN'));set('dashFollowers',(db.followersById[myId()]||0).toLocaleString('en-IN'));set('dashFollowing',db.following.length.toLocaleString('en-IN'));set('dashLikes',myPosts.reduce((n,p)=>n+p.likes.length,0).toLocaleString('en-IN'));
+ const host=$('socialLikeActivity');if(!host)return;if(!events.length){host.innerHTML='<div class="tiny muted">No likes on your photo posts yet.</div>';return;}
  host.innerHTML=events.slice(0,10).map(e=>{const p=person(e.user);return '<div class="like-activity-row">'+avatar(p)+'<div class="like-activity-copy"><b>'+safe(p.name||'Social member')+'</b><small>Liked your photo · '+ago(e.time)+'</small></div></div>';}).join('');
 }
-
+function openSocialTopUp(){openModal('<h3>＋ Top up S-Coins</h3><p class="tiny muted">Choose a coin pack. Coins are credited only after payment verification.</p><div class="field"><label>Coin pack</label><select id="socialTopupPack"><option value="100">100 S-Coins</option><option value="500">500 S-Coins</option><option value="1000">1,000 S-Coins</option><option value="5000">5,000 S-Coins</option></select></div><div class="notice">Secure payment checkout is not connected yet. Do not send money until an official checkout is displayed.</div><div class="modal-actions"><button class="soft" onclick="closeModal()">Cancel</button><button class="primary" onclick="submitSocialTopup()">Create request</button></div>');}
+async function submitSocialTopup(){const coins=Number($('socialTopupPack')?.value);if(![100,500,1000,5000].includes(coins))return;try{const {error}=await supabaseClient.from('social_coin_topup_requests').insert({user_id:myId(),coins,status:'pending'});if(error)throw error;closeModal();showToast('Top-up request created. Coins are credited after verification.');}catch(e){showToast(e.message||'Apply the wallet database migration before using top-up.');}}
+function openSocialWithdraw(){openModal('<h3>↗ Withdraw earnings</h3><p class="tiny muted">Withdraw available cash earnings to your saved bank account.</p><div class="field"><label>Amount (₹)</label><input id="socialWithdrawAmount" type="number" min="1" step="0.01" placeholder="Enter amount"></div><div class="field"><label>Confirm bank account</label><input id="socialWithdrawConfirm" type="text" maxlength="4" inputmode="numeric" placeholder="Last 4 digits of bank account"></div><div class="notice">Only verified earnings are withdrawable. Requests are reviewed before payout.</div><div class="modal-actions"><button class="soft" onclick="closeModal()">Cancel</button><button class="primary" onclick="submitSocialWithdraw()">Submit request</button></div>');}
+async function submitSocialWithdraw(){const amount=Number($('socialWithdrawAmount')?.value),last4=($('socialWithdrawConfirm')?.value||'').trim();if(!Number.isFinite(amount)||amount<=0||!/^[0-9]{4}$/.test(last4)){showToast('Enter a valid amount and last 4 bank digits.');return;}try{const {error}=await supabaseClient.rpc('social_request_earning_withdrawal',{p_amount:amount,p_bank_last4:last4});if(error)throw error;closeModal();showToast('Withdrawal request submitted for review.');await renderCoinDashboard();}catch(e){showToast(e.message||'Apply the wallet database migration before using withdrawals.');}}
+function showCoinHistory(){const rows=window.socialCoinHistory||[];const html=rows.map(x=>'<div class="comment"><b>'+(Number(x.amount)>0?'+':'')+Number(x.amount).toLocaleString('en-IN')+' S-Coins</b><div class="tiny muted">'+safe(x.note||x.entry_type||'Wallet activity')+' · '+new Date(x.created_at).toLocaleString()+'</div></div>').join('');openModal('<h3>S-Coin history</h3>'+(html||'<p class="tiny muted">No coin activity yet.</p>')+'<div class="modal-actions"><button class="soft" onclick="closeModal()">Close</button></div>');}
+function showEarningHistory(){const rows=window.socialEarningHistory||[];const html=rows.map(x=>'<div class="comment"><b>+₹'+Number(x.amount||0).toFixed(2)+'</b><div class="tiny muted">'+safe(x.earning_type||'Earning')+' · '+new Date(x.created_at).toLocaleString()+'</div></div>').join('');openModal('<h3>Earning history</h3>'+(html||'<p class="tiny muted">No verified earnings yet.</p>')+'<div class="modal-actions"><button class="soft" onclick="closeModal()">Close</button></div>');}
 function renderPostComments(post,comments){
  const roots=comments.filter(c=>!c.parentId),repliesFor=id=>comments.filter(c=>c.parentId===id);
  return roots.map(c=>{
@@ -2262,4 +2268,4 @@ supabaseClient.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT')
 }
 </style>
 
-</body></html>
+<style id="live-earning-wallet-dashboard">.money-dashboard{margin:14px 0!important;padding:18px!important;background:linear-gradient(135deg,#102c25,#174638 58%,#1d5b48)!important;color:#fff!important;border:1px solid #b99a52!important;box-shadow:0 12px 30px #173b2b22!important}.money-dashboard .muted,.money-dashboard .tiny{color:#d7e8df!important}.money-dashboard .badge{background:#f4dfaa!important;color:#4b3814!important}.money-dashboard-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.money-dashboard-head h2{font-size:30px;margin:8px 0 2px;color:#f5d98e}.money-icon{width:54px;height:54px;border-radius:17px;display:grid;place-items:center;background:linear-gradient(145deg,#f7e2a8,#c39a4e);color:#17372c;font-size:30px;font-weight:900}.money-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.money-actions button{min-width:130px}.money-dashboard .primary{background:linear-gradient(135deg,#f6dfaa,#c69b50)!important;color:#18372d!important}#scoinTopBalance{filter:none!important}.scoin-top{cursor:pointer!important;border:1px solid #d7c48c!important}.scoin-top small{font-size:8px!important}@media(max-width:560px){.money-dashboard,.coin-dashboard{padding:14px!important}.money-dashboard-head h2{font-size:26px}.money-actions button{flex:1;min-width:0}.coin-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}}</style></body></html>
