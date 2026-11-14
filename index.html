@@ -1331,7 +1331,7 @@ body{min-width:320px!important}
 
 <div class="app">
 <header class="top"><div class="brand"><div class="logo brand-logo-image"><img src="./smart-money-social-logo.jpg" alt="Smart Money Social logo"></div><div>SMART MONEY <small>SOCIAL COMMUNITY</small></div></div><div class="top-actions">
-<div class="scoin-top" title="S-Coin test balance"><span class="scoin-mark">S</span><span><b id="scoinTopBalance" class="coming-soon-blur">0</b><small>UPCOMING</small></span></div>
+<button class="scoin-top" type="button" onclick="showView('dashboard')" title="Open S-Coin wallet"><span class="scoin-mark">S</span><span><b id="scoinTopBalance">0</b><small>S-COINS</small></span></button>
 <button class="iconbtn premium-action notification-action" onclick="showView('notifications')" title="Notifications" aria-label="Notifications"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-2.5 7.5-2.5 9h17C20.5 16.5 18 16 18 9Z"/><path d="M9.5 21h5"/><path d="M12 3V2"/></svg><span id="notificationBadge" class="notification-badge" hidden></span></button>
 
 </div></header>
@@ -1349,23 +1349,12 @@ body{min-width:320px!important}
 <section id="view-profile" class="view"><div id="profileView"></div></section>
 <section id="view-saved" class="view"><div class="section-head"><h2>Saved Posts</h2></div><div id="savedFeed"></div></section>
 <section id="view-dashboard" class="view">
-<div class="section-head"><div><h2>Dashboard</h2><div class="tiny muted">Your account overview and community activity</div></div><span class="badge coming-soon-badge">UPCOMING</span></div>
-<div class="coming-soon-wrap"><div class="coming-soon-content">
-<div class="statgrid dashboard-statgrid">
-<div class="stat"><b id="dashPosts">0</b><span class="tiny muted">Your posts</span></div>
-<div class="stat"><b id="dashFollowers">0</b><span class="tiny muted">Followers</span></div>
-<div class="stat"><b id="dashFollowing">0</b><span class="tiny muted">Following</span></div>
-<div class="stat"><b id="dashLikes">0</b><span class="tiny muted">Likes received</span></div>
-</div>
-<div class="card coin-dashboard" style="margin-top:14px">
-<div class="coin-dashboard-head"><div><span class="badge">S-COIN WALLET</span><h2 style="margin:8px 0 4px">Your S-Coin overview</h2><p class="tiny muted">Wallet status and community activity</p></div><div class="scoin-large"><span class="scoin-mark">S</span><span><b id="scoinWalletBalance">0</b><small>S-COINS</small></span></div></div>
-<div class="coin-stats"><div><b id="scoinUsed">0</b><span>Coins used</span></div><div><b id="socialLikesReceived">0</b><span>Likes received</span></div><div><b id="socialDemoEarning">0</b><span>Test rewards</span></div><div><b id="socialWithdrawalStatus">Unavailable</b><span>Cash withdrawal</span></div></div>
-<div class="setting-actions" style="margin-top:14px"><button class="primary" onclick="openRewardsCenter()">🎁 Rewards Center</button><button class="soft" onclick="showCoinHistory()">📒 Coin history</button><button class="soft" disabled aria-disabled="true" title="Cash withdrawals are unavailable">Withdrawal unavailable</button></div>
-<div class="notice" style="margin-top:12px">TEST WALLET ONLY · These points have no cash value. No real-money deposits, purchases, earnings or withdrawals are available.</div>
-</div>
+<div class="section-head"><div><h2>Dashboard</h2><div class="tiny muted">Your earnings, S-Coins and account activity</div></div><span class="badge">LIVE WALLET</span></div>
+<div class="statgrid dashboard-statgrid"><div class="stat"><b id="dashPosts">0</b><span class="tiny muted">Your posts</span></div><div class="stat"><b id="dashFollowers">0</b><span class="tiny muted">Followers</span></div><div class="stat"><b id="dashFollowing">0</b><span class="tiny muted">Following</span></div><div class="stat"><b id="dashLikes">0</b><span class="tiny muted">Likes received</span></div></div>
+<div class="card money-dashboard"><div class="money-dashboard-head"><div><span class="badge">SMART MONEY EARNINGS</span><h2>₹<b id="socialCashEarnings">0.00</b></h2><p class="tiny muted">Available earnings balance</p></div><div class="money-icon">₹</div></div><div class="money-actions"><button class="primary" onclick="openSocialWithdraw()">↗ Withdraw</button><button class="soft" onclick="showEarningHistory()">▤ Earning history</button></div><div class="tiny muted" style="margin-top:10px">Withdrawals are sent for review and paid to your verified bank account.</div></div>
+<div class="card coin-dashboard"><div class="coin-dashboard-head"><div><span class="badge">S-COIN WALLET</span><h2 style="margin:8px 0 4px">Your S-Coin balance</h2><p class="tiny muted">Coins for eligible in-app features</p></div><div class="scoin-large"><span class="scoin-mark">S</span><span><b id="scoinWalletBalance">0</b><small>S-COINS</small></span></div></div><div class="coin-stats"><div><b id="scoinUsed">0</b><span>Coins used</span></div><div><b id="socialLikesReceived">0</b><span>Likes received</span></div><div><b id="socialDemoEarning">0</b><span>Coins earned</span></div><div><b id="socialWithdrawalStatus">Ready</b><span>Wallet status</span></div></div><div class="setting-actions" style="margin-top:14px"><button class="primary" onclick="openSocialTopUp()">＋ Top Up</button><button class="soft" onclick="showCoinHistory()">📒 Coin history</button><button class="soft" onclick="openRewardsCenter()">🎁 Rewards Center</button></div><div class="notice" style="margin-top:12px">S-Coins are in-app credits and are separate from cash earnings. They cannot be withdrawn or converted to cash.</div></div>
 <div class="card" style="margin-top:14px"><div class="section-head"><h3 style="margin:0">Recent photo activity</h3><span class="badge">ACTIVITY</span></div><div id="socialLikeActivity"><div class="tiny muted">No likes on your photo posts yet.</div></div></div>
 <div class="card" style="margin-top:14px"><div class="section-head"><h3 style="margin:0">Quick actions</h3></div><div class="setting-actions"><button class="primary" onclick="openComposer('photo')">📷 Create photo post</button><button class="soft" onclick="openStoryComposer()">⭕ Add story</button><button class="soft" onclick="location.href=SOCIAL_BASE+'community.html'">💬 Messages</button><button class="soft" onclick="openProfile()">👤 My profile</button></div></div>
-</div><div class="coming-soon-overlay"><span>✦</span><b>COMING SOON</b><small>Dashboard & Coins are on the way</small></div></div>
 </section>
 <section id="view-settings" class="view">
 <div class="section-head"><div><h2>Settings & Privacy</h2><div class="tiny muted">Tap a section to open its options</div></div><span class="badge">YOUR EXPERIENCE</span></div>
