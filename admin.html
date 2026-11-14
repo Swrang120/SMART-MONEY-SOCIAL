@@ -1806,7 +1806,7 @@ function retryPostMedia(element,path){
 function focusComment(id){$('comment-'+id)?.focus();}
 async function toggleSave(id){try{const exists=db.saved.includes(id);const q=exists?supabaseClient.from('social_saved_posts').delete().eq('post_id',id).eq('user_id',myId()):supabaseClient.from('social_saved_posts').insert({post_id:id,user_id:myId()});const {error}=await q;if(error)throw error;await loadSocialData();showToast(exists?'Removed from saved':'Post saved');}catch(e){showToast(e.message||'Could not save post');}}
 async function sharePost(id){const p=db.posts.find(x=>x.id===id);if(!p)return;const text=(p.text||'Smart Money Social post')+' — Smart Money Social';try{if(navigator.share)await navigator.share({title:'Smart Money Social',text,url:location.href});else{await navigator.clipboard.writeText(text);showToast('Post text copied');}}catch(e){}}
-function postMenu(id){const p=db.posts.find(x=>x.id===id);if(!p)return;const own=p.user===myId();openModal('<h3>Post options</h3><button class="soft" style="width:100%;margin:5px 0" onclick="sharePost(\''+id+'\');closeModal()">↗ Share post</button>'+(own?'<button class="primary" style="width:100%;margin:5px 0" onclick="editPost(\''+id+'\')">✎ Edit post</button><button class="soft" style="width:100%;margin:5px 0;color:var(--red)" onclick="deletePost(\''+id+'\')">Delete post</button>':'<button class="soft" style="width:100%;margin:5px 0;color:var(--red)" onclick="reportPost(\''+id+'\')">⚑ Report post</button>')+ '<div class="modal-actions"><button class="soft" onclick="closeModal()">Close</button></div>');
+function postMenu(id){const p=db.posts.find(x=>x.id===id);if(!p)return;const own=p.user===myId();openModal('<h3>Post options</h3><button class="soft" style="width:100%;margin:5px 0" onclick="sharePost(\''+id+'\');closeModal()">↗ Share post</button>'+(own?'<button class="primary" style="width:100%;margin:5px 0" onclick="editPost(\''+id+'\')">✎ Edit post</button><button class="soft" style="width:100%;margin:5px 0;color:var(--red)" onclick="deletePost(\''+id+'\')">Delete post</button>':'<button class="soft" style="width:100%;margin:5px 0;color:var(--red)" onclick="reportPost(\''+id+'\')">⚑ Report post</button>')+ '<div class="modal-actions"></div>');
   document.querySelectorAll('[data-task-toggle]').forEach(btn=>btn.addEventListener('click',()=>adminToggleRewardTask(btn.dataset.taskToggle,btn.dataset.taskActive==='true')));
   document.querySelectorAll('[data-task-review]').forEach(btn=>btn.addEventListener('click',()=>adminReviewRewardTask(btn.dataset.taskReview,btn.dataset.taskDecision)));}
 let storyEditorObjectUrl='',storyMusicDuration=0,storyMusicReady=false,storyEditorEmojis=[],storyMusicCatalog=[],storySelectedMusic=null;
@@ -2281,7 +2281,8 @@ supabaseClient.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT')
 </style>
 
 
-<style id="standalone-admin-console">
+
+<script>window.addEventListener('DOMContentLoaded',()=>{const b=document.createElement('button');b.type='button';b.textContent='Sign out';b.setAttribute('aria-label','Sign out of Admin Console');b.style.cssText='position:fixed;z-index:40;top:14px;right:max(18px,calc((100vw - 1100px)/2));padding:9px 15px;border:1px solid #d8c58f;border-radius:10px;background:#f5dfa2;color:#17362d;font-weight:850;font-size:12px;cursor:pointer';b.addEventListener('click',async()=>{b.disabled=true;b.textContent='Signing out…';await supabaseClient.auth.signOut({scope:'local'});location.href='./admin.html';});document.body.appendChild(b);});</script><style id="standalone-admin-console">
 html,body{min-height:100%;background:#f3f5f9!important}
 body{padding:88px 14px 30px!important}
 body:before{content:"SMART MONEY SOCIAL  /  ADMIN CONSOLE";position:fixed;z-index:25;top:0;left:0;right:0;height:64px;display:flex;align-items:center;padding:0 max(18px,calc((100vw - 1100px)/2));background:linear-gradient(110deg,#102b25,#183d35);border-bottom:2px solid #d4b46a;color:#f5dfa2;font-size:15px;font-weight:900;letter-spacing:1.1px;box-shadow:0 5px 20px #10251f22}
@@ -2301,5 +2302,4 @@ body>.app,body>.mobile-nav{display:none!important}
 #toast{z-index:60}
 #authGate{position:fixed!important;inset:64px 0 0!important;z-index:50!important;min-height:calc(100vh - 64px)!important;overflow:auto}
 @media(max-width:600px){body{padding:78px 9px 20px!important}body:before{height:58px;font-size:12px;padding:0 12px}body:after{top:22px;right:12px;font-size:8px}#modalBack .modal{border-radius:15px!important;padding:14px!important}#authGate{inset:58px 0 0!important;min-height:calc(100vh - 58px)!important}}
-</style>
-</body></html>
+</style></body></html>
