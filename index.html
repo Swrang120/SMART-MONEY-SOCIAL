@@ -1579,14 +1579,11 @@ async function ensureSocialProfile(user){
 async function activateSocialUser(user){authUser=user;isAdmin=['admin','super_admin'].includes(user?.app_metadata?.role);try{const roleResult=await supabaseClient.from('profiles').select('role').eq('id',user.id).maybeSingle();if(!roleResult.error&&roleResult.data?.role==='admin')isAdmin=true;await ensureSocialProfile(user);$('authGate')?.remove();document.body.classList.remove('preview-mode');const app=document.querySelector('.app');if(app)app.style.display='';const nav=document.querySelector('.mobile-nav');if(nav)nav.style.display='';await loadSocialData();subscribeSocialRealtime();renderAll();addSocialAdminShortcut();const routeUrl=new URL(window.location.href);const route=routeUrl.searchParams;let initialView='home';if(route.get('settings')==='1')initialView='settings';else if(route.get('notifications')==='1')initialView='notifications';else if(route.get('profile')==='1')initialView='profile';else if(route.get('messages')==='1'){history.replaceState({},'',routeUrl.pathname);location.replace(SOCIAL_BASE+'community.html?messages=1'+(route.get('peer')?'&peer='+encodeURIComponent(route.get('peer')):''));return;}if(routeUrl.search){history.replaceState({},'',routeUrl.pathname);}if(initialView==='profile')openProfile();else showView(initialView);addSocialLogout();}catch(e){console.error(e);showAuthGate('Account setup could not finish: '+(e.message||'Please retry.'));}}
 async function logoutSocial(){const {error}=await supabaseClient.auth.signOut({scope:'local'});if(error){showToast(error.message);return;}authUser=null;canPublish=false;isAdmin=false;addSocialAdminShortcut();showAuthGate('You have been logged out.');}
 function addSocialAdminShortcut(){
- const side=$('sideNav'),menu=$('mobileMenuPanel');
- if(!isAdmin){$('socialAdminSideButton')?.remove();$('socialAdminMenuButton')?.remove();return;}
+ const side=$('sideNav');
+ $('socialAdminMenuButton')?.remove();
+ if(!isAdmin){$('socialAdminSideButton')?.remove();return;}
  if(side&&!$('socialAdminSideButton')){
   const b=document.createElement('button');b.id='socialAdminSideButton';b.type='button';b.innerHTML='<span class="ico">⚙</span> Admin Panel';b.addEventListener('click',openAdmin);side.appendChild(b);
- }
- if(menu&&!$('socialAdminMenuButton')){
-  const b=document.createElement('button');b.id='socialAdminMenuButton';b.type='button';b.textContent='🛠️ Admin Panel';b.addEventListener('click',()=>{toggleMobileMenu(false);openAdmin();});
-  const section=menu.querySelector('.mobile-menu-section-title');menu.insertBefore(b,section||null);
  }
 }
 function addSocialLogout(){
