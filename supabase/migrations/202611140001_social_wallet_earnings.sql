@@ -1,4 +1,16 @@
 -- Smart Money Social wallet foundation
+-- Keep the existing Smart Money earnings ledger shape consistent across installs.
+create table if not exists public.earnings (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  amount numeric(12,2) not null check (amount >= 0),
+  earning_type text not null default 'reward',
+  created_at timestamptz not null default now()
+);
+alter table public.earnings enable row level security;
+drop policy if exists "Users can read own earnings" on public.earnings;
+create policy "Users can read own earnings" on public.earnings for select to authenticated using (user_id = auth.uid());
+
 -- Apply this migration to the Supabase project actually used by index.html.
 create table if not exists public.social_coin_ledger (
   id uuid primary key default gen_random_uuid(),
