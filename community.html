@@ -973,5 +973,12 @@ window.addEventListener('storage',e=>{if(e.key==='smart-money-social-auth-v1'&&!
 .community-bottom-nav [data-nav="messages"] .nav-message-icon svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s ease,filter .18s ease}
 .community-bottom-nav [data-nav="messages"].active .nav-message-icon svg{transform:translateY(-1px);filter:drop-shadow(0 2px 5px currentColor)}
 </style>
+
+<style id="messenger-vertical-chat-list-fix">
+@media(max-width:760px){
+ body.chat-open .chatlist{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-auto-flow:row!important;overflow-x:hidden!important;overflow-y:visible!important;gap:3px!important;padding:2px 0 8px!important;}
+ body.chat-open .chatitem{display:flex!important;flex:initial!important;width:100%!important;min-width:0!important;max-width:100%!important;scroll-snap-align:none!important;}
+}
+</style>
 </body></html>
 
