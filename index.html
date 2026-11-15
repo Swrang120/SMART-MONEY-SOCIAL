@@ -1329,6 +1329,14 @@ body{min-width:320px!important}
 </style><style>
 
 /* Global white typography on the dark social interface */
+/* Keep verification badges blue; only ordinary interface text is white. */
+body .profile-blue-tick,body .post-author-blue-tick{color:#168bff!important}
+body .profile-blue-tick svg,body .post-author-blue-tick svg{color:#168bff!important}
+body .profile-blue-tick svg path:first-child,body .post-author-blue-tick svg path:first-child{fill:#168bff!important}
+body .profile-blue-tick svg path:last-child,body .post-author-blue-tick svg path:last-child{fill:none!important;stroke:#fff!important}
+body .profile-main>.profile-avatar-wrap>.profile-photo-blue-tick{background:#168bff!important;color:#fff!important}
+body .profile-main>.profile-avatar-wrap>.profile-photo-blue-tick svg{color:#fff!important}
+
 body,body *{color:#fff!important}
 body input,body textarea,body select{background:#142238!important;color:#fff!important;border-color:#52647c!important}
 body input::placeholder,body textarea::placeholder{color:#c5d0df!important;opacity:1!important}
