@@ -2567,4 +2567,43 @@ body.story-modal-open .mobile-nav{display:none!important}
 @media(min-width:681px){.sm-story-shell{max-width:640px!important;margin:0 auto!important}.sm-story-tools{left:18px!important;right:18px!important}}
 @media(prefers-reduced-motion:reduce){.sm-story-tools .sm-story-tool{transition:none!important}}
 </style>
+<style id="story-panel-selection-visibility-fix">
+/* Give the selected editor tool enough real screen space; keep publish controls separate. */
+#modalBack.story-mode .sm-story-editor{flex:1 1 auto!important;min-height:0!important;overflow:hidden!important}
+#modalBack.story-mode .sm-story-stage{flex:1 1 0!important;min-height:125px!important;max-height:none!important}
+#modalBack.story-mode .sm-story-panel:not([hidden]){display:block!important;box-sizing:border-box!important;flex:0 1 36dvh!important;width:100%!important;min-height:145px!important;max-height:min(36dvh,430px)!important;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;padding:10px 14px 18px!important;scrollbar-width:thin!important;scrollbar-color:#c8a45c #172033!important;background:linear-gradient(145deg,#142238,#101725)!important;border-top:1px solid #c8a45c88!important;border-bottom:1px solid #c8a45c55!important;box-shadow:0 -8px 22px #0005!important}
+#modalBack.story-mode .sm-story-panel[hidden],
+#modalBack.story-mode .sm-story-panel [hidden]{display:none!important}
+#modalBack.story-mode .sm-story-panel-head{position:sticky!important;top:-10px!important;z-index:30!important;min-height:44px!important;margin:0 0 12px!important;padding:6px 0 9px!important;background:#142238!important;border-bottom:1px solid #c6a45c55!important}
+#modalBack.story-mode .sm-story-panel-head .sm-story-panel-close{width:38px!important;height:38px!important;min-width:38px!important;border:1px solid #c9a65f!important;background:linear-gradient(145deg,#273c55,#17263a)!important;color:#f5dfa6!important}
+#modalBack.story-mode #smStoryTextPanel,
+#modalBack.story-mode #smStoryMentionPanel,
+#modalBack.story-mode #smStoryStickersPanel,
+#modalBack.story-mode #smStoryFiltersPanel,
+#modalBack.story-mode #smStoryMusicPanel{display:block!important;min-width:0!important;padding-bottom:8px!important}
+#modalBack.story-mode .sm-story-filter-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px!important}
+#modalBack.story-mode .sm-story-filter-grid button{min-height:64px!important;padding:10px 6px!important;border:1px solid #6d7890!important;border-radius:13px!important;background:linear-gradient(145deg,#26374d,#17263b)!important;color:#fff!important;font-size:13px!important}
+#modalBack.story-mode .sm-story-filter-grid button:active,
+#modalBack.story-mode .sm-brand-sticker-grid button:active,
+#modalBack.story-mode .sm-story-sticker-grid button:active{transform:scale(.97)!important;border-color:#f1d18a!important}
+#modalBack.story-mode .sm-sticker-tabs{position:sticky!important;top:43px!important;z-index:20!important;display:flex!important;gap:7px!important;overflow-x:auto!important;padding:4px 0 10px!important;background:#142238!important}
+#modalBack.story-mode .sm-sticker-tabs button{flex:0 0 auto!important;min-height:44px!important;padding:9px 13px!important;border:1px solid #66748b!important;border-radius:22px!important;background:#202f45!important;color:#fff!important;white-space:nowrap!important}
+#modalBack.story-mode .sm-brand-sticker-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px!important}
+#modalBack.story-mode .sm-brand-sticker-grid button{min-height:76px!important;padding:9px 5px!important;border:1px solid #66748b!important;border-radius:14px!important;background:linear-gradient(145deg,#233b51,#15263a)!important;color:#fff!important}
+#modalBack.story-mode .sm-story-sticker-grid{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:8px!important}
+#modalBack.story-mode .sm-story-sticker-grid button{min-height:44px!important;font-size:25px!important;border:1px solid #536783!important;background:#1b2d43!important}
+#modalBack.story-mode .sm-story-bottom{flex:0 0 27dvh!important;min-height:175px!important;max-height:30dvh!important;overflow:hidden!important}
+#modalBack.story-mode .sm-story-bottom-scroll{min-height:0!important;overflow-y:auto!important}
+#modalBack.story-mode .sm-story-share{position:relative!important;z-index:35!important;flex:0 0 auto!important;padding-top:7px!important}
+#modalBack.story-mode #storyPublishButton{position:relative!important;z-index:36!important;min-height:50px!important;height:auto!important;display:flex!important;align-items:center!important;justify-content:center!important;visibility:visible!important;opacity:1!important}
+@media(max-height:760px){
+ #modalBack.story-mode .sm-story-panel:not([hidden]){flex-basis:30dvh!important;max-height:30dvh!important;min-height:130px!important}
+ #modalBack.story-mode .sm-story-bottom{flex-basis:29dvh!important;max-height:31dvh!important;min-height:165px!important}
+ #modalBack.story-mode .sm-story-stage{min-height:105px!important}
+}
+@media(max-width:380px){
+ #modalBack.story-mode .sm-brand-sticker-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ #modalBack.story-mode .sm-story-filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+</style>
 </body></html>
