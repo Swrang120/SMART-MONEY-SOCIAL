@@ -2462,5 +2462,25 @@ supabaseClient.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT')
 .sm-story-audience-person input{width:20px;height:20px;accent-color:#22b879}
 #storyPublishButton{min-width:130px;min-height:48px;font-weight:800}
 #storyPublishButton:disabled{opacity:.65;cursor:wait}
+
+/* Restore the mobile Menu palette; keep the white-text rule scoped to story/editor content only. */
+.mobile-menu-panel{
+ background:#ffffff!important;
+ color:#241d35!important;
+ border:1px solid #d9d2e8!important;
+ box-shadow:0 14px 45px #09051b35!important;
+}
+.mobile-menu-panel .mobile-menu-head,
+.mobile-menu-panel .mobile-menu-head b{color:#241d35!important}
+.mobile-menu-panel .mobile-menu-section-title{color:#9a7845!important;border-top-color:#e9e4f0!important}
+.mobile-menu-panel>button{
+ color:#241d35!important;
+ background:transparent!important;
+}
+.mobile-menu-panel>button:hover,
+.mobile-menu-panel>button:active{background:#f1ecfa!important;color:#241d35!important}
+.mobile-menu-panel .mobile-menu-close{
+ color:#35264d!important;background:#f0ebf7!important;
+}
 </style>
 </body></html>
