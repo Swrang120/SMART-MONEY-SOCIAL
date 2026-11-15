@@ -1326,7 +1326,35 @@ body{min-width:320px!important}
  #view-profile .profile-main .follow,#view-profile .profile-main .soft{padding:5px 7px!important;font-size:9px!important}
  #view-profile .post-media{max-height:300px!important}
 }
-</style></head>
+</style><style>
+
+/* Global white typography on the dark social interface */
+body,body *{color:#fff!important}
+body input,body textarea,body select{background:#142238!important;color:#fff!important;border-color:#52647c!important}
+body input::placeholder,body textarea::placeholder{color:#c5d0df!important;opacity:1!important}
+body option{background:#142238!important;color:#fff!important}
+body .profile-story-dot{display:none!important}
+
+/* Active story: green Instagram/Facebook-style ring around the profile photo */
+.profile-main .profile-avatar-wrap.profile-avatar-story{
+ position:relative!important;
+ isolation:isolate!important;
+}
+.profile-main .profile-avatar-wrap.profile-avatar-story::before{
+ content:""!important;
+ position:absolute!important;
+ inset:-5px!important;
+ border:3px solid #22c55e!important;
+ border-radius:50%!important;
+ pointer-events:none!important;
+ z-index:25!important;
+ box-shadow:0 0 0 2px #10221d,0 0 12px #22c55e88!important;
+}
+.profile-main .profile-avatar-wrap.profile-avatar-story>.avatar{position:relative!important;z-index:1!important}
+.profile-main .profile-avatar-wrap.profile-avatar-story>.profile-media-pencil{z-index:30!important}
+
+</style>
+</head>
 <body>
 
 <div class="app">
