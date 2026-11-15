@@ -2606,4 +2606,58 @@ body.story-modal-open .mobile-nav{display:none!important}
  #modalBack.story-mode .sm-story-filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 }
 </style>
+<style id="story-instagram-style-tool-layout">
+/* Story editor inspired by the supplied reference: vertical tools + selectable bottom sheet. */
+#modalBack.story-mode .sm-story-editor{position:relative!important;display:flex!important;flex:1 1 auto!important;flex-direction:column!important;min-height:0!important;overflow:hidden!important}
+#modalBack.story-mode .sm-story-stage{position:relative!important;display:flex!important;flex:1 1 auto!important;min-height:180px!important;max-height:none!important;padding:10px 66px 10px 10px!important;overflow:hidden!important}
+#modalBack.story-mode .sm-story-preview{position:relative!important;width:auto!important;height:100%!important;max-width:100%!important;max-height:100%!important;aspect-ratio:9/16!important;margin:0 auto!important;border-radius:12px!important;overflow:hidden!important}
+#modalBack.story-mode .sm-story-tools{position:absolute!important;top:12px!important;right:9px!important;left:auto!important;bottom:12px!important;width:52px!important;height:auto!important;max-height:none!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;gap:8px!important;padding:8px 5px!important;overflow-y:auto!important;overflow-x:hidden!important;border:1px solid #d2b36f88!important;border-radius:27px!important;background:rgba(8,15,29,.88)!important;box-shadow:0 8px 28px #0009,inset 0 1px #ffffff24!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important;scrollbar-width:none!important;z-index:25!important}
+#modalBack.story-mode .sm-story-tools::-webkit-scrollbar{display:none!important}
+#modalBack.story-mode .sm-story-tools .sm-story-tool{display:flex!important;flex:0 0 54px!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:3px!important;width:100%!important;height:54px!important;min-height:54px!important;max-width:none!important;padding:3px 0!important;border:0!important;border-radius:13px!important;background:transparent!important;color:#fff!important;overflow:visible!important}
+#modalBack.story-mode .sm-story-tools .sm-story-tool i{display:grid!important;place-items:center!important;width:37px!important;height:37px!important;min-width:37px!important;min-height:37px!important;flex:0 0 37px!important;border:1px solid #c6a45c!important;border-radius:13px!important;background:linear-gradient(145deg,#293c54,#111d30)!important;color:#f8dfa1!important;box-shadow:0 3px 10px #0007,inset 0 1px #ffffff22!important}
+#modalBack.story-mode .sm-story-tools .sm-story-tool svg{display:block!important;width:21px!important;height:21px!important;stroke:currentColor!important;stroke-width:1.8!important;fill:none!important}
+#modalBack.story-mode .sm-story-tools .sm-story-tool span{display:block!important;width:100%!important;max-width:100%!important;padding:0!important;margin:0!important;border:0!important;background:transparent!important;color:#f4f5f8!important;font-size:9px!important;font-weight:750!important;line-height:1.1!important;text-align:center!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important}
+#modalBack.story-mode .sm-story-tools .sm-story-tool:active i,
+#modalBack.story-mode .sm-story-tools .sm-story-tool:focus-visible i{background:linear-gradient(145deg,#f1d38c,#b98c42)!important;color:#142238!important;outline:2px solid #fff!important;outline-offset:1px!important}
+#modalBack.story-mode .sm-story-panel:not([hidden]){position:absolute!important;left:0!important;right:0!important;bottom:0!important;z-index:60!important;display:block!important;box-sizing:border-box!important;width:100%!important;max-height:min(54dvh,520px)!important;min-height:190px!important;flex:none!important;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;padding:9px 16px calc(18px + env(safe-area-inset-bottom))!important;border:1px solid #53647d!important;border-bottom:0!important;border-radius:23px 23px 0 0!important;background:linear-gradient(160deg,rgba(35,42,55,.99),rgba(17,24,37,.99))!important;box-shadow:0 -14px 38px #000b!important;scrollbar-width:thin!important;scrollbar-color:#c8a45c #172033!important}
+#modalBack.story-mode .sm-story-panel[hidden],
+#modalBack.story-mode .sm-story-panel [hidden]{display:none!important}
+#modalBack.story-mode .sm-story-panel:before{content:"";display:block;width:42px;height:4px;margin:0 auto 11px;border-radius:9px;background:#aab3c2!important;opacity:.9}
+#modalBack.story-mode .sm-story-panel-head{position:sticky!important;top:-9px!important;z-index:12!important;display:flex!important;align-items:center!important;min-height:48px!important;margin:0 0 12px!important;padding:7px 0!important;background:#202a3a!important;border-bottom:1px solid #c6a45c66!important}
+#modalBack.story-mode .sm-story-panel-head b{font-size:16px!important;font-weight:800!important;color:#fff!important}
+#modalBack.story-mode .sm-story-panel-head .sm-story-panel-close{display:grid!important;place-items:center!important;width:40px!important;height:40px!important;min-width:40px!important;border:1px solid #d2b36f!important;border-radius:50%!important;background:#26384f!important;color:#fff!important;font-size:23px!important}
+#modalBack.story-mode #smStoryTextPanel,
+#modalBack.story-mode #smStoryMentionPanel,
+#modalBack.story-mode #smStoryStickersPanel,
+#modalBack.story-mode #smStoryFiltersPanel,
+#modalBack.story-mode #smStoryMusicPanel{display:block!important;min-width:0!important;padding-bottom:8px!important}
+#modalBack.story-mode .sm-story-panel label{display:block!important;color:#fff!important;font-size:14px!important;font-weight:750!important;margin:8px 0!important}
+#modalBack.story-mode .sm-story-panel input:not([type=hidden]){width:100%!important;min-height:48px!important;box-sizing:border-box!important;border:1px solid #64758d!important;border-radius:13px!important;background:#111d2e!important;color:#fff!important;font-size:15px!important;padding:12px 14px!important}
+#modalBack.story-mode .sm-story-panel .sm-sticker-tabs{position:sticky!important;top:39px!important;z-index:10!important;display:flex!important;gap:8px!important;overflow-x:auto!important;padding:8px 0 11px!important;background:#202a3a!important}
+#modalBack.story-mode .sm-story-panel .sm-sticker-tabs button{flex:0 0 auto!important;min-height:43px!important;padding:9px 14px!important;border:1px solid #718098!important;border-radius:24px!important;background:#29374a!important;color:#fff!important;font-size:13px!important;white-space:nowrap!important}
+#modalBack.story-mode .sm-story-panel .sm-brand-sticker-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px!important}
+#modalBack.story-mode .sm-story-panel .sm-brand-sticker-grid button{min-height:82px!important;border:1px solid #667991!important;border-radius:14px!important;background:linear-gradient(145deg,#263e50,#17283c)!important;color:#fff!important}
+#modalBack.story-mode .sm-story-panel .sm-story-filter-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px!important}
+#modalBack.story-mode .sm-story-panel .sm-story-filter-grid button{min-height:62px!important;border:1px solid #687990!important;border-radius:13px!important;background:#27364a!important;color:#fff!important;font-size:13px!important}
+#modalBack.story-mode .sm-story-panel .story-music-catalog,
+#modalBack.story-mode .sm-story-panel #storyMusicCatalog{max-height:40dvh!important;overflow-y:auto!important}
+#modalBack.story-mode .sm-story-bottom{position:relative!important;z-index:20!important;flex:0 0 auto!important;min-height:0!important;max-height:29dvh!important;padding:8px 12px calc(7px + env(safe-area-inset-bottom))!important;background:#070b14!important;overflow:hidden!important}
+#modalBack.story-mode .sm-story-bottom-scroll{min-height:0!important;overflow-y:auto!important}
+#modalBack.story-mode .sm-story-share{position:relative!important;z-index:22!important;flex:0 0 auto!important;padding-top:7px!important}
+#modalBack.story-mode #storyPublishButton{display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;min-height:50px!important;height:auto!important;visibility:visible!important;opacity:1!important}
+@media(max-height:760px){
+ #modalBack.story-mode .sm-story-tools{top:7px!important;bottom:7px!important;gap:4px!important}
+ #modalBack.story-mode .sm-story-tools .sm-story-tool{flex-basis:48px!important;height:48px!important;min-height:48px!important}
+ #modalBack.story-mode .sm-story-tools .sm-story-tool i{width:33px!important;height:33px!important;min-width:33px!important;min-height:33px!important;flex-basis:33px!important}
+ #modalBack.story-mode .sm-story-panel:not([hidden]){max-height:49dvh!important;min-height:165px!important}
+ #modalBack.story-mode .sm-story-bottom{max-height:30dvh!important}
+}
+@media(max-width:380px){
+ #modalBack.story-mode .sm-story-stage{padding-right:59px!important}
+ #modalBack.story-mode .sm-story-tools{width:48px!important;right:5px!important}
+ #modalBack.story-mode .sm-story-tools .sm-story-tool span{font-size:8px!important}
+ #modalBack.story-mode .sm-story-panel .sm-brand-sticker-grid,
+ #modalBack.story-mode .sm-story-panel .sm-story-filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+</style>
 </body></html>
