@@ -1362,7 +1362,7 @@ body .profile-story-dot{display:none!important}
 .profile-main .profile-avatar-wrap.profile-avatar-story>.profile-media-pencil{z-index:30!important}
 
 </style>
-</head>
+<link rel="preconnect" href="https://cdvsjjexshalhudmmsei.supabase.co" crossorigin><link rel="dns-prefetch" href="//cdvsjjexshalhudmmsei.supabase.co"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin></head>
 <body>
 
 <div class="app">
@@ -1600,7 +1600,7 @@ async function ensureSocialProfile(user){
   if(insertError)throw insertError;
  }
 }
-async function activateSocialUser(user){authUser=user;isAdmin=['admin','super_admin'].includes(user?.app_metadata?.role);try{const roleResult=await supabaseClient.from('profiles').select('role').eq('id',user.id).maybeSingle();if(!roleResult.error&&roleResult.data?.role==='admin')isAdmin=true;await ensureSocialProfile(user);$('authGate')?.remove();document.body.classList.remove('preview-mode');const app=document.querySelector('.app');if(app)app.style.display='';const nav=document.querySelector('.mobile-nav');if(nav)nav.style.display='';await loadSocialData();subscribeSocialRealtime();renderAll();addSocialAdminShortcut();const routeUrl=new URL(window.location.href);const route=routeUrl.searchParams;const adminRequested=route.get('admin')==='1';let initialView='home';if(route.get('settings')==='1')initialView='settings';else if(route.get('notifications')==='1')initialView='notifications';else if(route.get('profile')==='1')initialView='profile';else if(route.get('messages')==='1'){history.replaceState({},'',routeUrl.pathname);location.replace(SOCIAL_BASE+'community.html?messages=1'+(route.get('peer')?'&peer='+encodeURIComponent(route.get('peer')):''));return;}if(routeUrl.search){history.replaceState({},'',routeUrl.pathname);}if(initialView==='profile')openProfile();else showView(initialView);addSocialLogout();if(adminRequested){if(isAdmin)await openAdmin();else showToast('Admin access is restricted to the Smart Money Social team.');}}catch(e){console.error(e);showAuthGate('Account setup could not finish: '+(e.message||'Please retry.'));}}
+async function activateSocialUser(user){authUser=user;isAdmin=['admin','super_admin'].includes(user?.app_metadata?.role);try{const [roleResult]=await Promise.all([supabaseClient.from('profiles').select('role').eq('id',user.id).maybeSingle(),ensureSocialProfile(user)]);if(!roleResult.error&&roleResult.data?.role==='admin')isAdmin=true;$('authGate')?.remove();document.body.classList.remove('preview-mode');const app=document.querySelector('.app');if(app)app.style.display='';const nav=document.querySelector('.mobile-nav');if(nav)nav.style.display='';await loadSocialData();subscribeSocialRealtime();renderAll();addSocialAdminShortcut();const routeUrl=new URL(window.location.href);const route=routeUrl.searchParams;const adminRequested=route.get('admin')==='1';let initialView='home';if(route.get('settings')==='1')initialView='settings';else if(route.get('notifications')==='1')initialView='notifications';else if(route.get('profile')==='1')initialView='profile';else if(route.get('messages')==='1'){history.replaceState({},'',routeUrl.pathname);location.replace(SOCIAL_BASE+'community.html?messages=1'+(route.get('peer')?'&peer='+encodeURIComponent(route.get('peer')):''));return;}if(routeUrl.search){history.replaceState({},'',routeUrl.pathname);}if(initialView==='profile')openProfile();else showView(initialView);addSocialLogout();if(adminRequested){if(isAdmin)await openAdmin();else showToast('Admin access is restricted to the Smart Money Social team.');}}catch(e){console.error(e);showAuthGate('Account setup could not finish: '+(e.message||'Please retry.'));}}
 async function logoutSocial(){const {error}=await supabaseClient.auth.signOut({scope:'local'});if(error){showToast(error.message);return;}authUser=null;canPublish=false;isAdmin=false;addSocialAdminShortcut();showAuthGate('You have been logged out.');}
 function addSocialAdminShortcut(){
  const side=$('sideNav');
@@ -1622,7 +1622,7 @@ function addSocialLogout(){
 }
 async function loadSocialData(){
  const uid=myId();if(!uid)return;
- const [profiles,privateProfileRes,posts,likes,comments,commentLikes,follows,saved,stories,storyLikes,storyViews,storyReplies,notifs]=await Promise.all([
+ const [profiles,privateProfileRes,posts,likes,comments,commentLikes,follows,saved,stories,storyLikes,storyViews,storyReplies,notifs,accessRes]=await Promise.all([
   supabaseClient.from('social_profiles').select('*'),
   supabaseClient.from('social_profile_private').select('*').eq('user_id',uid).maybeSingle(),
   supabaseClient.from('social_posts').select('*').order('created_at',{ascending:false}).limit(80),
@@ -1635,10 +1635,10 @@ async function loadSocialData(){
   supabaseClient.from('social_story_likes').select('*'),
   supabaseClient.from('social_story_views').select('story_id,viewer_id,viewed_at'),
   supabaseClient.from('social_story_replies').select('*').order('created_at',{ascending:true}),
-  supabaseClient.from('social_notifications').select('*').eq('user_id',uid).order('created_at',{ascending:false}).limit(100)
+  supabaseClient.from('social_notifications').select('*').eq('user_id',uid).order('created_at',{ascending:false}).limit(100),
+  supabaseClient.from('social_access').select('access_status').eq('user_id',uid).maybeSingle()
  ]);
- for(const r of [profiles,privateProfileRes,posts,likes,comments,commentLikes,follows,saved,stories,storyLikes,storyViews,storyReplies,notifs])if(r.error)throw r.error;
- const accessRes=await supabaseClient.from('social_access').select('access_status').eq('user_id',uid).maybeSingle();if(accessRes.error)throw accessRes.error;const socialStatus=accessRes.data?.access_status;if(['suspended','banned'].includes(socialStatus)){alert('Your Smart Money Social account is suspended after an admin review. Please contact Support if you believe this is a mistake.');await supabaseClient.auth.signOut();return;}canPublish=isAdmin||socialStatus==='approved';const accessNotice=$('accessNotice');if(accessNotice)accessNotice.textContent=canPublish?'Your Social account is active. You can publish posts and stories.':'Your account is active. Posting and Stories will be available after Social admin approval.';
+ for(const r of [profiles,privateProfileRes,posts,likes,comments,commentLikes,follows,saved,stories,storyLikes,storyViews,storyReplies,notifs,accessRes])if(r.error)throw r.error;const socialStatus=accessRes.data?.access_status;if(['suspended','banned'].includes(socialStatus)){alert('Your Smart Money Social account is suspended after an admin review. Please contact Support if you believe this is a mistake.');await supabaseClient.auth.signOut();return;}canPublish=isAdmin||socialStatus==='approved';const accessNotice=$('accessNotice');if(accessNotice)accessNotice.textContent=canPublish?'Your Social account is active. You can publish posts and stories.':'Your account is active. Posting and Stories will be available after Social admin approval.';
  const ownPrivateProfile=privateProfileRes.data||{};
  people=(profiles.data||[]).map(p=>({...p,...(p.user_id===uid?ownPrivateProfile:{}),id:p.user_id,name:cleanDisplayName(p.display_name||p.username||'Community Member')||p.username||'Community Member',handle:'@'+(p.username||'member'),bio:p.bio||'',photo:'',cover:'',avatar:'U',verified:p.user_id===uid}));
  const stickerPaths=(stories.data||[]).flatMap(x=>{try{const v=JSON.parse(x.sticker_emoji||'[]');return Array.isArray(v)?v.filter(o=>o&&o.type==='image'&&o.path).map(o=>o.path):[];}catch(e){return [];}});const paths=[...(posts.data||[]).map(x=>x.media_path),...(stories.data||[]).flatMap(x=>[x.media_path,x.music_path]),...stickerPaths,...(profiles.data||[]).flatMap(x=>[x.avatar_path,x.cover_path])].filter(Boolean);
