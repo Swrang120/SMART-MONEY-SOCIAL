@@ -1494,6 +1494,26 @@ body .profile-story-dot{display:none!important}
 #modalBack.story-mode .sm-pdf-text-styles button{flex:0 0 auto!important;padding:7px 11px!important;border-radius:9px!important}
 #modalBack.story-mode .sm-story-trash-target{z-index:70!important}
 @media(max-height:700px){#modalBack.story-mode #smStoryPanel:not([hidden]){height:52vh!important}#modalBack.story-mode .sm-story-bottom{max-height:23dvh!important}#modalBack.story-mode .sm-story-tool{flex-basis:43px!important;height:43px!important;min-height:43px!important}}
+</style><style id="sm-story-text-drag-fix-v5">
+#modalBack.story-mode #storyEditorCaption{
+ left:var(--story-text-x,50%)!important;
+ top:var(--story-text-y,50%)!important;
+ right:auto!important;bottom:auto!important;
+ transform:translate(-50%,-50%)!important;
+ width:max-content!important;max-width:82%!important;
+ min-height:24px!important;
+ padding:5px 9px!important;
+ background:#0008!important;
+ border-radius:8px!important;
+ pointer-events:auto!important;
+ touch-action:none!important;
+ user-select:none!important;
+ -webkit-user-select:none!important;
+ cursor:grab!important;
+ z-index:60!important;
+}
+#modalBack.story-mode #storyEditorCaption:active{cursor:grabbing!important}
+#modalBack.story-mode #storyEditorPreview{isolation:isolate!important}
 </style></head>
 <body>
 
@@ -2054,7 +2074,51 @@ async function addUploadedStorySticker(input){const file=input.files?.[0];if(!fi
 function downloadStoryMedia(){if(!storyEditorObjectUrl)return;const f=$('storyFile')?.files?.[0],a=document.createElement('a');a.href=storyEditorObjectUrl;a.download=f?.name||'story-media';document.body.appendChild(a);a.click();a.remove();}
 function previewStoryMedia(input){const f=input.files?.[0];if(!f)return;if(!f.type.startsWith('image/')&&!f.type.startsWith('video/')){showToast('Please choose an image or video.');return;}if(storyEditorObjectUrl)URL.revokeObjectURL(storyEditorObjectUrl);storyEditorObjectUrl=URL.createObjectURL(f);const picker=$('smStoryPicker'),editor=$('smStoryEditor'),target=$('storyEditorMedia');if(picker){picker.hidden=true;picker.style.display='none';}if(editor){editor.hidden=false;editor.style.display='flex';}if(target)target.innerHTML=f.type.startsWith('video/')?'<video src="'+safe(storyEditorObjectUrl)+'" muted autoplay loop playsinline style="width:100%;height:100%;object-fit:contain"></video>':'<img src="'+safe(storyEditorObjectUrl)+'" alt="Story preview" style="width:100%;height:100%;object-fit:contain">';loadStoryMusicLibrary();updateStoryEditorPreview();}
 function updateStoryEditorPreview(){const media=$('storyEditorMedia')?.firstElementChild;if(media)media.style.filter=[$('storyFilter')?.value||'none',window.storyEffectFilter||'none'].filter(x=>x&&x!=='none').join(' ')||'none';const caption=$('storyEditorCaption');if(caption){const mention=$('storyMention')?.value?.trim()||'',text=$('storyCaption')?.value||$('storyCaptionFallback')?.value||'';caption.textContent=[text,mention].filter(Boolean).join(' ');caption.style.fontFamily=window.storyTextStyle==='poster'?'Impact,system-ui':window.storyTextStyle==='classic'?'Georgia,serif':'system-ui,sans-serif';caption.style.fontWeight=window.storyTextStyle==='classic'?'600':'900';caption.style.fontStyle=window.storyTextStyle==='bubble'?'italic':'normal';}}
-function beginStoryCaptionDrag(event){const caption=event.currentTarget;if(!caption||!caption.textContent.trim())return;event.preventDefault();caption.setPointerCapture?.(event.pointerId);const box=$('storyEditorPreview'),target=$('smStoryDeleteTarget');if(!box||!target)return;const rect=box.getBoundingClientRect();let moved=false,lastX=event.clientX,lastY=event.clientY;showStoryDeleteZones(true);const move=e=>{moved=true;lastX=e.clientX;lastY=e.clientY;const x=Math.max(2,Math.min(98,(e.clientX-rect.left)/rect.width*100)),y=Math.max(5,Math.min(95,(e.clientY-rect.top)/rect.height*100));caption.style.left=x+'%';caption.style.top=y+'%';caption.style.right='auto';caption.style.bottom='auto';caption.style.transform='translate(-50%,-50%)';const tr=target.getBoundingClientRect();target.classList.toggle('active',e.clientX>=tr.left&&e.clientX<=tr.right&&e.clientY>=tr.top&&e.clientY<=tr.bottom);};const end=e=>{caption.removeEventListener('pointermove',move);caption.removeEventListener('pointerup',end);caption.removeEventListener('pointercancel',end);const x=Number.isFinite(e.clientX)?e.clientX:lastX,y=Number.isFinite(e.clientY)?e.clientY:lastY,tr=target.getBoundingClientRect(),del=moved&&x>=tr.left&&x<=tr.right&&y>=tr.top&&y<=tr.bottom;showStoryDeleteZones(false);if(del){if($('storyCaption'))$('storyCaption').value='';if($('storyCaptionFallback'))$('storyCaptionFallback').value='';if($('storyMention'))$('storyMention').value='';updateStoryEditorPreview();showToast('Text removed.');}};caption.addEventListener('pointermove',move);caption.addEventListener('pointerup',end);caption.addEventListener('pointercancel',end);}function selectStoryEffect(name,button){
+function beginStoryCaptionDrag(event){
+ const caption=event.currentTarget;
+ if(!caption||!caption.textContent.trim())return;
+ event.preventDefault();
+ event.stopPropagation();
+ const box=$('storyEditorPreview'),trash=$('smStoryDeleteTarget');
+ if(!box)return;
+ const rect=box.getBoundingClientRect();
+ let moved=false,lastX=event.clientX,lastY=event.clientY;
+ const pointerId=event.pointerId;
+ try{caption.setPointerCapture(pointerId);}catch(_){}
+ showStoryDeleteZones(true);
+ const move=e=>{
+  if(e.pointerId!==pointerId)return;
+  moved=true;lastX=e.clientX;lastY=e.clientY;
+  const x=Math.max(4,Math.min(96,(e.clientX-rect.left)/rect.width*100));
+  const y=Math.max(5,Math.min(95,(e.clientY-rect.top)/rect.height*100));
+  caption.style.setProperty('--story-text-x',x+'%');
+  caption.style.setProperty('--story-text-y',y+'%');
+  if(trash){const tr=trash.getBoundingClientRect();trash.classList.toggle('active',e.clientX>=tr.left&&e.clientX<=tr.right&&e.clientY>=tr.top&&e.clientY<=tr.bottom);}
+ };
+ const cleanup=()=>{
+  window.removeEventListener('pointermove',move,true);
+  window.removeEventListener('pointerup',end,true);
+  window.removeEventListener('pointercancel',end,true);
+  showStoryDeleteZones(false);
+ };
+ const end=e=>{
+  if(e.pointerId!==pointerId)return;
+  const x=Number.isFinite(e.clientX)?e.clientX:lastX,y=Number.isFinite(e.clientY)?e.clientY:lastY;
+  let del=false;
+  if(trash){const tr=trash.getBoundingClientRect();del=moved&&x>=tr.left&&x<=tr.right&&y>=tr.top&&y<=tr.bottom;}
+  cleanup();
+  if(del){
+   if($('storyCaption'))$('storyCaption').value='';
+   if($('storyCaptionFallback'))$('storyCaptionFallback').value='';
+   if($('storyMention'))$('storyMention').value='';
+   caption.style.removeProperty('--story-text-x');caption.style.removeProperty('--story-text-y');
+   updateStoryEditorPreview();showToast('Text removed.');
+  }
+ };
+ window.addEventListener('pointermove',move,true);
+ window.addEventListener('pointerup',end,true);
+ window.addEventListener('pointercancel',end,true);
+}function selectStoryEffect(name,button){
  const effects={none:'none',glow:'brightness(1.16) saturate(1.25) drop-shadow(0 0 5px #ffffff55)',cinema:'contrast(1.22) saturate(1.18)',soft:'blur(.25px) brightness(1.08) saturate(.9)',mono:'grayscale(1) contrast(1.12)',vintage:'sepia(.42) contrast(1.08) saturate(.85)'};
  window.storyEffectFilter=effects[name]||'none';
  document.querySelectorAll('.sm-pdf-effect-grid button').forEach(b=>b.classList.toggle('active',b===button));
