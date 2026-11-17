@@ -4451,12 +4451,16 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
  window.loadStoryMusicLibrary=async function(){
   const host=$m('smmlList');if(host)host.innerHTML='<div class="smml-empty">Loading music library…</div>';
   try{
-   let {data,error}=await supabaseClient.from('social_story_music_library').select('id,title,artist,file_path,artwork_path,duration_seconds,music_start_seconds,music_end_seconds,is_trending_hook,music_hooks').eq('is_active',true).order('created_at',{ascending:false});
-   // Backward compatibility: older Social DB migrations may not yet have music_hooks.
-   if(error && /music_hooks|column .* does not exist|schema cache/i.test(error.message||'')){
-    const fallback=await supabaseClient.from('social_story_music_library').select('id,title,artist,file_path,artwork_path,duration_seconds,music_start_seconds,music_end_seconds,is_trending_hook').eq('is_active',true).order('created_at',{ascending:false});
-    data=fallback.data;error=fallback.error;
-    if(!error)data=(data||[]).map(track=>({...track,music_hooks:[]}));
+   // Use the original upload schema first; optional hook columns must not block audio.
+   let {data,error}=await supabaseClient.from('social_story_music_library')
+    .select('id,title,artist,file_path,artwork_path,duration_seconds,is_active,created_at')
+    .eq('is_active',true).order('created_at',{ascending:false});
+   // Older databases may not have artwork_path. Keep audio available regardless.
+   if(error && /artwork_path|column .* does not exist|schema cache/i.test(error.message||'')){
+    const fallback=await supabaseClient.from('social_story_music_library')
+     .select('id,title,artist,file_path,duration_seconds,is_active,created_at')
+     .eq('is_active',true).order('created_at',{ascending:false});
+    data=(fallback.data||[]).map(track=>({...track,artwork_path:null}));error=fallback.error;
    }
    if(error)throw error;
    storyMusicCatalog=data||[];
