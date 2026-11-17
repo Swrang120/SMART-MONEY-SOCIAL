@@ -2848,16 +2848,16 @@ body.story-modal-open .mobile-nav{display:none!important}
  const hiddenMentions=()=>Array.isArray(window.storyMentionSelection)?window.storyMentionSelection:[];
  const originalRender=window.renderStoryEditorEmojis;
  window.renderStoryEditorEmojis=function(){
-   if(!Array.isArray(window.storyEditorEmojis))return;
-   const visible=window.storyEditorEmojis.filter(x=>x.type!=='hidden_mention');
-   const save=window.storyEditorEmojis;window.storyEditorEmojis=visible;
-   try{originalRender?.();}finally{window.storyEditorEmojis=save;}
+   if(!Array.isArray(storyEditorEmojis))return;
+   const visible=storyEditorEmojis.filter(x=>x.type!=='hidden_mention');
+   const save=storyEditorEmojis;storyEditorEmojis=visible;
+   try{originalRender?.();}finally{storyEditorEmojis=save;}
  };
  window.renderStoryMentionPeople=function(){
    const host=$('storyMentionPeopleList');if(!host)return;
    const selected=new Set(hiddenMentions());
-   const rows=(window.people||[]).filter(p=>p.id!==window.myId()).sort((a,b)=>(a.name||'').localeCompare(b.name||''));
-   host.innerHTML=rows.map(p=>'<label class="sm-pdf-mention-row" data-search="'+esc(((p.name||'')+' '+(p.handle||'')).toLowerCase())+'">'+(window.avatar?window.avatar(p,'small'):'<span class="sm-avatar">👤</span>')+'<span><b>'+esc(p.handle||p.name||'Member')+'</b><small>'+esc(p.name||'')+'</small></span><input type="checkbox" value="'+esc(p.id)+'" '+(selected.has(p.id)?'checked':'')+' onchange="toggleStoryMentionPerson(this)"></label>').join('')||'<div class="sm-pdf-empty">No members available.</div>';
+   const rows=people.filter(p=>p.id!==myId()).sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+   host.innerHTML=rows.map(p=>'<label class="sm-pdf-mention-row" data-search="'+esc(((p.name||'')+' '+(p.handle||'')).toLowerCase())+'">'+avatar(p,'small')+'<span><b>'+esc(p.handle||p.name||'Member')+'</b><small>'+esc(p.name||'')+'</small></span><input type="checkbox" value="'+esc(p.id)+'" '+(selected.has(p.id)?'checked':'')+' onchange="toggleStoryMentionPerson(this)"></label>').join('')||'<div class="sm-pdf-empty">No members available.</div>';
    window.updateStoryMentionCount?.();
  };
  window.applyStoryMentions=function(){
