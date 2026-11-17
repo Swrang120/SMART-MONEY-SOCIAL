@@ -3259,4 +3259,77 @@ document.addEventListener('click',function(e){
  if(bottom)bottom.classList.toggle('show-audience');
 },true);
 </script>
+<style id="story-text-controls-hard-reset-v15">
+/* Use a native, touch-safe vertical range control and keep the top actions clear. */
+#smStoryNativeTextComposer{pointer-events:none!important}
+#smStoryNativeTextComposer.open{pointer-events:auto!important}
+#smStoryNativeTextComposer header{position:relative!important;z-index:300!important;pointer-events:auto!important}
+#smStoryNativeTextComposer header>button{z-index:301!important;pointer-events:auto!important;touch-action:manipulation!important}
+#smStoryNativeTextComposer #smNativeTextSizeSlider{position:absolute!important;display:block!important;pointer-events:auto!important;touch-action:pan-x!important;z-index:500!important;width:30px!important;height:42%!important;left:8px!important;top:29%!important;writing-mode:vertical-lr!important;direction:rtl!important;accent-color:#1688ff!important;opacity:1!important}
+#smStoryNativeTextComposer textarea{pointer-events:auto!important;touch-action:pan-y!important}
+#modalBack.story-mode .sm-story-top{position:absolute!important;top:env(safe-area-inset-top,0px)!important;left:0!important;right:0!important;z-index:250!important;pointer-events:none!important}
+#modalBack.story-mode .sm-story-top>*{pointer-events:auto!important}
+#modalBack.story-mode .sm-story-top b{position:absolute!important;left:50%!important;transform:translateX(-50%)!important;max-width:42%!important;white-space:nowrap!important;overflow:hidden!important}
+#modalBack.story-mode .sm-story-top .sm-story-audience-settings{position:absolute!important;right:104px!important;top:4px!important;margin:0!important}
+#modalBack.story-mode .sm-story-top .sm-story-share{position:absolute!important;right:54px!important;top:2px!important;width:42px!important;height:42px!important;padding:0!important;background:transparent!important}
+#modalBack.story-mode .sm-story-top #storyPublishButton{width:42px!important;height:42px!important}
+</style>
+<script id="story-text-controls-hard-reset-v15">
+(function(){
+ const byId=id=>document.getElementById(id);
+ function hardenTextControls(){
+  const layer=byId('smStoryNativeTextComposer');
+  if(!layer||!layer.classList.contains('open'))return;
+  const header=layer.querySelector('header');
+  let done=header?.querySelector('button');
+  if(done&&!done.dataset.v15){
+   const fresh=done.cloneNode(true);
+   fresh.removeAttribute('onclick');
+   fresh.type='button';fresh.textContent='Done ✓';fresh.dataset.v15='1';
+   fresh.addEventListener('click',function(e){
+    e.preventDefault();e.stopPropagation();
+    const input=byId('smNativeStoryTextInput');
+    if(input&&byId('storyCaption'))byId('storyCaption').value=input.value;
+    if(input)input.blur();
+    updateStoryEditorPreview();
+    layer.classList.remove('open');
+   });
+   done.replaceWith(fresh);
+  }
+  let slider=byId('smNativeTextSizeSlider');
+  if(slider&&!slider.dataset.v15){
+   const fresh=slider.cloneNode(true);
+   fresh.dataset.v15='1';
+   fresh.min='12';fresh.max='76';fresh.step='1';
+   fresh.value=String(window.storyTextSize||26);
+   fresh.addEventListener('input',e=>setStoryTextSize(e.currentTarget.value));
+   let dragging=false;
+   const applyAt=e=>{
+    const r=fresh.getBoundingClientRect();
+    const ratio=Math.max(0,Math.min(1,(r.bottom-e.clientY)/Math.max(1,r.height)));
+    const value=Math.round(12+ratio*64);
+    fresh.value=String(value);setStoryTextSize(value);
+   };
+   fresh.addEventListener('pointerdown',e=>{dragging=true;applyAt(e);fresh.setPointerCapture?.(e.pointerId);e.preventDefault();},{passive:false});
+   fresh.addEventListener('pointermove',e=>{if(dragging)applyAt(e);},{passive:true});
+   const stop=()=>{dragging=false;};
+   fresh.addEventListener('pointerup',stop);fresh.addEventListener('pointercancel',stop);
+   slider.replaceWith(fresh);slider=fresh;
+  }
+ }
+ const open=window.openStoryTextComposer;
+ if(typeof open==='function'&&!open.__v15){
+  const wrapped=function(){const result=open.apply(this,arguments);requestAnimationFrame(hardenTextControls);setTimeout(hardenTextControls,80);return result;};
+  wrapped.__v15=true;window.openStoryTextComposer=wrapped;
+ }
+ document.addEventListener('click',e=>{
+  if(e.target.closest('#smStoryNativeTextComposer header>button')){
+   const layer=byId('smStoryNativeTextComposer');
+   if(layer?.classList.contains('open')){e.preventDefault();e.stopImmediatePropagation();const input=byId('smNativeStoryTextInput');if(input&&byId('storyCaption'))byId('storyCaption').value=input.value;updateStoryEditorPreview();layer.classList.remove('open');}
+  }
+ },true);
+ const mo=new MutationObserver(()=>{if(byId('smStoryNativeTextComposer')?.classList.contains('open'))hardenTextControls();});
+ mo.observe(document.body,{childList:true,subtree:true});
+})();
+</script>
 </body></html>
