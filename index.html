@@ -2784,19 +2784,7 @@ body.story-modal-open .mobile-nav{display:none!important}
 
 
 
-<script id="story-text-touch-controls-v2">
-(function(){
- if(window.__storyTextTouchControlsV2)return;window.__storyTextTouchControlsV2=true;
- const caption=()=>document.getElementById('storyEditorCaption');
- let pinchStart=0,pinchFont=24;
- function dist(t){const x=t[0].clientX-t[1].clientX,y=t[0].clientY-t[1].clientY;return Math.hypot(x,y);}
- document.addEventListener('touchstart',e=>{const c=caption();if(!c||!c.textContent.trim()||!e.target.closest('#storyEditorPreview')||e.touches.length!==2)return;pinchStart=dist(e.touches);pinchFont=parseFloat(getComputedStyle(c).fontSize)||24;},{passive:true,capture:true});
- document.addEventListener('touchmove',e=>{const c=caption();if(!c||!pinchStart||e.touches.length!==2)return;const next=Math.max(12,Math.min(76,pinchFont*dist(e.touches)/pinchStart));c.style.fontSize=next+'px';},{passive:true,capture:true});
- document.addEventListener('touchend',e=>{if(e.touches.length<2)pinchStart=0;},{passive:true,capture:true});
- window.setStoryTextBackground=function(mode){window.storyTextBackground=mode;const c=caption();if(c){c.style.background=mode?'#0009':'transparent';c.style.padding=mode?'9px 14px':'0';c.style.borderRadius=mode?'12px':'0';} };
- window.setStoryTextSize=function(v){const c=caption();if(c)c.style.fontSize=Math.max(12,Math.min(76,Number(v)||24))+'px';};
-})();
-</script>
+<script id="story-text-touch-controls-v2">(function(){ /* Superseded by unified Instagram-style touch gestures. */ })();</script>
 <style id="story-editor-single-source-v7">
 #modalBack.story-mode{position:fixed!important;inset:0!important;z-index:2300!important;padding:0!important;overflow:hidden!important;background:#050505!important}
 #modalBack.story-mode .modal{position:relative!important;width:100%!important;max-width:100%!important;height:100dvh!important;max-height:100dvh!important;margin:0!important;padding:0!important;overflow:hidden!important;background:#050505!important;color:#fff!important}
@@ -4648,80 +4636,94 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
 </style>
 <script id="sm-unified-two-finger-gestures-js">
 (function(){
- if(window.__smUnifiedPinchV1)return;window.__smUnifiedPinchV1=true;
- const preview=()=>document.getElementById('storyEditorPreview');
- const state={target:null,pointers:new Map(),startDistance:0,startScale:1,startX:0,startY:0,startLeft:0,startTop:0,kind:'',index:-1,moved:false};
+ if(window.__smUnifiedPinchV2)return;window.__smUnifiedPinchV2=true;
+ const box=document.getElementById('storyEditorPreview');
+ if(!box)return;
+ const S={node:null,kind:'',index:-1,startD:0,startScale:1,startX:0,startY:0,startLeft:50,startTop:50,pinching:false,moved:false};
  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
- const distance=ps=>{const p=[...ps.values()];return p.length<2?0:Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y);};
- function scaleOf(kind,index,node){
-  if(kind==='sticker')return Number(storyEditorEmojis[index]?.scale)||1;
-  if(kind==='caption')return Number(window.storyCaptionScale)||1;
+ const dist=(a,b)=>Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);
+ function pick(target){
+  let n=target.closest?.('[data-sticker-index]');
+  if(n)return {node:n,kind:'sticker',index:Number(n.dataset.stickerIndex)};
+  if(target.closest?.('#storyEditorCaption'))return {node:document.getElementById('storyEditorCaption'),kind:'caption',index:-1};
+  if(target.closest?.('#storyEditorMedia'))return {node:document.querySelector('#storyEditorMedia>*'),kind:'media',index:-1};
+  return null;
+ }
+ function currentScale(){
+  if(S.kind==='sticker')return Number(storyEditorEmojis[S.index]?.scale)||1;
+  if(S.kind==='caption')return Number(window.storyCaptionScale)||1;
   return Number(window.storyMediaScale)||1;
  }
- function applyScale(){
-  const s=state,ratio=clamp(distance(s.pointers)/(s.startDistance||1),.25,4),next=clamp(s.startScale*ratio,.35,4);
-  if(s.kind==='sticker'){
-   const o=storyEditorEmojis[s.index];if(!o)return;o.scale=next;
-   s.target.style.transform='translate(-50%,-50%) scale('+next+')';
-  }else if(s.kind==='caption'){
-   window.storyCaptionScale=next;s.target.style.transform='scale('+next+')';
+ function paintScale(value){
+  const v=clamp(value,.25,4);
+  if(S.kind==='sticker'){
+   const o=storyEditorEmojis[S.index];if(!o)return;o.scale=v;
+   S.node.style.transform='translate(-50%,-50%) scale('+v+')';
+  }else if(S.kind==='caption'){
+   window.storyCaptionScale=v;S.node.style.transform='scale('+v+')';
   }else{
-   window.storyMediaScale=next;s.target.style.transform='scale('+next+')';
+   window.storyMediaScale=v;S.node.style.transform='scale('+v+')';
   }
  }
- function onDown(e){
-  if(e.pointerType==='mouse'&&e.button!==0)return;
-  const box=preview();if(!box||!box.contains(e.target))return;
-  let node,kind,index;
-  if(state.pointers.size===1&&state.target){
-   // Second finger may land anywhere inside the editor canvas, including empty space.
-   node=state.target;kind=state.kind;index=state.index;
-  }else{
-   node=e.target.closest('[data-sticker-index]');kind='sticker';index=node?Number(node.dataset.stickerIndex):-1;
-   if(!node&&e.target.closest('#storyEditorCaption')){node=document.getElementById('storyEditorCaption');kind='caption';}
-   if(!node&&e.target.closest('#storyEditorMedia')){node=document.querySelector('#storyEditorMedia>*');kind='media';}
-   if(!node)return;
-   if(kind==='media'&&!node)return;
+ function onTouchStart(e){
+  if(!box.contains(e.target))return;
+  if(e.touches.length===1){
+   const found=pick(e.target);
+   if(!found)return;
+   S.node=found.node;S.kind=found.kind;S.index=found.index;
+   S.startX=e.touches[0].clientX;S.startY=e.touches[0].clientY;
+   S.startScale=currentScale();S.moved=false;S.pinching=false;
+   if(S.kind==='sticker'){
+    const o=storyEditorEmojis[S.index];S.startLeft=Number(o?.x)||50;S.startTop=Number(o?.y)||50;
+   }else if(S.kind==='caption'){
+    S.startLeft=parseFloat(S.node.style.left)||50;S.startTop=parseFloat(S.node.style.top)||50;
+   }
+   return;
   }
-  if(state.pointers.size===0){state.target=node;state.kind=kind;state.index=index;state.startScale=scaleOf(kind,index,node);state.startDistance=0;state.moved=false;}
-  if(state.target!==node)return;
-  try{state.target.setPointerCapture?.(e.pointerId);}catch(_){}
-  state.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
-  e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
-  if(state.pointers.size===2){state.startDistance=distance(state.pointers)||1;state.startScale=scaleOf(state.kind,state.index,state.target);state.moved=true;}
-  else if(state.pointers.size===1&&state.kind!=='media'){state.startX=e.clientX;state.startY=e.clientY;state.startLeft=parseFloat(node.style.left)||50;state.startTop=parseFloat(node.style.top)||50;}
-  if(state.pointers.size>2){state.pointers.delete(e.pointerId);}
- }
- function onMove(e){
-  if(!state.pointers.has(e.pointerId))return;
-  state.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
-  if(state.pointers.size>=2){e.preventDefault();applyScale();return;}
-  if(state.pointers.size===1&&state.kind==='sticker'){
-   const dx=e.clientX-state.startX,dy=e.clientY-state.startY,rect=preview().getBoundingClientRect();
-   if(Math.abs(dx)+Math.abs(dy)>5)state.moved=true;
-   if(state.moved){const o=storyEditorEmojis[state.index];if(o){o.x=clamp(state.startLeft+dx/rect.width*100,2,98);o.y=clamp(state.startTop+dy/rect.height*100,2,98);state.target.style.left=o.x+'%';state.target.style.top=o.y+'%';}}
-  }else if(state.pointers.size===1&&state.kind==='caption'){
-   const dx=e.clientX-state.startX,dy=e.clientY-state.startY;
-   if(Math.abs(dx)+Math.abs(dy)>5){state.moved=true;state.target.style.translate=dx+'px '+dy+'px';}
+  if(e.touches.length===2&&S.node){
+   S.startD=dist(e.touches[0],e.touches[1])||1;
+   S.startScale=currentScale();S.pinching=true;S.moved=true;
+   e.preventDefault();
   }
  }
- function finish(e){
-  if(!state.pointers.has(e.pointerId))return;
-  state.pointers.delete(e.pointerId);
-  if(state.pointers.size===1){const p=[...state.pointers.values()][0];state.startX=p.x;state.startY=p.y;if(state.kind==='sticker'){const o=storyEditorEmojis[state.index];state.startLeft=o?.x||50;state.startTop=o?.y||50;}return;}
-  if(state.pointers.size)return;
-  const kind=state.kind,index=state.index,wasPinch=state.moved;
-  state.target=null;state.kind='';state.index=-1;state.startDistance=0;state.moved=false;
-  if(kind==='sticker'&&wasPinch)renderStoryEditorEmojis();
+ function onTouchMove(e){
+  if(!S.node)return;
+  if(e.touches.length>=2&&S.pinching){
+   e.preventDefault();
+   paintScale(S.startScale*dist(e.touches[0],e.touches[1])/(S.startD||1));
+   return;
+  }
+  if(e.touches.length===1&&!S.pinching&&S.kind!=='media'){
+   const t=e.touches[0],dx=t.clientX-S.startX,dy=t.clientY-S.startY;
+   if(Math.abs(dx)+Math.abs(dy)>5)S.moved=true;
+   if(!S.moved)return;
+   if(S.kind==='sticker'){
+    const o=storyEditorEmojis[S.index],r=box.getBoundingClientRect();if(!o||!r.width||!r.height)return;
+    o.x=clamp(S.startLeft+dx/r.width*100,2,98);o.y=clamp(S.startTop+dy/r.height*100,2,98);
+    S.node.style.left=o.x+'%';S.node.style.top=o.y+'%';
+   }else if(S.kind==='caption'){
+    S.node.style.translate=dx+'px '+dy+'px';
+   }
+  }
  }
- const box=preview();
- if(box){
-  box.addEventListener('pointerdown',onDown,{capture:true,passive:false});
-  window.addEventListener('pointermove',onMove,{passive:false});
-  window.addEventListener('pointerup',finish);
-  window.addEventListener('pointercancel',finish);
-  box.addEventListener('touchmove',e=>{if(e.touches.length>=2)e.preventDefault();},{passive:false});
+ function onTouchEnd(e){
+  if(e.touches.length===1&&S.pinching){
+   const t=e.touches[0];S.startX=t.clientX;S.startY=t.clientY;S.startScale=currentScale();
+   if(S.kind==='sticker'){const o=storyEditorEmojis[S.index];S.startLeft=Number(o?.x)||50;S.startTop=Number(o?.y)||50;}
+   S.pinching=false;S.startD=0;return;
+  }
+  if(e.touches.length===0){
+   const kind=S.kind,wasPinch=S.pinching||S.moved;
+   S.node=null;S.kind='';S.index=-1;S.startD=0;S.pinching=false;S.moved=false;
+   if(kind==='sticker'&&wasPinch)renderStoryEditorEmojis();
+  }
  }
+ // Stop legacy pointer drag handlers for touch; touch handlers below own the gesture.
+ box.addEventListener('pointerdown',e=>{if(e.pointerType==='touch')e.stopImmediatePropagation();},true);
+ box.addEventListener('touchstart',onTouchStart,{capture:true,passive:false});
+ box.addEventListener('touchmove',onTouchMove,{capture:true,passive:false});
+ box.addEventListener('touchend',onTouchEnd,{capture:true,passive:false});
+ box.addEventListener('touchcancel',onTouchEnd,{capture:true,passive:false});
  window.resetStoryMediaZoom=function(){window.storyMediaScale=1;const n=document.querySelector('#storyEditorMedia>*');if(n)n.style.transform='scale(1)';};
  window.resetStoryCaptionZoom=function(){window.storyCaptionScale=1;const n=document.getElementById('storyEditorCaption');if(n)n.style.transform='scale(1)';n?.style.removeProperty('translate');};
 })();
