@@ -3934,5 +3934,72 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
 })();
 </script>
 
+
+<style id="story-text-live-formatting-fix-v28">
+#smStoryTextEditorV23 textarea{color:var(--story-text-color,#fff)!important;font-size:var(--story-text-size,28px)!important;text-align:var(--story-text-align,center)!important}
+#smStoryTextEditorV23 .v23-colors[hidden]{display:none!important}
+#smStoryTextEditorV23 .v23-colors:not([hidden]){display:flex!important;position:relative!important;z-index:40!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important}
+#smStoryTextEditorV23 .v23-colors button{pointer-events:auto!important;position:relative!important;z-index:41!important}
+</style>
+<script id="story-text-live-formatting-fix-v28">
+(function(){
+ const $=id=>document.getElementById(id);
+ const layer=$('smStoryTextEditorV23');
+ const fontMap={signature:'cursive',editor:'system-ui,sans-serif',poster:'Impact,system-ui',bubble:'Trebuchet MS,system-ui',deco:'Georgia,serif',classic:'Georgia,serif',bold:'system-ui,sans-serif',neon:'system-ui,sans-serif',type:'monospace'};
+ function apply(){
+  const input=$('smStoryTextInputV23'),caption=$('storyEditorCaption');
+  const color=window.storyTextColor||'#ffffff',size=Math.max(12,Math.min(88,Number(window.storyTextSize)||28));
+  const style=window.storyTextStyle||'editor',align=window.storyTextAlign||'center';
+  const font=fontMap[style]||fontMap.editor,weight=['bold','poster','neon'].includes(style)?'900':'650';
+  [input,caption].filter(Boolean).forEach(node=>{
+   node.style.setProperty('color',color,'important');
+   node.style.setProperty('font-size',size+'px','important');
+   node.style.setProperty('font-family',font,'important');
+   node.style.setProperty('font-weight',weight);
+   node.style.setProperty('font-style',style==='bubble'?'italic':'normal');
+   node.style.setProperty('text-align',align);
+   node.style.setProperty('background',window.storyTextBackground?'rgba(17,24,39,.78)':'transparent');
+   node.style.setProperty('padding',window.storyTextBackground?'9px 14px':'4px 8px');
+   node.style.setProperty('border-radius',window.storyTextBackground?'14px':'0');
+   node.style.setProperty('-webkit-text-stroke',window.storyTextOutline?'1px #111':'0 transparent');
+   node.style.setProperty('text-shadow',window.storyTextGlow?'0 0 8px currentColor,0 0 18px currentColor':'0 2px 6px #000b');
+   node.style.setProperty('animation',window.storyTextMotion?'smStoryTextPulseV23 1.8s ease-in-out infinite':'none');
+  });
+  if(input)input.style.setProperty('--story-text-color',color);
+  const slider=$('smStoryTextSizeV23');if(slider&&Number(slider.value)!==size)slider.value=String(size);
+ }
+ window.setStoryTextColor=function(color){
+  if(!/^#[0-9a-f]{6}$/i.test(String(color)))return;
+  window.storyTextColor=color;apply();
+  layer?.querySelectorAll('[data-v23-color]').forEach(b=>b.classList.toggle('active',b.dataset.v23Color.toLowerCase()===color.toLowerCase()));
+ };
+ window.setStoryTextSize=function(value){
+  window.storyTextSize=Math.max(12,Math.min(88,Number(value)||28));apply();
+ };
+ document.addEventListener('click',function(e){
+  const color=e.target.closest('#smStoryTextEditorV23 [data-v23-color]');
+  if(color){e.preventDefault();e.stopImmediatePropagation();window.setStoryTextColor(color.dataset.v23Color);const rail=$('smStoryTextColorsV23');if(rail)rail.hidden=true;return;}
+  const font=e.target.closest('#smStoryTextEditorV23 [data-v23-font]');
+  if(font){window.storyTextStyle=font.dataset.v23Font;apply();}
+  const wheel=e.target.closest('#smStoryColorWheelV23');
+  if(wheel){const rail=$('smStoryTextColorsV23');if(rail)rail.hidden=!rail.hidden;}
+  const bg=e.target.closest('#smStoryTextBgV23');
+  if(bg){window.storyTextBackground=!window.storyTextBackground;apply();}
+ },true);
+ document.addEventListener('input',function(e){
+  if(e.target?.id==='smStoryTextSizeV23'){window.storyTextSize=Number(e.target.value)||28;apply();}
+  if(e.target?.id==='smStoryTextInputV23'){
+   const target=$('storyCaption');if(target)target.value=e.target.value;
+   const fallback=$('storyCaptionFallback');if(fallback)fallback.value=e.target.value;
+   const caption=$('storyEditorCaption');if(caption)caption.textContent=e.target.value;
+   apply();
+  }
+ },true);
+ const observer=new MutationObserver(()=>{if(layer&&!layer.hidden)apply();});
+ if(layer)observer.observe(layer,{attributes:true,attributeFilter:['hidden','class']});
+ window.addEventListener('resize',()=>{if(layer&&!layer.hidden)apply();});
+})();
+</script>
+
 </body>
 </html>
