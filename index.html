@@ -1553,6 +1553,23 @@ body .profile-story-dot{display:none!important}
 #modalBack.story-mode .sm-story-share button{min-height:42px!important;border-radius:12px!important}
 #modalBack.story-mode .sm-story-trash-target{z-index:120!important}
 @media(max-height:700px){#modalBack.story-mode .sm-story-bottom{max-height:19dvh!important}#modalBack.story-mode #smStoryPanel:not([hidden]){height:49vh!important}}
+</style><style id="sm-native-text-composer-v1">
+#smStoryNativeTextComposer{display:none;position:fixed;inset:0;z-index:100000;background:#090d10;color:#fff;flex-direction:column;overflow:hidden}
+#smStoryNativeTextComposer.open{display:flex}
+#smStoryNativeTextComposer header{height:70px;min-height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 22px}
+#smStoryNativeTextComposer button{color:#fff;border:0;background:#171d22;border-radius:28px;padding:12px 20px;font-weight:700}
+#smStoryNativeTextComposer header div{display:flex;gap:12px}
+#smStoryNativeTextComposer header div button{width:50px;height:50px;padding:0;border-radius:50%;font-size:21px}
+#smStoryNativeTextComposer main{position:relative;flex:1;min-height:180px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#050708}
+#smStoryNativeTextComposer main>div{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:.65}
+#smStoryNativeTextComposer main img,#smStoryNativeTextComposer main video{width:100%;height:100%;object-fit:contain}
+#smStoryNativeTextComposer textarea{position:relative;z-index:2;width:78%;min-height:80px;max-height:45%;resize:none;border:0;outline:0;background:transparent;color:#fff;text-align:center;font:800 27px/1.25 system-ui;text-shadow:0 2px 6px #0009;padding:12px}
+#smStoryNativeTextComposer textarea::placeholder{color:#fffa}
+#smStoryNativeTextComposer #smNativeTextColorRail{position:absolute;z-index:3;right:22px;top:18%;height:42%;width:14px;padding:0;border-radius:12px;background:linear-gradient(#fff,#ffcf33,#ff4d3d,#57e85a,#32baff,#864cff,#ff3d9b)}
+#smStoryNativeTextComposer nav{min-height:88px;display:flex;align-items:center;gap:12px;overflow-x:auto;padding:0 18px}
+#smStoryNativeTextComposer nav button{flex:0 0 56px;width:56px;height:56px;border-radius:50%;padding:0;font-size:19px}
+#smStoryNativeTextComposer nav button:focus{background:#fff;color:#111}
+@media(max-height:650px){#smStoryNativeTextComposer header{height:54px;min-height:54px}#smStoryNativeTextComposer nav{min-height:64px}#smStoryNativeTextComposer textarea{font-size:22px}}
 </style></head>
 <body>
 
@@ -2072,7 +2089,7 @@ function openStoryComposer(){
  <div id="storyEditorPreview" class="sm-story-preview"><div id="storyEditorMedia" class="sm-story-media"></div><div id="storyEditorEmoji" class="sm-story-emoji"></div><div id="storyEditorCaption" class="sm-story-caption" onpointerdown="beginStoryCaptionDrag(event)"></div></div>
  <button id="smStoryDeleteTarget" class="sm-story-trash-target" type="button" aria-label="Drop here to delete" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3m3 0-.9 13H6.9L6 7m4 3v7m4-7v7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
  <div class="sm-story-tools" aria-label="Premium story editing tools">
- <button type="button" class="sm-story-tool" onclick="toggleStoryPanel('text')" title="Add text" aria-label="Add text"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6V4h16v2M12 4v16M8 20h8" /></svg></i><span>Text</span></button>
+ <button type="button" class="sm-story-tool" onclick="openStoryTextComposer()" title="Add text" aria-label="Add text"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6V4h16v2M12 4v16M8 20h8" /></svg></i><span>Text</span></button>
  <button type="button" class="sm-story-tool" onclick="toggleStoryPanel('stickers')" title="Stickers" aria-label="Stickers"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-8-8h8v8Z"/><path d="M20 12h-5a3 3 0 0 0 3 3v5M8.5 10h.01M13 8.5h.01M8.5 14h.01"/></svg></i><span>Stickers</span></button>
  <button type="button" class="sm-story-tool" onclick="toggleStoryPanel('music')" title="Add music" aria-label="Add music"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></i><span>Music</span></button>
  <button type="button" class="sm-story-tool" onclick="toggleStoryPanel('filters')" title="Restyle" aria-label="Restyle"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2L12 2Z"/><path d="m19 2 .8 2.2L22 5l-2.2.8L19 8l-.8-2.2L16 5l2.2-.8L19 2Z"/></svg></i><span>Restyle</span></button>
@@ -2112,7 +2129,25 @@ function addStorySticker(item){if(storyEditorEmojis.length>=15){showToast('You c
 async function addUploadedStorySticker(input){const file=input.files?.[0];if(!file)return;if(!['image/png','image/webp','image/jpeg'].includes(file.type)){showToast('Use PNG, WEBP or JPG sticker images.');input.value='';return;}if(file.size>3*1024*1024){showToast('Sticker image maximum size is 3 MB.');input.value='';return;}try{showToast('Uploading your sticker…');const path=await uploadMedia(file,'stories');const url=await signedMedia(path);addStorySticker({type:'image',path,url,x:50,y:50,scale:1});input.value='';}catch(e){showToast(e.message||'Sticker upload failed');}}
 function downloadStoryMedia(){if(!storyEditorObjectUrl)return;const f=$('storyFile')?.files?.[0],a=document.createElement('a');a.href=storyEditorObjectUrl;a.download=f?.name||'story-media';document.body.appendChild(a);a.click();a.remove();}
 function previewStoryMedia(input){const f=input.files?.[0];if(!f)return;if(!f.type.startsWith('image/')&&!f.type.startsWith('video/')){showToast('Please choose an image or video.');return;}if(storyEditorObjectUrl)URL.revokeObjectURL(storyEditorObjectUrl);storyEditorObjectUrl=URL.createObjectURL(f);const picker=$('smStoryPicker'),editor=$('smStoryEditor'),target=$('storyEditorMedia');if(picker){picker.hidden=true;picker.style.display='none';}if(editor){editor.hidden=false;editor.style.display='flex';}if(target)target.innerHTML=f.type.startsWith('video/')?'<video src="'+safe(storyEditorObjectUrl)+'" muted autoplay loop playsinline style="width:100%;height:100%;object-fit:contain"></video>':'<img src="'+safe(storyEditorObjectUrl)+'" alt="Story preview" style="width:100%;height:100%;object-fit:contain">';loadStoryMusicLibrary();updateStoryEditorPreview();}
-function updateStoryEditorPreview(){const media=$('storyEditorMedia')?.firstElementChild;if(media)media.style.filter=[$('storyFilter')?.value||'none',window.storyEffectFilter||'none'].filter(x=>x&&x!=='none').join(' ')||'none';const caption=$('storyEditorCaption');if(caption){const mention=$('storyMention')?.value?.trim()||'',text=$('storyCaption')?.value||$('storyCaptionFallback')?.value||'';caption.textContent=[text,mention].filter(Boolean).join(' ');caption.style.fontFamily=window.storyTextStyle==='poster'?'Impact,system-ui':window.storyTextStyle==='classic'?'Georgia,serif':'system-ui,sans-serif';caption.style.fontWeight=window.storyTextStyle==='classic'?'600':'900';caption.style.fontStyle=window.storyTextStyle==='bubble'?'italic':'normal';}}
+function updateStoryEditorPreview(){const media=$('storyEditorMedia')?.firstElementChild;if(media)media.style.filter=[$('storyFilter')?.value||'none',window.storyEffectFilter||'none'].filter(x=>x&&x!=='none').join(' ')||'none';const caption=$('storyEditorCaption');if(caption){const mention=$('storyMention')?.value?.trim()||'',text=$('storyCaption')?.value||$('storyCaptionFallback')?.value||'';caption.textContent=[text,mention].filter(Boolean).join(' ');caption.style.fontFamily=window.storyTextStyle==='poster'?'Impact,system-ui':window.storyTextStyle==='classic'?'Georgia,serif':'system-ui,sans-serif';caption.style.fontWeight=window.storyTextStyle==='classic'?'600':'900';caption.style.fontStyle=window.storyTextStyle==='bubble'?'italic':'normal';caption.style.color=window.storyTextColor||'#fff';caption.style.textAlign=window.storyTextAlign||'center';caption.style.textShadow=window.storyTextStyle==='neon'?'0 0 9px currentColor':'0 2px 5px #0008';if(window.storyTextStyle==='typewriter')caption.style.fontFamily='monospace';}}
+function openStoryTextComposer(){
+ let layer=$('smStoryNativeTextComposer');
+ if(!layer){
+  layer=document.createElement('div');layer.id='smStoryNativeTextComposer';layer.className='sm-native-text-composer';
+  layer.innerHTML="<header><button type='button' onclick='closeStoryTextComposer()'>Done</button><div><button type='button' onclick='cycleStoryTextAlign()'>☰</button><button type='button' onclick='cycleStoryTextStyle()'>Aᵃ</button></div></header><main><div id='smNativeTextPhoto'></div><textarea id='smNativeStoryTextInput' maxlength='120' placeholder='Add text'></textarea><button id='smNativeTextColorRail' type='button' aria-label='Text color'></button></main><nav><button type='button' onclick=\"setStoryTextStyle('classic')\">Aa</button><button type='button' onclick=\"setStoryTextStyle('bold')\">𝗔a</button><button type='button' onclick=\"setStoryTextStyle('poster')\">Aa</button><button type='button' onclick=\"setStoryTextStyle('bubble')\">Aa</button><button type='button' onclick=\"setStoryTextStyle('neon')\">Aa</button><button type='button' onclick=\"setStoryTextStyle('typewriter')\">Aa</button></nav>";
+  $('modalBack').appendChild(layer);
+  const input=$('smNativeStoryTextInput');
+  input.addEventListener('input',()=>{if($('storyCaption'))$('storyCaption').value=input.value;updateStoryEditorPreview();});
+  $('smNativeTextColorRail').addEventListener('click',()=>{const colors=['#fff','#ffcf33','#ff4d4d','#55dd77','#42a5ff','#bd68ff','#ff4fa3'];let n=colors.indexOf(window.storyTextColor);window.storyTextColor=colors[(n+1)%colors.length];input.style.color=window.storyTextColor;updateStoryEditorPreview();});
+ }
+ const media=$('storyEditorMedia')?.firstElementChild,photo=$('smNativeTextPhoto');
+ if(media&&photo){photo.innerHTML='';const clone=media.cloneNode(true);clone.style.cssText='width:100%;height:100%;object-fit:contain;filter:'+media.style.filter;photo.appendChild(clone);}
+ const input=$('smNativeStoryTextInput');input.value=$('storyCaption')?.value||'';input.style.color=window.storyTextColor||'#fff';
+ layer.classList.add('open');setTimeout(()=>input.focus(),120);
+}
+function closeStoryTextComposer(){const layer=$('smStoryNativeTextComposer');if(!layer)return;const input=$('smNativeStoryTextInput');if($('storyCaption'))$('storyCaption').value=input.value;updateStoryEditorPreview();layer.classList.remove('open');input.blur();}
+function cycleStoryTextAlign(){window.storyTextAlign=window.storyTextAlign==='left'?'center':window.storyTextAlign==='center'?'right':'left';const i=$('smNativeStoryTextInput');if(i)i.style.textAlign=window.storyTextAlign;updateStoryEditorPreview();}
+function cycleStoryTextStyle(){const a=['classic','bold','poster','bubble','neon','typewriter'];setStoryTextStyle(a[(a.indexOf(window.storyTextStyle||'classic')+1)%a.length]);}
 function beginStoryCaptionDrag(event){
  const c=event.currentTarget;if(!c||!c.textContent.trim())return;event.preventDefault();event.stopPropagation();
  const stage=$('storyEditorPreview'),trash=$('smStoryDeleteTarget');if(!stage)return;
