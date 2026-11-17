@@ -3250,4 +3250,13 @@ window.confirmStoryMusicSelection=function(){
  moveStoryActions();
 })();
 </script>
+<script id="story-top-audience-capture-v14">
+document.addEventListener('click',function(e){
+ const gear=e.target.closest('#modalBack.story-mode .sm-story-top .sm-story-audience-settings');
+ if(!gear)return;
+ e.preventDefault();e.stopImmediatePropagation();
+ const bottom=document.querySelector('#modalBack.story-mode .sm-story-bottom');
+ if(bottom)bottom.classList.toggle('show-audience');
+},true);
+</script>
 </body></html>
