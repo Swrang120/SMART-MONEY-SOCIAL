@@ -4346,28 +4346,28 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
 
 <!-- SMART-MONEY-SOCIAL FULLSCREEN MUSIC LIBRARY + EDITOR -->
 <style>
-#smMusicExperience{position:fixed;inset:0;z-index:100500;background:#f7f8fb;color:#151b27;display:none;flex-direction:column;font-family:inherit; padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);box-sizing:border-box}
+#smMusicExperience{position:fixed;inset:0;z-index:100500;background:#0b1220;color:#f4f7fb;display:none;flex-direction:column;font-family:inherit;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);box-sizing:border-box}
 #smMusicExperience.open{display:flex}
-#smMusicExperience .smml-head{padding:12px 16px 8px;background:#fff;flex:none}
-#smMusicExperience .smml-search{height:48px;border-radius:15px;background:#f0f2f6;display:flex;align-items:center;gap:10px;padding:0 14px}
-#smMusicExperience .smml-search input{border:0!important;outline:0!important;background:transparent!important;color:#151b27!important;width:100%;font-size:15px;min-height:44px}
+#smMusicExperience .smml-head{padding:12px 16px 8px;background:#111c2e;color:#f4f7fb;flex:none;border-bottom:1px solid #ffffff18}
+#smMusicExperience .smml-search{height:48px;border-radius:15px;background:#1c2940;border:1px solid #34435d;display:flex;align-items:center;gap:10px;padding:0 14px;color:#dce6f5}
+#smMusicExperience .smml-search input{border:0!important;outline:0!important;background:transparent!important;color:#f4f7fb!important;width:100%;font-size:15px;min-height:44px}#smMusicExperience .smml-search input::placeholder{color:#9eabc0!important}
 #smMusicExperience .smml-tabs{display:flex;gap:8px;overflow-x:auto;padding:12px 0 4px;scrollbar-width:none}
-#smMusicExperience .smml-tabs button{white-space:nowrap;border:0;border-radius:22px;padding:10px 15px;background:#eef0f5;color:#586174;font-weight:750}
-#smMusicExperience .smml-tabs button.active{background:#172033;color:#fff}
-#smMusicExperience .smml-list{flex:1;overflow:auto;padding:8px 14px 120px}
-#smMusicExperience .smml-row{display:flex;align-items:center;gap:12px;padding:10px 2px;border-bottom:1px solid #e8eaf0}
-#smMusicExperience .smml-row.selected{background:#eaf2ff;border-radius:14px;padding-left:8px;padding-right:8px}
-#smMusicExperience .smml-art{width:54px;height:54px;flex:none;object-fit:cover;border-radius:10px;background:#e4e7ed;display:grid;place-items:center;font-size:23px}
+#smMusicExperience .smml-tabs button{white-space:nowrap;border:1px solid #34435d;border-radius:22px;padding:10px 15px;background:#1c2940;color:#c4cee0;font-weight:750}
+#smMusicExperience .smml-tabs button.active{background:#d8b66c;color:#172033;border-color:#d8b66c}
+#smMusicExperience .smml-list{flex:1;overflow:auto;padding:8px 14px 120px;background:#0b1220;color:#f4f7fb}
+#smMusicExperience .smml-row{display:flex;align-items:center;gap:12px;padding:10px 8px;border-bottom:1px solid #ffffff18;color:#f4f7fb}
+#smMusicExperience .smml-row.selected{background:#1c3456;border-radius:14px;padding-left:8px;padding-right:8px}
+#smMusicExperience .smml-art{width:54px;height:54px;flex:none;object-fit:cover;border-radius:10px;background:#26344b;display:grid;place-items:center;font-size:23px}
 #smMusicExperience .smml-meta{flex:1;min-width:0;text-align:left}
 #smMusicExperience .smml-meta b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px}
-#smMusicExperience .smml-meta small{display:block;color:#7b8495;margin-top:4px;font-size:12px}
-#smMusicExperience .smml-select,#smMusicExperience .smml-save{border:0;background:transparent;color:#1d2738;font-size:20px;padding:9px}
-#smMusicExperience .smml-player{position:absolute;bottom:0;left:0;right:0;display:none;align-items:center;gap:12px;padding:12px 15px calc(12px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #e7e9ef;box-shadow:0 -8px 28px #17203314}
+#smMusicExperience .smml-meta small{display:block;color:#aab6c9;margin-top:4px;font-size:12px}
+#smMusicExperience .smml-select,#smMusicExperience .smml-save{border:0;background:transparent;color:#f4f7fb;font-size:20px;padding:9px}
+#smMusicExperience .smml-player{position:absolute;bottom:0;left:0;right:0;display:none;align-items:center;gap:12px;padding:12px 15px calc(12px + env(safe-area-inset-bottom));background:#111c2e;color:#f4f7fb;border-top:1px solid #ffffff20;box-shadow:0 -8px 28px #0006}
 #smMusicExperience .smml-player.show{display:flex}
-#smMusicExperience .smml-player-art{width:44px;height:44px;border-radius:9px;object-fit:cover;background:#e7eaf0}
+#smMusicExperience .smml-player-art{width:44px;height:44px;border-radius:9px;object-fit:cover;background:#26344b}
 #smMusicExperience .smml-player-info{flex:1;min-width:0}
 #smMusicExperience .smml-player-info b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
-#smMusicExperience .smml-player-info small{color:#788296;font-size:11px}
+#smMusicExperience .smml-player-info small{color:#aab6c9;font-size:11px}
 #smMusicExperience .smml-play,#smMusicExperience .smml-next{border:0;border-radius:50%;width:42px;height:42px;background:#182338;color:white;font-size:18px}
 #smMusicExperience .smml-next{border-radius:13px;background:#2368e8}
 #smMusicExperience .smme{position:absolute;inset:0;background:#090e19;color:#fff;display:none;flex-direction:column}
@@ -4391,7 +4391,7 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
 #smMusicExperience .smme-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px}
 #smMusicExperience .smme-bottom button{border:1px solid #ffffff2a;background:#ffffff12;color:#fff;border-radius:20px;padding:9px 13px}
 #smMusicExperience .smme-bottom button.active{background:#fff;color:#172033}
-#smMusicExperience .smml-empty{padding:28px 12px;text-align:center;color:#7b8495}
+#smMusicExperience .smml-empty{padding:28px 12px;text-align:center;color:#c0cadd;background:#0b1220}
 @media(min-width:700px){#smMusicExperience .smme-stage{max-width:520px;width:100%;margin:auto}#smMusicExperience .smme-top,#smMusicExperience .smme-tools,#smMusicExperience .smme-trim{padding-left:max(14px,calc((100vw - 520px)/2));padding-right:max(14px,calc((100vw - 520px)/2))}}
 </style>
 <div id="smMusicExperience" aria-hidden="true">
@@ -4461,11 +4461,17 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
    if(error)throw error;
    storyMusicCatalog=data||[];
    if(!storyMusicCatalog.length){render();return}
-   const paths=storyMusicCatalog.flatMap(x=>[x.file_path,x.artwork_path].filter(Boolean));
-   const {data:urls,error:urlError}=await supabaseClient.storage.from(bucket).createSignedUrls(paths,300);
-   if(urlError)throw urlError;
-   const signed={};(urls||[]).forEach(x=>{if(x.path)signed[x.path]=x.signedUrl||''});
+   const paths=[...new Set(storyMusicCatalog.flatMap(x=>[x.file_path,x.artwork_path].filter(Boolean)))];
+   const signed={};
+   // Sign each file separately so one missing artwork path cannot break the whole music list.
+   await Promise.all(paths.map(async path=>{
+    try{const {data:one,error:oneError}=await supabaseClient.storage.from(bucket).createSignedUrl(path,300);if(!oneError&&one?.signedUrl)signed[path]=one.signedUrl;}
+    catch(signError){console.warn('Music asset signing failed:',path,signError?.message||signError);}
+   }));
    storyMusicCatalog=storyMusicCatalog.map(x=>({...x,url:signed[x.file_path]||'',artworkUrl:x.artwork_path?signed[x.artwork_path]||'':''}));
+   const playable=storyMusicCatalog.filter(x=>x.url);
+   if(!playable.length)throw new Error('Music records mile, lekin audio files private bucket se sign nahi ho pa rahi. Storage bucket/path permissions check karein.');
+   storyMusicCatalog=playable;
    render();
   }catch(e){if(host)host.innerHTML='<div class="smml-empty">Music library load nahi hui: '+safe(e.message||'Please retry')+'</div>'}
  };
