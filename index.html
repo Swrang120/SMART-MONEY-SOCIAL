@@ -4069,5 +4069,53 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
 })();
 </script>
 
+
+<style id="sm-sticker-bottom-sheet-v30">
+#modalBack.story-mode #smStoryPanel:not([hidden]){position:fixed!important;left:0!important;right:0!important;bottom:0!important;top:auto!important;width:100%!important;max-width:none!important;height:min(58dvh,560px)!important;max-height:58dvh!important;margin:0!important;padding:0!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;z-index:100120!important;background:#111b2a!important;border:1px solid #ffffff20!important;border-bottom:0!important;border-radius:24px 24px 0 0!important;box-shadow:0 -18px 55px #0009!important;animation:smStickerSheetIn .24s ease-out both!important}
+@keyframes smStickerSheetIn{from{transform:translateY(35px);opacity:.75}to{transform:translateY(0);opacity:1}}
+#modalBack.story-mode #smStoryPanel .sm-story-panel-head{flex:0 0 48px!important;min-height:48px!important;padding:0 16px!important;background:transparent!important;border:0!important}
+#modalBack.story-mode #smStoryStickersPanel{flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important;padding:0 14px calc(16px + env(safe-area-inset-bottom,0px))!important}
+#modalBack.story-mode #smStoryStickersPanel .sm-pdf-sheet-search{position:sticky!important;top:0!important;z-index:4!important;padding:7px 0 12px!important;background:#111b2a!important}
+#modalBack.story-mode #smStoryStickersPanel .sm-pdf-sheet-search input{height:44px!important;border-radius:24px!important;background:#ffffff12!important;border:1px solid #ffffff20!important;color:#fff!important;padding:0 16px!important}
+#modalBack.story-mode #smStoryStickersPanel .sm-sticker-tabs,#modalBack.story-mode #smStoryStickersPanel #smStickerBrandTab,#modalBack.story-mode #smStoryStickersPanel #smStickerEmojiTab,#modalBack.story-mode #smStoryStickersPanel #smStickerCustomTab{display:none!important}
+#modalBack.story-mode #smStoryStickersPanel .sm-sticker-action-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px!important;margin:2px 0 18px!important}
+#modalBack.story-mode #smStoryStickersPanel .sm-sticker-action-grid button{min-height:76px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:6px!important;border:1px solid #ffffff18!important;border-radius:16px!important;background:#ffffff0d!important;color:#fff!important;font-size:11px!important;font-weight:750!important}
+#modalBack.story-mode #smStoryStickersPanel .sm-sticker-action-grid button:active{background:#2478d5!important;transform:scale(.97)}
+#modalBack.story-mode #smStoryStickersPanel .sm-sticker-action-grid strong{font-size:24px!important;line-height:1!important}
+#modalBack.story-mode #smStoryStickersPanel .sm-sticker-section-title{display:block!important;margin:14px 2px 9px!important;color:#cbd5e1!important;font-size:12px!important;font-weight:800!important;letter-spacing:.04em!important}
+#modalBack.story-mode #smStoryStickersPanel .sm-sticker-quick-row{display:flex!important;gap:10px!important;overflow-x:auto!important;padding:2px 1px 10px!important}
+#modalBack.story-mode #smStoryStickersPanel .sm-sticker-quick-row button{flex:0 0 58px!important;width:58px!important;height:58px!important;border-radius:16px!important;border:1px solid #ffffff20!important;background:#ffffff10!important;color:#fff!important;font-size:27px!important}
+#modalBack.story-mode #smStoryStickersPanel .sm-sticker-upload-row{display:flex!important;align-items:center!important;gap:10px!important;flex-wrap:wrap!important;margin:10px 0!important}
+#modalBack.story-mode #smStoryStickersPanel .sm-sticker-upload-row button{border:1px solid #ffffff24!important;border-radius:20px!important;background:#ffffff12!important;color:#fff!important;padding:9px 13px!important;font-size:12px!important}
+@media(max-width:380px){#modalBack.story-mode #smStoryStickersPanel .sm-sticker-action-grid{gap:7px!important}#modalBack.story-mode #smStoryStickersPanel .sm-sticker-action-grid button{min-height:68px!important}}
+</style>
+<script id="sm-sticker-bottom-sheet-v30">
+(function(){
+ const $=id=>document.getElementById(id);
+ const actions=[['📍','LOCATION',0],['@','MENTION',1],['♫','MUSIC',2],['GIF','GIF',3],['➕','ADD YOURS',4],['▣','FRAMES / PHOTOSTRIP',5],['?','QUESTIONS',9],['☑','POLL',13],['😍','EMOJI SLIDER',12],['↗','LINK',14],['#','#HASHTAG',15],['⏳','COUNTDOWN',16]];
+ function build(){
+  const panel=$('smStoryStickersPanel');if(!panel||$('smStickerActionGridV30'))return;
+  const search=panel.querySelector('.sm-pdf-sheet-search');
+  const grid=document.createElement('div');grid.id='smStickerActionGridV30';grid.className='sm-sticker-action-grid';
+  grid.innerHTML=actions.map(a=>'<button type="button" data-sticker-search="'+a[1].toLowerCase()+'" onclick="addStoryPresetSticker('+a[2]+')"><strong>'+a[0]+'</strong><span>'+a[1]+'</span></button>').join('');
+  const title=document.createElement('b');title.className='sm-sticker-section-title';title.textContent='YOUR STICKERS';
+  const row=document.createElement('div');row.className='sm-sticker-quick-row';row.id='smStickerQuickRowV30';
+  ['❤️','😍','🔥','✨','😂','🥰','🎉','🌸','💫','👍','🎶','🌈','💖','😎','🦋','🚀'].forEach(e=>{const b=document.createElement('button');b.type='button';b.textContent=e;b.title='Add '+e;b.addEventListener('click',()=>window.addStoryEmoji?.(e));row.appendChild(b);});
+  const brandTitle=document.createElement('b');brandTitle.className='sm-sticker-section-title';brandTitle.textContent='SMART MONEY STICKERS';
+  const brandRow=document.createElement('div');brandRow.className='sm-sticker-quick-row';
+  for(let i=0;i<8;i++){const b=document.createElement('button');b.type='button';b.textContent='💠';b.title='Smart Money sticker '+(i+1);b.addEventListener('click',()=>window.addBrandStorySticker?.(i));brandRow.appendChild(b);}
+  const upload=document.createElement('div');upload.className='sm-sticker-upload-row';upload.innerHTML='<button type="button" onclick="document.getElementById(\'smStickerCustomTab\').style.display=\'block\';document.getElementById(\'smStickerCustomTab\').hidden=false">＋ Upload my sticker</button>';
+  if(search)search.after(grid,title,row,brandTitle,brandRow,upload);else panel.prepend(grid,title,row,brandTitle,brandRow,upload);
+  const input=$('storyStickerSearch');
+  if(input&&!input.dataset.v30){input.dataset.v30='1';input.addEventListener('input',()=>{const q=input.value.trim().toLowerCase();grid.querySelectorAll('button').forEach(b=>b.hidden=!b.dataset.stickerSearch.includes(q));row.querySelectorAll('button').forEach(b=>b.hidden=!!q&&!b.textContent.includes(q));brandRow.hidden=!!q;});}
+ }
+ const oldToggle=window.toggleStoryPanel;
+ window.toggleStoryPanel=function(name){oldToggle?.(name);if(name==='stickers'){build();const p=$('smStoryPanel');if(p){p.style.display='flex';p.hidden=false;}}};
+ const oldEnsure=window.ensureStoryStickerPresets;
+ window.ensureStoryStickerPresets=function(){oldEnsure?.();build();};
+ document.addEventListener('DOMContentLoaded',build);
+})();
+</script>
+
 </body>
 </html>
