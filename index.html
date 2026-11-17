@@ -3104,4 +3104,83 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
  };
 })();
 </script>
+<style id="story-editor-functional-overhaul-v13">
+/* Story tool sheets: keep the media visible and prevent the bottom composer from covering them. */
+#modalBack.story-mode .sm-story-panel{position:fixed!important;z-index:10040!important;left:0!important;right:0!important;bottom:0!important;top:auto!important;width:100%!important;max-height:44dvh!important;height:auto!important;overflow:hidden!important;display:flex!important;flex-direction:column!important;padding:12px 14px calc(12px + env(safe-area-inset-bottom,0px))!important;border:1px solid #ffffff22!important;border-bottom:0!important;border-radius:22px 22px 0 0!important;background:rgba(16,21,31,.97)!important;box-shadow:0 -12px 36px #0008!important;backdrop-filter:blur(18px)!important;transform:translateY(0);transition:transform .22s ease}
+#modalBack.story-mode .sm-story-panel[hidden]{display:none!important}
+#modalBack.story-mode .sm-story-panel-head{flex:0 0 auto!important;background:transparent!important;padding:2px 0 10px!important}
+#modalBack.story-mode .sm-story-panel>div[id$="Panel"]{min-height:0!important;overflow:auto!important;overscroll-behavior:contain!important}
+#modalBack.story-mode .sm-story-panel-footer{flex:0 0 auto!important;background:#10151f!important}
+#modalBack.story-mode .sm-story-shell:has(.sm-story-panel:not([hidden])) .sm-story-bottom{display:none!important}
+#modalBack.story-mode .sm-story-shell:has(.sm-story-panel:not([hidden])) .sm-story-stage{min-height:0!important}
+#modalBack.story-mode .sm-story-panel[data-active-tool="music"]{inset:0!important;top:0!important;bottom:0!important;left:0!important;right:0!important;width:100vw!important;height:100dvh!important;max-height:100dvh!important;padding:calc(12px + env(safe-area-inset-top,0px)) 16px calc(16px + env(safe-area-inset-bottom,0px))!important;border:0!important;border-radius:0!important;background:#0b111b!important;overflow:hidden!important;z-index:10060!important}
+#modalBack.story-mode .sm-story-panel[data-active-tool="music"] .sm-story-panel-head{min-height:48px!important;border-bottom:1px solid #ffffff20!important}
+#modalBack.story-mode .sm-story-panel[data-active-tool="music"] #smStoryMusicPanel{display:flex!important;flex:1 1 auto!important;min-height:0!important;flex-direction:column!important;gap:12px!important;overflow:hidden!important}
+#modalBack.story-mode .sm-story-panel[data-active-tool="music"] .sm-pdf-sheet-search{flex:0 0 auto!important;width:100%!important}
+#modalBack.story-mode .sm-story-panel[data-active-tool="music"] #storyMusicSearch{width:100%!important;height:54px!important;font-size:17px!important;border-radius:16px!important}
+#modalBack.story-mode .sm-story-panel[data-active-tool="music"] .sm-pdf-music-tabs{display:flex!important;flex:0 0 auto!important;gap:8px!important;overflow-x:auto!important;padding:2px 0 10px!important}
+#modalBack.story-mode .sm-story-panel[data-active-tool="music"] .sm-pdf-music-tabs button{flex:0 0 auto!important;min-height:42px!important;padding:0 18px!important;border-radius:22px!important;background:#1b2635!important;color:#fff!important;border:1px solid #ffffff22!important}
+#modalBack.story-mode .sm-story-panel[data-active-tool="music"] .sm-pdf-music-tabs button.active{background:#1677e8!important;border-color:#58a7ff!important}
+#modalBack.story-mode .sm-story-panel[data-active-tool="music"] #storyMusicCatalog{flex:1 1 auto!important;min-height:100px!important;overflow-y:auto!important;overscroll-behavior:contain!important}
+#modalBack.story-mode .sm-story-panel[data-active-tool="music"] .sm-pdf-track{min-height:68px!important;border-bottom:1px solid #ffffff18!important}
+#modalBack.story-mode .sm-story-panel[data-active-tool="music"] .sm-pdf-track-main{min-height:66px!important}
+#modalBack.story-mode .sm-story-panel[data-active-tool="music"] #storyMusicPreview{flex:0 0 auto!important;max-height:30dvh!important;overflow:auto!important;padding:12px!important;border:1px solid #ffffff25!important;border-radius:16px!important;background:#151f2d!important}
+#modalBack.story-mode .sm-story-panel[data-active-tool="music"] .sm-story-panel-footer{flex:0 0 auto!important}
+#modalBack.story-mode .sm-story-panel:not([data-active-tool="music"]) .sm-story-panel-head{min-height:38px!important}
+#modalBack.story-mode .sm-story-panel:not([data-active-tool="music"]) .sm-story-panel-head:before{content:"";position:absolute;top:5px;left:calc(50% - 22px);width:44px;height:4px;border-radius:4px;background:#aab2bf}
+#modalBack.story-mode .sm-story-panel:not([data-active-tool="music"]) .sm-story-panel-head b{padding-top:10px!important}
+#modalBack.story-mode .sm-story-panel:not([data-active-tool="music"]) .sm-pdf-sheet-search input{min-height:46px!important}
+#modalBack.story-mode .sm-story-panel:not([data-active-tool="music"]) .sm-story-panel-footer{padding-top:8px!important}
+#modalBack.story-mode .sm-story-tools{position:absolute!important;top:12px!important;right:10px!important;left:auto!important;bottom:auto!important;z-index:30!important;display:flex!important;flex-direction:column!important;gap:9px!important}
+#modalBack.story-mode .sm-story-tools .sm-story-tool{width:42px!important;height:42px!important;border:0!important;border-radius:50%!important;background:#111a!important;backdrop-filter:blur(8px)!important;box-shadow:none!important}
+#modalBack.story-mode .sm-story-tools .sm-story-tool span{display:none!important}
+#modalBack.story-mode .sm-story-tools .sm-story-tool svg{width:21px!important;height:21px!important}
+#modalBack.story-mode .sm-story-panel[data-active-tool="music"] #storyMusicPreview button{min-height:42px!important;border-radius:22px!important}
+@media(max-height:700px){#modalBack.story-mode .sm-story-panel:not([data-active-tool="music"]){max-height:40dvh!important}}
+</style>
+<script id="story-editor-functional-overhaul-v13">
+/* Keep panel state in sync with the active tool. */
+window.toggleStoryPanel=function(name){
+ const panel=document.getElementById('smStoryPanel');
+ const ids={text:'smStoryTextPanel',mention:'smStoryMentionPanel',stickers:'smStoryStickersPanel',filters:'smStoryFiltersPanel',effects:'smStoryEffectsPanel',music:'smStoryMusicPanel'};
+ const target=document.getElementById(ids[name]);
+ if(!panel||!target){showToast('This story tool is unavailable.');return;}
+ const wasOpen=!panel.hidden&&panel.dataset.activeTool===name;
+ Object.values(ids).forEach(id=>{const el=document.getElementById(id);if(el)el.hidden=true;});
+ if(wasOpen){panel.hidden=true;delete panel.dataset.activeTool;document.querySelectorAll('.sm-story-tool').forEach(b=>b.classList.remove('active'));return;}
+ target.hidden=false;panel.hidden=false;panel.dataset.activeTool=name;
+ document.querySelectorAll('.sm-story-tool').forEach(b=>b.classList.toggle('active',b.getAttribute('onclick')==="toggleStoryPanel('"+name+"')"));
+ const title=document.getElementById('smStoryPanelTitle');if(title)title.textContent=({text:'Text',mention:'Mention',stickers:'Stickers',filters:'Restyle',effects:'Effects',music:'Music'})[name]||'Story tools';
+ if(name==='music'){window.storyMusicTab=window.storyMusicTab||'for-you';const search=document.getElementById('storyMusicSearch');if(search)search.value='';document.querySelectorAll('.sm-pdf-music-tabs button').forEach(b=>b.classList.toggle('active',b.textContent.trim().toLowerCase()==='for you'));loadStoryMusicLibrary();}
+ if(name==='mention'){window.storyMentionSelection=[];const search=document.getElementById('storyMentionSearch');if(search)search.value='';renderStoryMentionPeople();}
+ if(name==='stickers'){showStickerTab('brand');const search=document.getElementById('storyStickerSearch');if(search)search.value='';filterStoryStickerOptions();}
+};
+window.closeStoryPanel=function(){
+ const panel=document.getElementById('smStoryPanel');if(panel){panel.hidden=true;delete panel.dataset.activeTool;}
+ ['smStoryTextPanel','smStoryMentionPanel','smStoryStickersPanel','smStoryFiltersPanel','smStoryEffectsPanel','smStoryMusicPanel'].forEach(id=>{const el=document.getElementById(id);if(el)el.hidden=true;});
+ document.querySelectorAll('.sm-story-tool').forEach(b=>b.classList.remove('active'));
+};
+window.setStoryTextStyle=function(style){
+ window.storyTextStyle=style;
+ const input=document.getElementById('smNativeStoryTextInput');
+ const caption=document.getElementById('storyEditorCaption');
+ const families={classic:'Georgia,serif',bold:'system-ui,sans-serif',poster:'Impact,system-ui,sans-serif',bubble:'system-ui,sans-serif',neon:'system-ui,sans-serif',typewriter:'monospace'};
+ const weight=['bold','poster','bubble','neon'].includes(style)?'900':'600';
+ [input,caption].forEach(el=>{if(!el)return;el.style.fontFamily=families[style]||families.classic;el.style.fontWeight=weight;el.style.fontStyle=style==='bubble'?'italic':'normal';el.style.textShadow=style==='neon'?'0 0 8px currentColor,0 0 16px currentColor':'0 2px 6px #0009';});
+ document.querySelectorAll('#smStoryNativeTextComposer nav button').forEach(b=>b.classList.toggle('active',b.textContent.trim().toLowerCase().includes(style)));
+ updateStoryEditorPreview();
+};
+window.confirmStoryMusicSelection=function(){
+ if(!storySelectedMusic){showToast('पहले कोई गाना चुनें।');return;}
+ const audio=document.getElementById('storyMusicAudioPreview');if(audio)audio.pause();
+ closeStoryPanel();showToast('Music story में जोड़ दिया गया है।');
+};
+(function(){
+ const preview=document.getElementById('storyMusicPreview');
+ if(preview&&!preview.querySelector('[data-confirm-story-music]')){
+  const btn=document.createElement('button');btn.type='button';btn.dataset.confirmStoryMusic='1';btn.textContent='✓ Add this song to story';btn.style.cssText='display:block;width:100%;margin-top:10px;padding:12px 16px;border:0;background:#1688f5;color:#fff;font-weight:800;border-radius:24px';
+  btn.addEventListener('click',window.confirmStoryMusicSelection);preview.appendChild(btn);
+ }
+})();
+</script>
 </body></html>
