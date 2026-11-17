@@ -1894,8 +1894,8 @@ function openStoryComposer(){
  storyEditorEmojis=[];window.storyMentionSelection=[];storyEditorObjectUrl='';storyMusicDuration=0;storyMusicReady=false;storySelectedMusic=null;
  openModal(`<div class="sm-story-shell">
  <header class="sm-story-top"><button type="button" onclick="closeModal()">✕</button><b>Add to story</b><button type="button" onclick="document.getElementById('storyFile').click()">＋</button></header>
- <section id="smStoryPicker" class="sm-story-picker sm-story-picker-clean"><div class="sm-gallery-prompt"><div class="sm-gallery-icon">▧</div><b>Select a photo or video</b><p>Your phone gallery opens automatically. Choose one item to start editing.</p><button type="button" onclick="document.getElementById('storyFile').click()">Open Gallery</button></div></section>
- <input id="storyFile" type="file" accept="image/*,video/*" onchange="previewStoryMedia(this)" style="display:none">
+ <section id="smStoryPicker" class="sm-story-picker sm-story-picker-clean" hidden aria-hidden="true"></section>
+ <input id="storyFile" type="file" accept="image/*,video/*" onchange="previewStoryMedia(this)" oncancel="closeModal()" style="display:none">
  <section id="smStoryEditor" class="sm-story-editor" style="display:none"><div class="sm-story-stage">
  <div id="storyEditorPreview" class="sm-story-preview"><div id="storyEditorMedia" class="sm-story-media"></div><div id="storyEditorEmoji" class="sm-story-emoji"></div><div id="storyEditorCaption" class="sm-story-caption" onpointerdown="beginStoryCaptionDrag(event)"></div></div>
  <button id="smStoryDeleteTarget" class="sm-story-trash-target" type="button" aria-label="Drop here to delete" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3m3 0-.9 13H6.9L6 7m4 3v7m4-7v7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
@@ -1954,6 +1954,7 @@ function openStoryTextComposer(){
   input.addEventListener('touchstart',e=>{if(e.touches.length===2){pinchStart=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);pinchSize=window.storyTextSize||26;}},{passive:true});
   input.addEventListener('touchmove',e=>{if(e.touches.length===2&&pinchStart){e.preventDefault();const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);setStoryTextSize(pinchSize*d/pinchStart);$('smNativeTextSizeSlider').value=window.storyTextSize;}},{passive:false});
   input.addEventListener('touchend',()=>{pinchStart=0;},{passive:true});
+ const storyInput=$('storyFile');if(storyInput)storyInput.click();
  }
  const media=$('storyEditorMedia')?.firstElementChild,photo=$('smNativeTextPhoto');
  if(media&&photo){photo.innerHTML='';const clone=media.cloneNode(true);clone.style.cssText='width:100%;height:100%;object-fit:contain;filter:'+media.style.filter;photo.appendChild(clone);}
