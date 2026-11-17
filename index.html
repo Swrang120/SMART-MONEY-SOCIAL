@@ -2761,4 +2761,67 @@ body.story-modal-open .mobile-nav{display:none!important}
 @media(max-height:700px){#modalBack.story-mode #smStoryPanel:not([hidden]){max-height:38dvh!important}#modalBack.story-mode #smStoryPanel[data-active-tool="effects"],#modalBack.story-mode #smStoryPanel[data-active-tool="filters"]{height:148px!important;max-height:148px!important}}
 @media(max-width:380px){#modalBack.story-mode .sm-story-tools{right:7px!important;gap:2px!important;padding:4px!important}#modalBack.story-mode .sm-story-tools .sm-story-tool{flex-basis:32px!important;width:32px!important;min-width:32px!important}#modalBack.story-mode .sm-story-tools .sm-story-tool i{width:30px!important;height:30px!important}}
 </style>
+<style id="story-editor-audited-final-v8">
+/* One editor toolbar only; hide any legacy toolbar copies within story modal. */
+#modalBack.story-mode .sm-story-stage>.sm-story-tools{position:absolute!important;top:10px!important;right:10px!important;left:auto!important;bottom:auto!important;z-index:60!important;display:flex!important;flex-flow:row nowrap!important;justify-content:flex-end!important;align-items:center!important;gap:3px!important;width:max-content!important;max-width:calc(100% - 20px)!important;height:42px!important;max-height:42px!important;padding:3px 5px!important;overflow-x:auto!important;overflow-y:hidden!important;border:1px solid #ffffff36!important;border-radius:24px!important;background:rgba(9,13,20,.48)!important;backdrop-filter:blur(13px)!important;box-shadow:0 3px 15px #0005!important}
+#modalBack.story-mode .sm-story-stage>.sm-story-tools .sm-story-tool{display:grid!important;flex:0 0 34px!important;width:34px!important;min-width:34px!important;height:34px!important;min-height:34px!important;place-items:center!important;padding:0!important;border:0!important;background:transparent!important;color:#fff!important}
+#modalBack.story-mode .sm-story-stage>.sm-story-tools .sm-story-tool i{display:grid!important;width:32px!important;height:32px!important;place-items:center!important;border:1px solid #ffffff40!important;border-radius:50%!important;background:#151a24a8!important}
+#modalBack.story-mode .sm-story-stage>.sm-story-tools .sm-story-tool span{display:none!important}
+#modalBack.story-mode .sm-story-stage>.sm-story-tools .sm-story-tool svg{width:18px!important;height:18px!important;stroke:currentColor!important;fill:none!important}
+#modalBack.story-mode .sm-story-editor>.sm-story-tools,#modalBack.story-mode .sm-story-preview>.sm-story-tools,#modalBack.story-mode .sm-story-bottom .sm-story-tools{display:none!important}
+#modalBack.story-mode #smStoryPanel[hidden],#modalBack.story-mode #smStoryPanel [hidden]{display:none!important}
+#modalBack.story-mode #smStoryPanel:not([hidden]){position:absolute!important;left:0!important;right:0!important;top:auto!important;bottom:0!important;z-index:90!important;display:flex!important;flex-direction:column!important;height:auto!important;min-height:0!important;max-height:36dvh!important;overflow:hidden!important;box-sizing:border-box!important;padding:0 13px calc(8px + env(safe-area-inset-bottom))!important;border:1px solid #ffffff30!important;border-bottom:0!important;border-radius:20px 20px 0 0!important;background:rgba(20,25,34,.88)!important;color:#fff!important;backdrop-filter:blur(18px)!important;box-shadow:0 -8px 25px #0005!important}
+#modalBack.story-mode .sm-story-panel-head{flex:0 0 42px!important;min-height:42px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;border-bottom:1px solid #ffffff22!important;background:transparent!important}
+#modalBack.story-mode .sm-story-panel-head:before{content:"";position:absolute;top:5px;left:calc(50% - 18px);width:36px;height:4px;border-radius:5px;background:#9ba3ae}
+#modalBack.story-mode .sm-story-panel-head b{color:#fff!important;font-size:14px!important}
+#modalBack.story-mode .sm-story-panel-actions button{width:32px!important;height:32px!important;min-width:32px!important;border-radius:50%!important;background:#ffffff16!important;color:#fff!important;border:1px solid #ffffff35!important}
+#modalBack.story-mode #smStoryPanel>div[id^="smStory"]:not([hidden]){display:block!important;flex:1 1 auto!important;min-height:0!important;max-height:calc(36dvh - 52px)!important;overflow-y:auto!important;overflow-x:hidden!important;padding:8px 1px!important;-webkit-overflow-scrolling:touch!important}
+#modalBack.story-mode #smStoryPanel[data-active-tool="effects"],#modalBack.story-mode #smStoryPanel[data-active-tool="filters"]{height:150px!important;max-height:150px!important}
+#modalBack.story-mode #smStoryPanel[data-active-tool="effects"]>div[id^="smStory"]:not([hidden]),#modalBack.story-mode #smStoryPanel[data-active-tool="filters"]>div[id^="smStory"]:not([hidden]){max-height:100px!important;overflow:hidden!important}
+#modalBack.story-mode .sm-pdf-effect-grid,#modalBack.story-mode .sm-story-filter-grid{display:flex!important;flex-flow:row nowrap!important;gap:10px!important;overflow-x:auto!important;overflow-y:hidden!important;padding:5px 2px 8px!important;scroll-snap-type:x mandatory!important}
+#modalBack.story-mode .sm-pdf-effect-grid button,#modalBack.story-mode .sm-story-filter-grid button{display:flex!important;flex:0 0 68px!important;width:68px!important;min-width:68px!important;min-height:78px!important;flex-direction:column!important;align-items:center!important;gap:4px!important;padding:0!important;border:0!important;background:transparent!important;color:#fff!important;scroll-snap-align:start!important}
+#modalBack.story-mode .sm-pdf-effect-grid button span,#modalBack.story-mode .story-filter-thumb{display:grid!important;width:56px!important;height:56px!important;min-width:56px!important;place-items:center!important;border:2px solid #ffffff9c!important;border-radius:50%!important;background:linear-gradient(145deg,#53677f,#9c8d9c)!important;color:white!important}
+#modalBack.story-mode .sm-pdf-effect-grid button b,#modalBack.story-mode .sm-story-filter-grid button small{font-size:10px!important;color:#fff!important}
+#modalBack.story-mode #smStoryMentionPanel:not([hidden]){display:flex!important;flex-direction:column!important;max-height:32dvh!important}
+#modalBack.story-mode #smStoryMentionPanel .sm-pdf-sheet-search{flex:0 0 40px!important;min-height:40px!important;border-radius:13px!important;background:#303744!important;border:1px solid #ffffff2b!important}
+#modalBack.story-mode #smStoryMentionPanel .sm-pdf-mention-help{font-size:11px!important;line-height:1.35!important;color:#e0e6ef!important;margin:5px 1px!important}
+#modalBack.story-mode #storyMentionPeopleList{flex:1 1 auto!important;min-height:0!important;max-height:17dvh!important;overflow-y:auto!important}
+#modalBack.story-mode .sm-pdf-mention-row{display:flex!important;align-items:center!important;gap:9px!important;min-height:48px!important;border-bottom:1px solid #ffffff18!important;color:white!important}
+#modalBack.story-mode .sm-pdf-mention-row img{width:38px!important;height:38px!important;border-radius:50%!important;object-fit:cover!important}
+#modalBack.story-mode .sm-pdf-mention-row span{flex:1!important;min-width:0!important}
+#modalBack.story-mode .sm-pdf-mention-row b,#modalBack.story-mode .sm-pdf-mention-row small{color:#fff!important}
+#modalBack.story-mode .sm-pdf-sheet-footer{display:flex!important;align-items:center!important;justify-content:space-between!important;min-height:40px!important;padding-top:5px!important;border-top:1px solid #ffffff20!important;background:transparent!important;color:#fff!important}
+#modalBack.story-mode .sm-pdf-sheet-footer button{min-width:84px!important;min-height:34px!important;border:0!important;border-radius:20px!important;background:#1688e8!important;color:#fff!important}
+#modalBack.story-mode .sm-sticker-tabs{display:flex!important;gap:6px!important;overflow-x:auto!important}
+#modalBack.story-mode .sm-brand-sticker-grid,#modalBack.story-mode .sm-story-sticker-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important}
+#modalBack.story-mode .sm-brand-sticker-grid button,#modalBack.story-mode .sm-story-sticker-grid button{min-height:65px!important;border-radius:14px!important;background:#ffffff12!important;color:#fff!important;border:1px solid #ffffff24!important}
+#modalBack.story-mode #smStoryNativeTextComposer{z-index:2400!important}
+@media(max-width:390px){#modalBack.story-mode .sm-story-stage>.sm-story-tools{right:6px!important;top:7px!important;gap:1px!important;padding:3px!important}#modalBack.story-mode .sm-story-stage>.sm-story-tools .sm-story-tool{flex-basis:31px!important;width:31px!important;min-width:31px!important}#modalBack.story-mode .sm-story-stage>.sm-story-tools .sm-story-tool i{width:29px!important;height:29px!important}}
+</style>
+<script id="story-editor-behavior-audit-v8">
+(function(){
+ const $=id=>document.getElementById(id);
+ window.toggleStoryPanel=function(name){
+  const panel=$('smStoryPanel'),ids={mention:'smStoryMentionPanel',stickers:'smStoryStickersPanel',filters:'smStoryFiltersPanel',effects:'smStoryEffectsPanel',music:'smStoryMusicPanel'};
+  const target=$(ids[name]);if(!panel||!target){if(name==='text')window.openStoryTextComposer?.();return;}
+  const already=!panel.hidden&&!target.hidden;
+  ['smStoryMentionPanel','smStoryStickersPanel','smStoryFiltersPanel','smStoryEffectsPanel','smStoryMusicPanel','smStoryTextPanel'].forEach(id=>{const el=$(id);if(el){el.hidden=true;el.style.display='none';}});
+  panel.hidden=true;panel.style.display='none';delete panel.dataset.activeTool;
+  document.querySelectorAll('#modalBack.story-mode .sm-story-tool').forEach(b=>b.classList.remove('active'));
+  if(already)return;
+  target.hidden=false;target.style.display='block';panel.hidden=false;panel.style.display='flex';panel.dataset.activeTool=name;
+  const title=$('smStoryPanelTitle');if(title)title.textContent=({mention:'Mention',stickers:'Stickers',filters:'Restyle',effects:'Effects',music:'Music'})[name]||'Story tools';
+  const btn=document.querySelector('#modalBack.story-mode .sm-story-tool[onclick*="'+name+'"]');if(btn)btn.classList.add('active');
+  if(name==='mention'){window.storyMentionSelection=[];if($('storyMentionSearch'))$('storyMentionSearch').value='';window.renderStoryMentionPeople?.();if(!$('storyMentionPeopleList')?.children.length)window.renderStoryMentionPeople?.();}
+  if(name==='music'){window.storyMusicTab='for-you';if($('storyMusicSearch'))$('storyMusicSearch').value='';window.loadStoryMusicLibrary?.();}
+  if(name==='stickers'){window.showStickerTab?.('brand');if($('storyStickerSearch'))$('storyStickerSearch').value='';window.filterStoryStickerOptions?.();}
+ };
+ window.closeStoryPanel=function(){
+  const panel=$('smStoryPanel');if(panel){panel.hidden=true;panel.style.display='none';delete panel.dataset.activeTool;}
+  ['smStoryMentionPanel','smStoryStickersPanel','smStoryFiltersPanel','smStoryEffectsPanel','smStoryMusicPanel','smStoryTextPanel'].forEach(id=>{const el=$(id);if(el){el.hidden=true;el.style.display='none';}});
+  document.querySelectorAll('#modalBack.story-mode .sm-story-tool').forEach(b=>b.classList.remove('active'));
+ };
+ window.minimizeStoryPanel=window.closeStoryPanel;
+})();
+</script>
 </body></html>
