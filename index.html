@@ -3744,5 +3744,76 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
 })();
 </script>
 
+
+<style id="story-text-active-v23-layout-v26">
+#smStoryTextEditorV23{
+ position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;
+ max-height:100dvh!important;z-index:100300!important;display:flex!important;flex-direction:column!important;
+ overflow:hidden!important;background:#090d15!important;padding-top:env(safe-area-inset-top,0px)!important;
+}
+#smStoryTextEditorV23[hidden]{display:none!important}
+#smStoryTextEditorV23>.v23-head{order:0!important;flex:0 0 48px!important;min-height:48px!important}
+#smStoryTextEditorV23>.v23-controls{
+ order:1!important;flex:0 0 auto!important;width:100%!important;max-height:42dvh!important;
+ overflow-y:auto!important;overscroll-behavior:contain!important;background:#101a29!important;
+ padding:7px 10px!important;z-index:10!important;
+}
+#smStoryTextEditorV23>.v23-preview{
+ order:2!important;flex:1 1 auto!important;min-height:90px!important;height:auto!important;
+ max-height:none!important;overflow:hidden!important;position:relative!important;
+}
+#smStoryTextEditorV23 .v23-fonts,#smStoryTextEditorV23 .v23-toolbar,#smStoryTextEditorV23 .v23-shortcuts{
+ display:flex!important;gap:7px!important;overflow-x:auto!important;white-space:nowrap!important;
+}
+#smStoryTextEditorV23 .v23-fonts button{flex:0 0 auto!important;min-height:36px!important}
+#smStoryTextEditorV23 .v23-toolbar button{flex:0 0 40px!important;min-height:38px!important}
+#smStoryTextEditorV23 .v23-colors[hidden]{display:none!important}
+#smStoryTextEditorV23 .v23-size{position:absolute!important;left:4px!important;top:10%!important;bottom:10%!important;z-index:5!important}
+#smStoryTextEditorV23 .v23-size input{height:100%!important;min-height:0!important;width:28px!important;touch-action:pan-y!important}
+#smStoryTextEditorV23 #smStoryTextInputV23{max-height:70%!important;touch-action:pan-y!important}
+@media(max-height:650px){
+ #smStoryTextEditorV23>.v23-head{flex-basis:42px!important;min-height:42px!important}
+ #smStoryTextEditorV23>.v23-controls{max-height:36dvh!important;padding:4px 8px!important}
+ #smStoryTextEditorV23 .v23-fonts button{min-height:32px!important}
+}
+</style>
+<script id="story-text-active-v23-layout-v26">
+(function(){
+ const $=id=>document.getElementById(id);
+ const vv=window.visualViewport;
+ function fit(){
+  const layer=$('smStoryTextEditorV23');if(!layer)return;
+  const h=vv?vv.height:window.innerHeight;
+  layer.style.height=Math.max(240,h)+'px';
+  layer.style.maxHeight=Math.max(240,h)+'px';
+  layer.style.top=(vv?Math.max(0,vv.offsetTop):0)+'px';
+ }
+ vv?.addEventListener('resize',fit);vv?.addEventListener('scroll',fit);
+ window.addEventListener('resize',fit);
+ const prior=window.openStoryTextComposer;
+ if(typeof prior==='function'&&!window.__activeStoryTextV23V26){
+  window.__activeStoryTextV23V26=true;
+  window.openStoryTextComposer=function(){
+   prior();
+   const layer=$('smStoryTextEditorV23');if(!layer)return;
+   const head=layer.querySelector(':scope > .v23-head');
+   const controls=layer.querySelector(':scope > .v23-controls');
+   const preview=layer.querySelector(':scope > .v23-preview');
+   /* Real active editor: controls must sit between header and photo/text preview. */
+   if(head&&controls&&preview){
+    head.after(controls);
+    controls.after(preview);
+   }
+   fit();
+   const input=$('smStoryTextInputV23');
+   if(input){
+    input.addEventListener('focus',fit,{once:true});
+    setTimeout(fit,120);
+   }
+  };
+ }
+})();
+</script>
+
 </body>
 </html>
