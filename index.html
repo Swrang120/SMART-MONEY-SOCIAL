@@ -3548,9 +3548,20 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
   const host=el(name==='filters'?'smStoryFiltersPanel':'smStoryEffectsPanel');if(!host)return;
   if(host.dataset.v23Built==='1')return;host.dataset.v23Built='1';
   const values=[['No effect','none'],['Glow','brightness(1.12) saturate(1.18)'],['Cinema','contrast(1.18) saturate(1.12)'],['Mono','grayscale(1)'],['Vintage','sepia(.35) contrast(1.08)'],['Dream','saturate(1.35) brightness(1.08)']];
-  host.insertAdjacentHTML('beforeend','<div class="v23-effect-list" style="display:flex;gap:8px;overflow:auto;padding:10px 0">'+values.map(([label,val])=>'<button type="button" data-v23-effect="'+val.replace(/"/g,'&quot;')+'" style="flex:0 0 auto;border:1px solid #ffffff30;border-radius:20px;background:#263448;color:#fff;padding:10px 14px">'+label+'</button>').join('')+'</div><label style="display:flex;align-items:center;gap:10px">Intensity <input id="smStoryEffectIntensityV23" type="range" min="0" max="100" value="100" style="flex:1"></label>');
-  host.querySelectorAll('[data-v23-effect]').forEach(b=>b.addEventListener('click',()=>{window.storyEffectFilter=b.dataset.v23Effect==='none'?'none':b.dataset.v23Effect;host.querySelectorAll('[data-v23-effect]').forEach(x=>x.classList.toggle('active',x===b));applyEffect();}));
-  el('smStoryEffectIntensityV23').addEventListener('input',applyEffect);
+  const media=el('storyEditorMedia')?.firstElementChild;
+  const src=media?(media.currentSrc||media.src||media.getAttribute('src')||media.poster||''):'';
+  const list=document.createElement('div');list.className='v23-effect-list';
+  values.forEach(([label,val])=>{
+   const b=document.createElement('button');b.type='button';b.dataset.v23Effect=val;b.setAttribute('aria-label',label);
+   const thumb=document.createElement('span');thumb.className='sm-effect-thumb';
+   if(src){const img=document.createElement('img');img.alt='';img.src=src;img.style.filter=val==='none'?'none':val;thumb.appendChild(img);}
+   const caption=document.createElement('small');caption.textContent=label;b.append(thumb,caption);
+   b.addEventListener('click',()=>{window.storyEffectFilter=b.dataset.v23Effect==='none'?'none':b.dataset.v23Effect;list.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));applyEffect();});
+   list.appendChild(b);
+  });
+  host.appendChild(list);
+  const intensity=document.createElement('input');intensity.id='smStoryEffectIntensityV23';intensity.type='range';intensity.min='0';intensity.max='100';intensity.value='100';intensity.hidden=true;host.appendChild(intensity);
+
  }
  function applyEffect(){const media=el('storyEditorMedia')?.firstElementChild;if(!media)return;const v=Number(el('smStoryEffectIntensityV23')?.value??100)/100;media.style.filter=window.storyEffectFilter==='none'?'none':(window.storyEffectFilter||'none')+' opacity('+Math.max(.25,v)+')';}
  function installEditorChrome(){
@@ -4206,6 +4217,16 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
  #modalBack.story-mode #smStoryPanel[data-active-tool="effects"] #smStoryEffectsPanel,
  #modalBack.story-mode #smStoryPanel[data-active-tool="filters"] #smStoryFiltersPanel{max-height:76px!important}
 }
+</style>
+
+
+<style id="sm-story-effects-thumbnail-v33">
+#modalBack.story-mode .v23-effect-list button{flex:0 0 70px!important;width:70px!important;min-width:70px!important;height:78px!important;min-height:78px!important;padding:0!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;gap:5px!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;color:#fff!important;white-space:nowrap!important}
+#modalBack.story-mode .v23-effect-list button:before{display:none!important;content:none!important}
+#modalBack.story-mode .v23-effect-list .sm-effect-thumb{display:block!important;position:relative!important;overflow:hidden!important;width:56px!important;height:56px!important;min-width:56px!important;min-height:56px!important;flex:0 0 56px!important;border-radius:50%!important;border:1.5px solid rgba(255,255,255,.65)!important;background:linear-gradient(135deg,#d5a95d,#725b91 48%,#456e88)!important;box-shadow:0 2px 8px rgba(0,0,0,.22)!important}
+#modalBack.story-mode .v23-effect-list .sm-effect-thumb img{display:block!important;width:100%!important;height:100%!important;object-fit:cover!important;border-radius:50%!important}
+#modalBack.story-mode .v23-effect-list button.active .sm-effect-thumb{border:2px solid #e8c66d!important;box-shadow:0 0 0 2px rgba(232,198,109,.24)!important}
+#modalBack.story-mode .v23-effect-list button small{display:block!important;max-width:70px!important;overflow:hidden!important;text-overflow:ellipsis!important;font-size:10px!important;line-height:13px!important;color:#fff!important;text-align:center!important}
 </style>
 
 </body>
