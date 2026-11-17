@@ -4651,16 +4651,16 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
   return null;
  }
  function scaleNow(){
-  if(S.kind==='sticker')return Number(window.storyEditorEmojis?.[S.index]?.scale)||1;
+  if(S.kind==='sticker')return Number(storyEditorEmojis?.[S.index]?.scale)||1;
   if(S.kind==='caption')return Number(window.storyCaptionScale)||1;
   return Number(window.storyMediaScale)||1;
  }
  function applyScale(){
   const next=clamp(S.startScale*distance()/(S.startD||1),.25,4);
   if(S.kind==='sticker'){
-   const item=window.storyEditorEmojis?.[S.index];if(!item||!S.node?.isConnected)return;
+   const item=storyEditorEmojis?.[S.index];if(!item||!S.node?.isConnected)return;
    item.scale=next;S.node.style.transform='translate(-50%,-50%) scale('+next+')';
-  }else if(S.kind==='caption){
+  }else if(S.kind==='caption'){
    window.storyCaptionScale=next;if(S.node?.isConnected)S.node.style.transform='scale('+next+')';
   }else{
    window.storyMediaScale=next;if(S.node?.isConnected)S.node.style.transform='scale('+next+')';
