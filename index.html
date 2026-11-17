@@ -4629,103 +4629,101 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
 </style>
 
 <style id="sm-unified-two-finger-gestures">
-#storyEditorPreview,#storyEditorMedia,#storyEditorEmoji{touch-action:none!important}
+#storyEditorPreview,#storyEditorMedia,#storyEditorEmoji,#smStoryEditor .sm-story-stage{touch-action:none!important}
 #storyEditorMedia>*{transform-origin:center center;will-change:transform}
 #storyEditorCaption{pointer-events:auto!important;touch-action:none!important;transform-origin:center center}
 #storyEditorEmoji [data-sticker-index]{touch-action:none!important}
 </style>
 <script id="sm-unified-two-finger-gestures-js">
 (function(){
- if(window.__smUnifiedPinchV2)return;window.__smUnifiedPinchV2=true;
- const box=document.getElementById('storyEditorPreview');
- if(!box)return;
- const S={node:null,kind:'',index:-1,startD:0,startScale:1,startX:0,startY:0,startLeft:50,startTop:50,pinching:false,moved:false};
+ if(window.__smUnifiedPinchV3)return;window.__smUnifiedPinchV3=true;
+ const preview=document.getElementById('storyEditorPreview');
+ const stage=document.querySelector('#smStoryEditor .sm-story-stage');
+ if(!preview||!stage)return;
+ const S={node:null,kind:'',index:-1,pointers:new Map(),startD:0,startScale:1,startX:0,startY:0,startLeft:50,startTop:50,pinching:false,moved:false};
  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
- const dist=(a,b)=>Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);
+ const distance=(p)=>{const a=[...p.values()];return a.length<2?0:Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);};
  function pick(target){
-  let n=target.closest?.('[data-sticker-index]');
-  if(n)return {node:n,kind:'sticker',index:Number(n.dataset.stickerIndex)};
-  if(target.closest?.('#storyEditorCaption'))return {node:document.getElementById('storyEditorCaption'),kind:'caption',index:-1};
-  if(target.closest?.('#storyEditorMedia'))return {node:document.querySelector('#storyEditorMedia>*'),kind:'media',index:-1};
+  const sticker=target.closest?.('[data-sticker-index]');
+  if(sticker)return {node:sticker,kind:'sticker',index:Number(sticker.dataset.stickerIndex)};
+  const caption=target.closest?.('#storyEditorCaption');
+  if(caption)return {node:caption,kind:'caption',index:-1};
+  const media=target.closest?.('#storyEditorMedia');
+  if(media){const child=media.firstElementChild;if(child)return {node:child,kind:'media',index:-1};}
   return null;
  }
- function currentScale(){
+ function scaleNow(){
   if(S.kind==='sticker')return Number(storyEditorEmojis[S.index]?.scale)||1;
   if(S.kind==='caption')return Number(window.storyCaptionScale)||1;
   return Number(window.storyMediaScale)||1;
  }
- function paintScale(value){
-  const v=clamp(value,.25,4);
+ function applyScale(){
+  const next=clamp(S.startScale*distance(S.pointers)/(S.startD||1),.25,4);
   if(S.kind==='sticker'){
-   const o=storyEditorEmojis[S.index];if(!o)return;o.scale=v;
-   S.node.style.transform='translate(-50%,-50%) scale('+v+')';
+   const item=storyEditorEmojis[S.index];if(!item)return;item.scale=next;
+   S.node.style.transform='translate(-50%,-50%) scale('+next+')';
   }else if(S.kind==='caption'){
-   window.storyCaptionScale=v;S.node.style.transform='scale('+v+')';
+   window.storyCaptionScale=next;S.node.style.transform='scale('+next+')';
   }else{
-   window.storyMediaScale=v;S.node.style.transform='scale('+v+')';
+   window.storyMediaScale=next;S.node.style.transform='scale('+next+')';
   }
  }
- function onTouchStart(e){
-  // First finger selects inside preview; second finger may land on empty editor space.
-  if(e.touches.length===1&&!box.contains(e.target))return;
-  if(e.touches.length===1){
-   const found=pick(e.target);
-   if(!found)return;
+ function down(e){
+  if(e.pointerType!=='touch'&&e.pointerType!=='pen'&&e.pointerType!=='mouse')return;
+  if(e.pointerType==='mouse'&&e.button!==0)return;
+  if(S.pointers.size===0){
+   if(!preview.contains(e.target))return;
+   const found=pick(e.target);if(!found)return;
    S.node=found.node;S.kind=found.kind;S.index=found.index;
-   S.startX=e.touches[0].clientX;S.startY=e.touches[0].clientY;
-   S.startScale=currentScale();S.moved=false;S.pinching=false;
-   if(S.kind==='sticker'){
-    const o=storyEditorEmojis[S.index];S.startLeft=Number(o?.x)||50;S.startTop=Number(o?.y)||50;
-   }else if(S.kind==='caption'){
-    S.startLeft=parseFloat(S.node.style.left)||50;S.startTop=parseFloat(S.node.style.top)||50;
-   }
-   return;
+   S.startScale=scaleNow();S.moved=false;S.pinching=false;
+   S.startX=e.clientX;S.startY=e.clientY;
+   if(S.kind==='sticker'){const o=storyEditorEmojis[S.index];S.startLeft=Number(o?.x)||50;S.startTop=Number(o?.y)||50;}
+  }else{
+   // Second pointer can land anywhere in the editor stage, not on the selected object.
+   if(!stage.contains(e.target))return;
+   if(S.pointers.size>=2)return;
   }
-  if(e.touches.length===2&&S.node){
-   S.startD=dist(e.touches[0],e.touches[1])||1;
-   S.startScale=currentScale();S.pinching=true;S.moved=true;
-   e.preventDefault();
+  S.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  try{e.target.setPointerCapture?.(e.pointerId);}catch(_){}
+  e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
+  if(S.pointers.size===2){
+   S.startD=distance(S.pointers)||1;S.startScale=scaleNow();S.pinching=true;S.moved=true;
   }
  }
- function onTouchMove(e){
-  if(!S.node)return;
-  if(e.touches.length>=2&&S.pinching){
-   e.preventDefault();
-   paintScale(S.startScale*dist(e.touches[0],e.touches[1])/(S.startD||1));
-   return;
-  }
-  if(e.touches.length===1&&!S.pinching&&S.kind!=='media'){
-   const t=e.touches[0],dx=t.clientX-S.startX,dy=t.clientY-S.startY;
+ function move(e){
+  if(!S.pointers.has(e.pointerId))return;
+  S.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(S.pointers.size===2&&S.pinching){e.preventDefault();applyScale();return;}
+  if(S.pointers.size===1&&!S.pinching&&S.kind==='sticker'){
+   const dx=e.clientX-S.startX,dy=e.clientY-S.startY;
    if(Math.abs(dx)+Math.abs(dy)>5)S.moved=true;
    if(!S.moved)return;
-   if(S.kind==='sticker'){
-    const o=storyEditorEmojis[S.index],r=box.getBoundingClientRect();if(!o||!r.width||!r.height)return;
-    o.x=clamp(S.startLeft+dx/r.width*100,2,98);o.y=clamp(S.startTop+dy/r.height*100,2,98);
-    S.node.style.left=o.x+'%';S.node.style.top=o.y+'%';
-   }else if(S.kind==='caption'){
-    S.node.style.translate=dx+'px '+dy+'px';
-   }
+   const item=storyEditorEmojis[S.index],r=preview.getBoundingClientRect();if(!item||!r.width||!r.height)return;
+   item.x=clamp(S.startLeft+dx/r.width*100,2,98);item.y=clamp(S.startTop+dy/r.height*100,2,98);
+   S.node.style.left=item.x+'%';S.node.style.top=item.y+'%';
+  }else if(S.pointers.size===1&&!S.pinching&&S.kind==='caption'){
+   const dx=e.clientX-S.startX,dy=e.clientY-S.startY;
+   if(Math.abs(dx)+Math.abs(dy)>5){S.moved=true;S.node.style.translate=dx+'px '+dy+'px';}
   }
  }
- function onTouchEnd(e){
-  if(e.touches.length===1&&S.pinching){
-   const t=e.touches[0];S.startX=t.clientX;S.startY=t.clientY;S.startScale=currentScale();
+ function finish(e){
+  if(!S.pointers.has(e.pointerId))return;
+  S.pointers.delete(e.pointerId);
+  if(S.pointers.size===1){
+   const p=[...S.pointers.values()][0];S.startX=p.x;S.startY=p.y;S.startScale=scaleNow();
    if(S.kind==='sticker'){const o=storyEditorEmojis[S.index];S.startLeft=Number(o?.x)||50;S.startTop=Number(o?.y)||50;}
    S.pinching=false;S.startD=0;return;
   }
-  if(e.touches.length===0){
-   const kind=S.kind,wasPinch=S.pinching||S.moved;
-   S.node=null;S.kind='';S.index=-1;S.startD=0;S.pinching=false;S.moved=false;
-   if(kind==='sticker'&&wasPinch)renderStoryEditorEmojis();
-  }
+  if(S.pointers.size)return;
+  const kind=S.kind,changed=S.moved;
+  S.node=null;S.kind='';S.index=-1;S.startD=0;S.pinching=false;S.moved=false;
+  if(kind==='sticker'&&changed)renderStoryEditorEmojis();
  }
- // Stop legacy pointer drag handlers for touch; touch handlers below own the gesture.
- box.addEventListener('pointerdown',e=>{if(e.pointerType==='touch')e.stopImmediatePropagation();},true);
- // Capture at document level: second finger may start on a different empty editor target.
- document.addEventListener('touchstart',onTouchStart,{capture:true,passive:false});
- document.addEventListener('touchmove',onTouchMove,{capture:true,passive:false});
- document.addEventListener('touchend',onTouchEnd,{capture:true,passive:false});
- document.addEventListener('touchcancel',onTouchEnd,{capture:true,passive:false});
+ // Capture before inline handlers so legacy one-finger resize/drag cannot compete.
+ document.addEventListener('pointerdown',down,{capture:true,passive:false});
+ document.addEventListener('pointermove',move,{capture:true,passive:false});
+ document.addEventListener('pointerup',finish,true);
+ document.addEventListener('pointercancel',finish,true);
  window.resetStoryMediaZoom=function(){window.storyMediaScale=1;const n=document.querySelector('#storyEditorMedia>*');if(n)n.style.transform='scale(1)';};
  window.resetStoryCaptionZoom=function(){window.storyCaptionScale=1;const n=document.getElementById('storyEditorCaption');if(n)n.style.transform='scale(1)';n?.style.removeProperty('translate');};
 })();
