@@ -4666,7 +4666,8 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
   }
  }
  function onTouchStart(e){
-  if(!box.contains(e.target))return;
+  // First finger selects inside preview; second finger may land on empty editor space.
+  if(e.touches.length===1&&!box.contains(e.target))return;
   if(e.touches.length===1){
    const found=pick(e.target);
    if(!found)return;
@@ -4720,10 +4721,11 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
  }
  // Stop legacy pointer drag handlers for touch; touch handlers below own the gesture.
  box.addEventListener('pointerdown',e=>{if(e.pointerType==='touch')e.stopImmediatePropagation();},true);
- box.addEventListener('touchstart',onTouchStart,{capture:true,passive:false});
- box.addEventListener('touchmove',onTouchMove,{capture:true,passive:false});
- box.addEventListener('touchend',onTouchEnd,{capture:true,passive:false});
- box.addEventListener('touchcancel',onTouchEnd,{capture:true,passive:false});
+ // Capture at document level: second finger may start on a different empty editor target.
+ document.addEventListener('touchstart',onTouchStart,{capture:true,passive:false});
+ document.addEventListener('touchmove',onTouchMove,{capture:true,passive:false});
+ document.addEventListener('touchend',onTouchEnd,{capture:true,passive:false});
+ document.addEventListener('touchcancel',onTouchEnd,{capture:true,passive:false});
  window.resetStoryMediaZoom=function(){window.storyMediaScale=1;const n=document.querySelector('#storyEditorMedia>*');if(n)n.style.transform='scale(1)';};
  window.resetStoryCaptionZoom=function(){window.storyCaptionScale=1;const n=document.getElementById('storyEditorCaption');if(n)n.style.transform='scale(1)';n?.style.removeProperty('translate');};
 })();
