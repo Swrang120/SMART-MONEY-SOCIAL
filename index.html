@@ -3177,5 +3177,195 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
  #modalBack.story-mode #smStoryNativeTextComposer .sm-native-style-row button{min-width:66px!important}
 }
 </style>
+
+<style id="story-experience-v22">
+/* Story tool sheets: never cover the main media preview. */
+#modalBack.story-mode .sm-story-panel{
+ position:fixed!important;left:0!important;right:0!important;bottom:0!important;top:auto!important;
+ width:100%!important;max-height:42dvh!important;height:auto!important;min-height:0!important;
+ overflow:hidden!important;border-radius:20px 20px 0 0!important;background:#111923f5!important;
+ z-index:100020!important;box-shadow:0 -12px 40px #0008!important;backdrop-filter:blur(18px)!important;
+ display:flex!important;flex-direction:column!important;padding-bottom:env(safe-area-inset-bottom,0px)!important;
+}
+#modalBack.story-mode .sm-story-panel[hidden]{display:none!important}
+#modalBack.story-mode .sm-story-panel-head{flex:0 0 42px!important;min-height:42px!important}
+#modalBack.story-mode #smStoryMentionPanel,#modalBack.story-mode #smStoryStickersPanel,
+#modalBack.story-mode #smStoryFiltersPanel,#modalBack.story-mode #smStoryEffectsPanel{
+ overflow-y:auto!important;max-height:calc(42dvh - 82px)!important;padding:8px 14px!important;
+}
+#modalBack.story-mode .sm-story-panel-footer{flex:0 0 auto!important}
+#smStoryMusicFullPage{position:fixed;inset:0;z-index:100050;background:#0d1420;color:#fff;display:flex;flex-direction:column;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+#smStoryMusicFullPage[hidden]{display:none!important}
+#smStoryMusicFullPage .sm-music-full-head{height:58px;flex:0 0 58px;display:flex;align-items:center;gap:14px;padding:0 16px;border-bottom:1px solid #ffffff18}
+#smStoryMusicFullPage .sm-music-full-head button{border:0;background:transparent;color:#fff;font-size:24px}
+#smStoryMusicFullPage .sm-music-full-head strong{font-size:19px}
+#smStoryMusicFullPage .sm-music-full-search{margin:14px 16px 10px;display:flex;align-items:center;gap:10px;padding:0 14px;height:48px;border-radius:14px;background:#202c3b}
+#smStoryMusicFullPage .sm-music-full-search input{flex:1;min-width:0;border:0!important;outline:0!important;background:transparent!important;color:#fff!important;font-size:16px}
+#smStoryMusicFullPage .sm-pdf-music-tabs{display:flex;gap:8px;overflow-x:auto;padding:6px 16px 12px;flex:0 0 auto}
+#smStoryMusicFullPage .sm-pdf-music-tabs button{white-space:nowrap;border:1px solid #ffffff22;border-radius:22px;padding:9px 15px;background:#1b2736;color:#fff}
+#smStoryMusicFullPage .sm-pdf-music-tabs button.active{background:#1688f5;border-color:#1688f5}
+#smStoryMusicFullPage .story-music-catalog{flex:1;min-height:0;overflow-y:auto;padding:0 14px 16px}
+#smStoryMusicFullPage .sm-pdf-track{display:flex;align-items:center;gap:8px;padding:10px 2px;border-bottom:1px solid #ffffff15}
+#smStoryMusicFullPage .sm-pdf-track-main{flex:1;min-width:0;display:flex;align-items:center;gap:12px;text-align:left;background:transparent;border:0;color:#fff}
+#smStoryMusicFullPage .sm-pdf-track-main img,#smStoryMusicFullPage .sm-pdf-track-art{width:52px;height:52px;flex:0 0 52px;border-radius:9px;object-fit:cover;background:#27364a;display:grid;place-items:center}
+#smStoryMusicFullPage .sm-pdf-track-info{display:flex;flex-direction:column;gap:4px;min-width:0}
+#smStoryMusicFullPage .sm-pdf-track-info b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#smStoryMusicFullPage .sm-pdf-track-info small{color:#bdc9d8}
+#smStoryMusicFullPage .sm-pdf-track-save{width:40px;height:40px;border:0;background:transparent;color:#ffcf4a;font-size:23px}
+#smStoryMusicFullPage .sm-music-full-bottom{flex:0 0 auto;padding:10px 14px;border-top:1px solid #ffffff18;background:#111923}
+#smStoryMusicFullPage #storyMusicPreview{max-height:34dvh;overflow:auto}
+#smStoryMusicFullPage #storyMusicAudioPreview{width:100%}
+#smStoryMusicFullPage .sm-music-full-actions{display:flex;gap:10px;margin-top:8px}
+#smStoryMusicFullPage .sm-music-full-actions button{flex:1;min-height:44px;border:0;border-radius:12px;background:#263448;color:#fff;font-weight:700}
+#smStoryMusicFullPage .sm-music-full-actions .apply{background:#1688f5}
+#smStoryTextFullPage{position:fixed;inset:0;z-index:100060;background:#090d14;color:#fff;display:none;flex-direction:column;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+#smStoryTextFullPage.open{display:flex}
+#smStoryTextFullPage .sm-text-head{height:54px;flex:0 0 54px;display:flex;align-items:center;justify-content:space-between;padding:0 14px}
+#smStoryTextFullPage .sm-text-head button{border:0;border-radius:24px;background:#1688f5;color:#fff;padding:10px 18px;font-weight:700}
+#smStoryTextFullPage .sm-text-preview{position:relative;flex:1;min-height:120px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#smStoryTextFullPage .sm-text-preview img,#smStoryTextFullPage .sm-text-preview video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none}
+#smStoryTextFullPage textarea{position:relative;z-index:2;width:88%;min-height:70px;max-height:60%;resize:none;border:0!important;outline:0!important;background:transparent!important;color:#fff;text-align:center;font:700 28px/1.25 system-ui;text-shadow:0 2px 8px #000b;padding:12px;touch-action:pan-y}
+#smStoryTextFullPage .sm-text-controls{flex:0 0 auto;background:#111a28;padding:10px 12px 14px;display:flex;flex-direction:column;gap:10px}
+#smStoryTextFullPage .sm-text-size{display:flex;align-items:center;gap:10px;font-size:12px}
+#smStoryTextFullPage .sm-text-size input{flex:1;min-width:0;width:100%;accent-color:#1688f5;touch-action:pan-x}
+#smStoryTextFullPage .sm-text-fonts,#smStoryTextFullPage .sm-text-colors{display:flex;gap:8px;overflow-x:auto;white-space:nowrap;padding:2px 0;touch-action:pan-x}
+#smStoryTextFullPage .sm-text-fonts button{flex:0 0 auto;border:1px solid #ffffff35;border-radius:22px;background:#263244;color:#fff;padding:10px 15px}
+#smStoryTextFullPage .sm-text-fonts button.active{background:#1688f5;border-color:#1688f5}
+#smStoryTextFullPage .sm-text-colors button{flex:0 0 30px;width:30px;height:30px;border:2px solid #ffffff88;border-radius:50%;padding:0}
+#smStoryTextFullPage .sm-text-colors button.active{outline:2px solid #fff;outline-offset:2px}
+</style>
+<script id="story-experience-v22">
+(function(){
+ const $=id=>document.getElementById(id);
+ const fontMap={classic:'Georgia,serif',bold:'system-ui,sans-serif',poster:'Impact,system-ui',bubble:'Trebuchet MS,system-ui',neon:'system-ui,sans-serif',typewriter:'monospace'};
+ const colors=['#ffffff','#ffdf4d','#ff4d4d','#ff7b36','#4de28b','#36c8ff','#557bff','#bd73ff','#ff62b5','#111111'];
+ let musicHome=null, textLayer=null;
+ function applyText(){
+  const input=$('smStoryTextInputV22'),caption=$('storyEditorCaption'),fallback=$('storyCaptionFallback');
+  const value=input?.value||'';
+  if(fallback)fallback.value=value;
+  if(caption){
+   caption.textContent=value;
+   caption.style.fontFamily=fontMap[window.storyTextStyle||'classic'];
+   caption.style.fontWeight=['bold','poster','neon'].includes(window.storyTextStyle)?'900':'600';
+   caption.style.fontStyle=window.storyTextStyle==='bubble'?'italic':'normal';
+   caption.style.fontSize=(window.storyTextSize||28)+'px';
+   caption.style.color=window.storyTextColor||'#fff';
+   caption.style.textAlign=window.storyTextAlign||'center';
+   caption.style.textShadow=window.storyTextStyle==='neon'?'0 0 9px currentColor,0 0 18px currentColor':'0 2px 6px #0009';
+   caption.style.background=window.storyTextBackground?'rgba(0,0,0,.58)':'transparent';
+   caption.style.padding=window.storyTextBackground?'8px 13px':'4px 8px';
+   caption.style.borderRadius=window.storyTextBackground?'12px':'0';
+  }
+ }
+ function updateFontButtons(){document.querySelectorAll('#smStoryTextFullPage [data-font-v22]').forEach(b=>b.classList.toggle('active',b.dataset.fontV22===window.storyTextStyle));}
+ function setStyle(style){if(!fontMap[style])return;window.storyTextStyle=style;const i=$('smStoryTextInputV22');if(i){i.style.fontFamily=fontMap[style];i.style.fontWeight=['bold','poster','neon'].includes(style)?'900':'600';i.style.fontStyle=style==='bubble'?'italic':'normal';i.style.textShadow=style==='neon'?'0 0 9px currentColor,0 0 18px currentColor':'0 2px 6px #000b';}updateFontButtons();applyText();}
+ function setColor(color){window.storyTextColor=color;const i=$('smStoryTextInputV22');if(i)i.style.color=color;document.querySelectorAll('#smStoryTextFullPage [data-color-v22]').forEach(b=>b.classList.toggle('active',b.dataset.colorV22===color));applyText();}
+ function setSize(v){window.storyTextSize=Math.max(12,Math.min(82,Number(v)||28));const i=$('smStoryTextInputV22'),out=$('smStoryTextSizeValueV22');if(i)i.style.fontSize=window.storyTextSize+'px';if(out)out.textContent=window.storyTextSize+'px';applyText();}
+ window.setStoryTextStyle=setStyle;window.setStoryTextSize=setSize;
+ window.setStoryTextBackground=function(on){window.storyTextBackground=!!on;const b=$('smStoryTextBgV22');if(b)b.classList.toggle('active',!!on);applyText();};
+ window.cycleStoryTextAlign=function(){window.storyTextAlign=window.storyTextAlign==='left'?'center':window.storyTextAlign==='center'?'right':'left';const i=$('smStoryTextInputV22');if(i)i.style.textAlign=window.storyTextAlign;applyText();};
+ window.cycleStoryTextStyle=function(){const a=Object.keys(fontMap),n=a.indexOf(window.storyTextStyle||'classic');setStyle(a[(n+1)%a.length]);};
+ function openText(){
+  if(typeof closeStoryPanel==='function')closeStoryPanel();
+  const existing=$('smStoryNativeTextComposer');if(existing)existing.remove();
+  textLayer=$('smStoryTextFullPage');
+  if(!textLayer){
+   textLayer=document.createElement('section');textLayer.id='smStoryTextFullPage';
+   textLayer.innerHTML='<header class="sm-text-head"><button type="button" onclick="closeStoryTextComposer()">Cancel</button><b>Edit text</b><button type="button" onclick="closeStoryTextComposer()">Done ✓</button></header><div class="sm-text-preview" id="smStoryTextPreviewV22"><textarea id="smStoryTextInputV22" maxlength="180" placeholder="Type your story text"></textarea></div><div class="sm-text-controls"><div class="sm-text-size"><span>A−</span><input id="smStoryTextSizeV22" type="range" min="12" max="82" value="28"><span>A+</span><output id="smStoryTextSizeValueV22">28px</output></div><div class="sm-text-fonts"><button data-font-v22="classic" data-story-font-v22="classic">Classic</button><button data-font-v22="bold" data-story-font-v22="bold">Bold</button><button data-font-v22="poster" data-story-font-v22="poster">Poster</button><button data-font-v22="bubble" data-story-font-v22="bubble">Bubble</button><button data-font-v22="neon" data-story-font-v22="neon">Neon</button><button data-font-v22="typewriter" data-story-font-v22="typewriter">Typewriter</button></div><div class="sm-text-colors">'+colors.map(c=>'<button type="button" data-color-v22="'+c+'" style="background:'+c+'" aria-label="Text color '+c+'"></button>').join('')+'</div><div><button type="button" id="smStoryTextBgV22" onclick="setStoryTextBackground(!window.storyTextBackground)">Text background</button><button type="button" onclick="cycleStoryTextAlign()">Align</button></div></div>';
+   $('modalBack').appendChild(textLayer);
+   const input=$('smStoryTextInputV22'),slider=$('smStoryTextSizeV22');
+   input.addEventListener('input',applyText);
+   slider.addEventListener('input',()=>setSize(slider.value));
+   textLayer.querySelectorAll('[data-font-v22]').forEach(b=>b.addEventListener('click',()=>setStyle(b.dataset.fontV22)));
+   textLayer.querySelectorAll('[data-color-v22]').forEach(b=>b.addEventListener('click',()=>setColor(b.dataset.colorV22)));
+   let pinchDistance=0,pinchBase=28;
+   textLayer.querySelector('.sm-text-preview').addEventListener('touchstart',e=>{if(e.touches.length===2){pinchDistance=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);pinchBase=window.storyTextSize||28;}},{passive:true});
+   textLayer.querySelector('.sm-text-preview').addEventListener('touchmove',e=>{if(e.touches.length===2&&pinchDistance){e.preventDefault();const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);setSize(pinchBase*d/pinchDistance);slider.value=window.storyTextSize;}},{passive:false});
+   textLayer.querySelector('.sm-text-preview').addEventListener('touchend',()=>pinchDistance=0,{passive:true});
+  }
+  const preview=$('smStoryTextPreviewV22'),media=$('storyEditorMedia')?.firstElementChild;
+  preview.querySelectorAll('img,video').forEach(n=>n.remove());
+  if(media){const clone=media.cloneNode(true);clone.removeAttribute('id');clone.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none';preview.insertBefore(clone,preview.firstChild);}
+  const input=$('smStoryTextInputV22');input.value=$('storyCaptionFallback')?.value||$('storyEditorCaption')?.textContent||'';
+  window.storyTextSize=Number(window.storyTextSize)||28;window.storyTextColor=window.storyTextColor||'#ffffff';
+  $('smStoryTextSizeV22').value=window.storyTextSize;setSize(window.storyTextSize);setColor(window.storyTextColor);setStyle(window.storyTextStyle||'classic');
+  $('smStoryTextBgV22').classList.toggle('active',!!window.storyTextBackground);
+  textLayer.classList.add('open');setTimeout(()=>input.focus(),80);
+ }
+ window.openStoryTextComposer=openText;
+ window.closeStoryTextComposer=function(){const i=$('smStoryTextInputV22');if(i){applyText();i.blur();}if(textLayer)textLayer.classList.remove('open');};
+ window.toggleStoryPanel=function(name){
+  const panel=$('smStoryPanel'),ids={mention:'smStoryMentionPanel',stickers:'smStoryStickersPanel',filters:'smStoryFiltersPanel',effects:'smStoryEffectsPanel'};
+  if(name==='music'){openMusic();return;}
+  if(!panel||!ids[name])return;
+  if($('smStoryMusicFullPage'))$('smStoryMusicFullPage').hidden=true;
+  const target=$(ids[name]),wasOpen=target&&!target.hidden;
+  Object.values(ids).forEach(id=>{const el=$(id);if(el){el.hidden=true;el.style.display='none';}});
+  if(wasOpen){window.closeStoryPanel?.();return;}
+  if(!window.storyPanelDraftSnapshot&&typeof captureStoryPanelDraft==='function')window.storyPanelDraftSnapshot=captureStoryPanelDraft();
+  target.hidden=false;target.style.display='block';panel.hidden=false;panel.style.display='flex';panel.dataset.activeTool=name;
+  document.querySelectorAll('.sm-story-tool').forEach(b=>b.classList.toggle('active',b.getAttribute('onclick')?.includes("'"+name+"'")));
+  const title=$('smStoryPanelTitle');if(title)title.textContent=({mention:'Mention',stickers:'Stickers',filters:'Restyle',effects:'Effects'})[name];
+  if(name==='mention'){window.storyMentionSelection=[];if($('storyMentionSearch'))$('storyMentionSearch').value='';renderStoryMentionPeople();}
+  if(name==='stickers'){showStickerTab('brand');if($('storyStickerSearch'))$('storyStickerSearch').value='';filterStoryStickerOptions();}
+ };
+ function openMusic(){
+  const source=$('smStoryMusicPanel');if(!source)return;
+  const shell=$('smStoryPanel');if(shell){shell.hidden=true;shell.style.display='none';}
+  let page=$('smStoryMusicFullPage');
+  if(!page){
+   page=document.createElement('section');page.id='smStoryMusicFullPage';
+   page.innerHTML='<header class="sm-music-full-head"><button type="button" onclick="closeStoryMusicPage()">‹</button><strong>Music</strong></header><div class="sm-music-full-search"><span>⌕</span><input id="smStoryMusicSearchV22" type="search" placeholder="Search songs, artists…" autocomplete="off"></div><nav class="sm-pdf-music-tabs"><button class="active" type="button" data-music-tab="for-you">For You</button><button type="button" data-music-tab="trending">Trending</button><button type="button" data-music-tab="saved">Saved</button><button type="button" data-music-tab="original">Original Audio</button></nav><div id="smStoryMusicRowsV22" class="story-music-catalog"><div class="tiny muted">Loading music library…</div></div><footer class="sm-music-full-bottom"><div id="smStoryMusicPreviewMountV22"></div><div class="sm-music-full-actions"><button type="button" onclick="clearStoryMusicSelection()">Remove music</button><button type="button" class="apply" onclick="applyStoryMusicV22()">Add to story ✓</button></div></footer>';
+   $('modalBack').appendChild(page);
+   page.querySelector('#smStoryMusicSearchV22').addEventListener('input',renderMusic);
+   page.querySelectorAll('[data-music-tab]').forEach(b=>b.addEventListener('click',()=>{window.storyMusicTab=b.dataset.musicTab;page.querySelectorAll('[data-music-tab]').forEach(x=>x.classList.toggle('active',x===b));renderMusic();}));
+  }
+  const preview=$('storyMusicPreview');if(preview)$('smStoryMusicPreviewMountV22').appendChild(preview);
+  page.hidden=false;window.storyMusicTab='for-you';page.querySelectorAll('[data-music-tab]').forEach(b=>b.classList.toggle('active',b.dataset.musicTab==='for-you'));
+  if(typeof loadStoryMusicLibrary==='function')loadStoryMusicLibrary();else renderMusic();
+ }
+ function renderMusic(){
+  const host=$('smStoryMusicRowsV22');if(!host)return;
+  const q=($('smStoryMusicSearchV22')?.value||'').trim().toLowerCase(),tab=window.storyMusicTab||'for-you';
+  let rows=[...(storyMusicCatalog||[])],saved=new Set();try{saved=new Set(JSON.parse(localStorage.getItem('smStorySavedMusic')||'[]'));}catch(_){}
+  if(tab==='saved')rows=rows.filter(x=>saved.has(x.id));
+  if(tab==='original')rows=rows.filter(x=>x.is_original!==false);
+  if(tab==='trending'){const plays={};(db.stories||[]).forEach(st=>{if(st.musicPath)plays[st.musicPath]=(plays[st.musicPath]||0)+1;});rows.sort((a,b)=>(plays[b.file_path]||0)-(plays[a.file_path]||0));}
+  if(q)rows=rows.filter(x=>(x.title+' '+(x.artist||'')).toLowerCase().includes(q));
+  if(!rows.length){host.innerHTML='<div class="sm-pdf-empty">No tracks found. Music tracks are added by the Smart Money Social admin.</div>';return;}
+  host.innerHTML=rows.map(x=>'<div class="sm-pdf-track '+(storySelectedMusic?.id===x.id?'selected':'')+'"><button type="button" class="sm-pdf-track-main" data-track-v22="'+String(x.id).replace(/"/g,'&quot;')+'">'+(x.artworkUrl?'<img src="'+safe(x.artworkUrl)+'" alt="">':'<span class="sm-pdf-track-art">♫</span>')+'<span class="sm-pdf-track-info"><b>'+safe(x.title)+'</b><small>'+safe(x.artist||'Original audio')+' · '+formatStoryTrackDuration(x.duration_seconds)+'</small></span></button><button type="button" class="sm-pdf-track-save" data-save-v22="'+String(x.id).replace(/"/g,'&quot;')+'">'+(saved.has(x.id)?'★':'☆')+'</button></div>').join('');
+  host.querySelectorAll('[data-track-v22]').forEach(b=>b.addEventListener('click',()=>selectStoryLibraryTrack(b.dataset.trackV22)));
+  host.querySelectorAll('[data-save-v22]').forEach(b=>b.addEventListener('click',e=>toggleStoryMusicSaved(b.dataset.saveV22,e)));
+ }
+ window.renderStoryMusicRows=renderMusic;
+ window.closeStoryMusicPage=function(){
+  const page=$('smStoryMusicFullPage'),preview=$('storyMusicPreview'),panel=$('smStoryMusicPanel');
+  if(preview&&panel)panel.appendChild(preview);
+  if(page)page.hidden=true;
+ };
+ window.applyStoryMusicV22=function(){if(!storySelectedMusic){showToast('Select a song first.');return;}window.closeStoryMusicPage();showToast('Music added to your story.');};
+ const originalLoad=window.loadStoryMusicLibrary;
+ window.loadStoryMusicLibrary=async function(){
+  const page=$('smStoryMusicFullPage');if(!page){return originalLoad?.();}
+  const host=$('smStoryMusicRowsV22');if(host)host.innerHTML='<div class="tiny muted">Loading music library…</div>';
+  try{
+   const {data,error}=await supabaseClient.from('social_story_music_library').select('id,title,artist,file_path,artwork_path,duration_seconds').eq('is_active',true).order('created_at',{ascending:false});
+   if(error)throw error;storyMusicCatalog=data||[];
+   if(!storyMusicCatalog.length){if(host)host.innerHTML='<div class="sm-pdf-empty">No music tracks are published yet.</div>';return;}
+   const paths=storyMusicCatalog.flatMap(x=>[x.file_path,x.artwork_path].filter(Boolean));
+   const {data:urls,error:urlError}=await supabaseClient.storage.from(bucket).createSignedUrls(paths,3600);if(urlError)throw urlError;
+   const signed={};(urls||[]).forEach(x=>{if(x.path)signed[x.path]=x.signedUrl||'';});
+   storyMusicCatalog=storyMusicCatalog.map(x=>({...x,url:signed[x.file_path]||'',artworkUrl:x.artwork_path?signed[x.artwork_path]||'':''}));
+   renderMusic();
+  }catch(e){if(host)host.innerHTML='<div class="sm-pdf-empty">Music library could not load: '+safe(e.message||'Please retry')+'</div>';}
+ };
+ window.closeStoryPanel=function(){
+  const panel=$('smStoryPanel');if(panel){panel.hidden=true;panel.style.display='none';delete panel.dataset.activeTool;}
+  ['smStoryMentionPanel','smStoryStickersPanel','smStoryFiltersPanel','smStoryEffectsPanel'].forEach(id=>{const el=$(id);if(el){el.hidden=true;el.style.display='none';}});
+  document.querySelectorAll('.sm-story-tool').forEach(b=>b.classList.remove('active'));
+ };
+})();
+</script>
 </body>
 </html>
