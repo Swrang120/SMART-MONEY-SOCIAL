@@ -3183,4 +3183,71 @@ window.confirmStoryMusicSelection=function(){
  }
 })();
 </script>
+<style id="story-text-size-done-top-actions-v14">
+/* Reliable Done target and draggable vertical font-size control */
+#smStoryNativeTextComposer{pointer-events:none!important}
+#smStoryNativeTextComposer.open{pointer-events:auto!important}
+#smStoryNativeTextComposer header{position:relative!important;z-index:100!important;pointer-events:auto!important}
+#smStoryNativeTextComposer header>button{position:relative!important;z-index:101!important;pointer-events:auto!important;touch-action:manipulation!important;min-width:76px!important;min-height:42px!important}
+#smStoryNativeTextComposer #smNativeTextSizeSlider{pointer-events:auto!important;touch-action:none!important;z-index:120!important;cursor:ns-resize!important;user-select:none!important;-webkit-user-select:none!important}
+#smStoryNativeTextComposer main{touch-action:pan-y!important}
+#modalBack.story-mode .sm-story-top{position:relative!important;z-index:120!important;display:flex!important;align-items:center!important;gap:8px!important}
+#modalBack.story-mode .sm-story-top .sm-story-audience-settings{display:grid!important;place-items:center!important;flex:0 0 38px!important;width:38px!important;height:38px!important;margin-left:auto!important;border:1px solid #ffffff45!important;border-radius:50%!important;background:#ffffff18!important;color:#fff!important;font-size:18px!important}
+#modalBack.story-mode .sm-story-top .sm-story-share{display:flex!important;flex:0 0 44px!important;width:44px!important;height:44px!important}
+#modalBack.story-mode .sm-story-top #storyPublishButton{display:grid!important;place-items:center!important;width:44px!important;height:44px!important;border:0!important;border-radius:50%!important;background:#1688f5!important;color:#fff!important;font-size:23px!important}
+#modalBack.story-mode .sm-story-bottom{display:flex!important}
+#modalBack.story-mode .sm-story-bottom .sm-story-audience-settings,
+#modalBack.story-mode .sm-story-bottom .sm-story-share{display:none!important}
+</style>
+<script id="story-text-size-done-top-actions-v14">
+(function(){
+ const $=id=>document.getElementById(id);
+ function moveStoryActions(){
+  const shell=document.querySelector('#modalBack.story-mode .sm-story-shell');
+  const head=shell?.querySelector('.sm-story-top');
+  const gear=shell?.querySelector('.sm-story-audience-settings');
+  const share=shell?.querySelector('.sm-story-share');
+  if(head&&gear&&gear.parentElement!==head){gear.title='Story audience settings';gear.setAttribute('aria-label','Story audience settings');head.appendChild(gear);}
+  if(head&&share&&share.parentElement!==head){share.title='Share story';head.appendChild(share);}
+ }
+ const oldOpen=window.openStoryTextComposer;
+ if(typeof oldOpen==='function'&&!oldOpen.__v14){
+  const wrapped=function(){
+   const out=oldOpen.apply(this,arguments);
+   const layer=$('smStoryNativeTextComposer'),done=layer?.querySelector('header>button'),slider=$('smNativeTextSizeSlider');
+   if(done){done.type='button';done.textContent='Done ✓';done.onclick=null;done.addEventListener('click',function(e){e.preventDefault();e.stopImmediatePropagation();window.closeStoryTextComposer();},{capture:true});}
+   if(slider&&!slider.__v14){
+    slider.__v14=true;
+    const setFromY=e=>{
+     const r=slider.getBoundingClientRect();
+     const ratio=Math.max(0,Math.min(1,(r.bottom-e.clientY)/Math.max(1,r.height)));
+     const value=12+ratio*(76-12);
+     slider.value=String(Math.round(value));
+     window.setStoryTextSize(value);
+    };
+    slider.addEventListener('pointerdown',e=>{e.preventDefault();slider.setPointerCapture?.(e.pointerId);setFromY(e);},{passive:false});
+    slider.addEventListener('pointermove',e=>{if(e.buttons||e.pressure>0)setFromY(e);},{passive:true});
+   }
+   moveStoryActions();
+   return out;
+  };
+  wrapped.__v14=true;window.openStoryTextComposer=wrapped;
+ }
+ const originalClose=window.closeStoryTextComposer;
+ window.closeStoryTextComposer=function(){
+  const layer=$('smStoryNativeTextComposer'),input=$('smNativeStoryTextInput');
+  if(input&&$('storyCaption'))$('storyCaption').value=input.value;
+  if(typeof originalClose==='function')originalClose();
+  else if(layer)layer.classList.remove('open');
+  if(input)input.blur();
+  window.updateStoryEditorPreview?.();
+ };
+ document.addEventListener('click',e=>{
+  if(e.target.closest('#smStoryNativeTextComposer header>button')){e.preventDefault();window.closeStoryTextComposer();}
+ },true);
+ const observer=new MutationObserver(moveStoryActions);
+ observer.observe(document.documentElement,{childList:true,subtree:true});
+ moveStoryActions();
+})();
+</script>
 </body></html>
