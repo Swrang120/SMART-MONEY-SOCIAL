@@ -1554,22 +1554,24 @@ body .profile-story-dot{display:none!important}
 #modalBack.story-mode .sm-story-trash-target{z-index:120!important}
 @media(max-height:700px){#modalBack.story-mode .sm-story-bottom{max-height:19dvh!important}#modalBack.story-mode #smStoryPanel:not([hidden]){height:49vh!important}}
 </style><style id="sm-native-text-composer-v1">
-#smStoryNativeTextComposer{display:none;position:fixed;inset:0;z-index:100000;background:#090d10;color:#fff;flex-direction:column;overflow:hidden}
+#smStoryNativeTextComposer{display:none;position:fixed;inset:0;z-index:100000;background:rgba(5,8,13,.84);color:#fff;flex-direction:column;overflow:hidden;backdrop-filter:blur(15px)}
 #smStoryNativeTextComposer.open{display:flex}
-#smStoryNativeTextComposer header{height:70px;min-height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 22px}
-#smStoryNativeTextComposer button{color:#fff;border:0;background:#171d22;border-radius:28px;padding:12px 20px;font-weight:700}
-#smStoryNativeTextComposer header div{display:flex;gap:12px}
-#smStoryNativeTextComposer header div button{width:50px;height:50px;padding:0;border-radius:50%;font-size:21px}
-#smStoryNativeTextComposer main{position:relative;flex:1;min-height:180px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#050708}
-#smStoryNativeTextComposer main>div{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:.65}
+#smStoryNativeTextComposer header{height:58px;min-height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;gap:8px}
+#smStoryNativeTextComposer header>button{margin-right:auto}
+#smStoryNativeTextComposer header div{display:flex;gap:7px}
+#smStoryNativeTextComposer button{color:#fff;border:1px solid #ffffff30;background:#202936;border-radius:22px;padding:9px 13px;font-weight:700}
+#smStoryNativeTextComposer header div button{width:38px;height:38px;padding:0;border-radius:50%;font-size:17px}
+#smStoryNativeTextComposer main{position:relative;flex:1;min-height:160px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:transparent}
+#smStoryNativeTextComposer main>div{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:.72;pointer-events:none}
 #smStoryNativeTextComposer main img,#smStoryNativeTextComposer main video{width:100%;height:100%;object-fit:contain}
-#smStoryNativeTextComposer textarea{position:relative;z-index:2;width:78%;min-height:80px;max-height:45%;resize:none;border:0;outline:0;background:transparent;color:#fff;text-align:center;font:800 27px/1.25 system-ui;text-shadow:0 2px 6px #0009;padding:12px}
+#smStoryNativeTextComposer textarea{position:relative;z-index:2;width:78%;min-height:80px;max-height:55%;resize:none;border:0;outline:0;background:transparent;color:#fff;text-align:center;font:800 26px/1.25 system-ui;text-shadow:0 2px 6px #0009;padding:12px;touch-action:pan-y}
 #smStoryNativeTextComposer textarea::placeholder{color:#fffa}
-#smStoryNativeTextComposer #smNativeTextColorRail{position:absolute;z-index:3;right:22px;top:18%;height:42%;width:14px;padding:0;border-radius:12px;background:linear-gradient(#fff,#ffcf33,#ff4d3d,#57e85a,#32baff,#864cff,#ff3d9b)}
-#smStoryNativeTextComposer nav{min-height:88px;display:flex;align-items:center;gap:12px;overflow-x:auto;padding:0 18px}
-#smStoryNativeTextComposer nav button{flex:0 0 56px;width:56px;height:56px;border-radius:50%;padding:0;font-size:19px}
-#smStoryNativeTextComposer nav button:focus{background:#fff;color:#111}
-@media(max-height:650px){#smStoryNativeTextComposer header{height:54px;min-height:54px}#smStoryNativeTextComposer nav{min-height:64px}#smStoryNativeTextComposer textarea{font-size:22px}}
+#smStoryNativeTextComposer #smNativeTextColorRail{position:absolute;z-index:4;right:12px;top:18%;height:40%;width:16px;padding:0;border:2px solid #ffffffaa;border-radius:12px;background:linear-gradient(#fff,#ffcf33,#ff4d3d,#57e85a,#32baff,#864cff,#ff3d9b)}
+#smStoryNativeTextComposer #smNativeTextSizeSlider{position:absolute;z-index:4;left:8px;top:23%;height:36%;width:25px;writing-mode:vertical-lr;direction:rtl;accent-color:#27a8ff}
+#smStoryNativeTextComposer nav{min-height:64px;display:flex;align-items:center;gap:8px;overflow-x:auto;padding:8px 12px;background:rgba(13,19,29,.85)}
+#smStoryNativeTextComposer nav button{flex:0 0 auto;min-width:58px;height:42px;padding:0 12px;border-radius:22px;font-size:12px}
+#smStoryNativeTextComposer nav button.active{background:#1688e8;border-color:#fff}
+@media(max-height:650px){#smStoryNativeTextComposer header{height:50px;min-height:50px}#smStoryNativeTextComposer nav{min-height:56px}#smStoryNativeTextComposer textarea{font-size:22px}}
 </style><style id="sm-story-music-complete-v1">#modalBack.story-mode .sm-music-clip-control{display:grid;gap:7px;padding:12px;margin:10px 0;border-radius:13px;background:#303139;color:#fff}#modalBack.story-mode .sm-music-clip-control label{display:flex;justify-content:space-between;gap:8px;font-size:12px}#modalBack.story-mode .sm-music-clip-control input{width:100%;accent-color:#278cf0}#modalBack.story-mode #storyMusicAudioPreview{width:100%;height:36px}#modalBack.story-mode .sm-pdf-track-info small{font-variant-numeric:tabular-nums}</style><style id="sm-story-instagram-layout-v2">
 /* Story editor: compact floating controls over the media */
 #modalBack.story-mode .sm-story-stage{position:relative!important;isolation:isolate!important}
@@ -2187,17 +2189,23 @@ function openStoryTextComposer(){
  let layer=$('smStoryNativeTextComposer');
  if(!layer){
   layer=document.createElement('div');layer.id='smStoryNativeTextComposer';layer.className='sm-native-text-composer';
-  layer.innerHTML="<header><button type='button' onclick='closeStoryTextComposer()'>Done</button><div><button type='button' onclick='cycleStoryTextAlign()'>☰</button><button type='button' onclick='cycleStoryTextStyle()'>Aᵃ</button></div></header><main><div id='smNativeTextPhoto'></div><textarea id='smNativeStoryTextInput' maxlength='120' placeholder='Add text'></textarea><button id='smNativeTextColorRail' type='button' aria-label='Text color'></button></main><nav><button type='button' onclick=\"setStoryTextStyle('classic')\">Aa</button><button type='button' onclick=\"setStoryTextStyle('bold')\">𝗔a</button><button type='button' onclick=\"setStoryTextStyle('poster')\">Aa</button><button type='button' onclick=\"setStoryTextStyle('bubble')\">Aa</button><button type='button' onclick=\"setStoryTextStyle('neon')\">Aa</button><button type='button' onclick=\"setStoryTextStyle('typewriter')\">Aa</button></nav>";
-  $('modalBack').appendChild(layer);
-  const input=$('smNativeStoryTextInput');
+  layer.innerHTML="<header><button type='button' onclick='closeStoryTextComposer()'>Done ✓</button><div><button type='button' onclick='cycleStoryTextAlign()'>☰</button><button type='button' onclick='cycleStoryTextStyle()'>Aᵃ</button><button type='button' id='smNativeTextHighlight' onclick='setStoryTextBackground(!window.storyTextBackground)'>▰</button></div></header><main><div id='smNativeTextPhoto'></div><textarea id='smNativeStoryTextInput' maxlength='120' placeholder='Type your story text'></textarea><input id='smNativeTextSizeSlider' type='range' min='12' max='76' value='26' aria-label='Text size'><button id='smNativeTextColorRail' type='button' aria-label='Change text color'></button></main><nav><button type='button' onclick=\"setStoryTextStyle('classic')\">Classic</button><button type='button' onclick=\"setStoryTextStyle('bold')\">Bold</button><button type='button' onclick=\"setStoryTextStyle('poster')\">Poster</button><button type='button' onclick=\"setStoryTextStyle('bubble')\">Bubble</button><button type='button' onclick=\"setStoryTextStyle('neon')\">Neon</button><button type='button' onclick=\"setStoryTextStyle('typewriter')\">Type</button></nav>";
+  $('modalBack').appendChild(layer);const input=$('smNativeStoryTextInput');
   input.addEventListener('input',()=>{if($('storyCaption'))$('storyCaption').value=input.value;updateStoryEditorPreview();});
   $('smNativeTextColorRail').addEventListener('click',()=>{const colors=['#fff','#ffcf33','#ff4d4d','#55dd77','#42a5ff','#bd68ff','#ff4fa3'];let n=colors.indexOf(window.storyTextColor);window.storyTextColor=colors[(n+1)%colors.length];input.style.color=window.storyTextColor;updateStoryEditorPreview();});
+  $('smNativeTextSizeSlider').addEventListener('input',e=>setStoryTextSize(e.target.value));
+  let pinchStart=0,pinchSize=26;
+  input.addEventListener('touchstart',e=>{if(e.touches.length===2){pinchStart=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);pinchSize=window.storyTextSize||26;}},{passive:true});
+  input.addEventListener('touchmove',e=>{if(e.touches.length===2&&pinchStart){e.preventDefault();const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);setStoryTextSize(pinchSize*d/pinchStart);$('smNativeTextSizeSlider').value=window.storyTextSize;}},{passive:false});
+  input.addEventListener('touchend',()=>{pinchStart=0;},{passive:true});
  }
  const media=$('storyEditorMedia')?.firstElementChild,photo=$('smNativeTextPhoto');
  if(media&&photo){photo.innerHTML='';const clone=media.cloneNode(true);clone.style.cssText='width:100%;height:100%;object-fit:contain;filter:'+media.style.filter;photo.appendChild(clone);}
- const input=$('smNativeStoryTextInput');input.value=$('storyCaption')?.value||'';input.style.color=window.storyTextColor||'#fff';
- layer.classList.add('open');setTimeout(()=>input.focus(),120);
+ const input=$('smNativeStoryTextInput');input.value=$('storyCaption')?.value||'';input.style.color=window.storyTextColor||'#fff';input.style.fontSize=(window.storyTextSize||26)+'px';input.style.textAlign=window.storyTextAlign||'center';
+ $('smNativeTextSizeSlider').value=window.storyTextSize||26;setStoryTextStyle(window.storyTextStyle||'classic');layer.classList.add('open');setTimeout(()=>input.focus(),120);
 }
+function setStoryTextBackground(enabled){window.storyTextBackground=!!enabled;const b=$('smNativeTextHighlight');if(b)b.style.background=enabled?'#1688e8':'#202936';updateStoryEditorPreview();}
+function setStoryTextSize(value){window.storyTextSize=Math.max(12,Math.min(76,Number(value)||26));const c=$('storyEditorCaption'),i=$('smNativeStoryTextInput');if(c)c.style.fontSize=window.storyTextSize+'px';if(i)i.style.fontSize=window.storyTextSize+'px';updateStoryEditorPreview();}
 function closeStoryTextComposer(){const layer=$('smStoryNativeTextComposer');if(!layer)return;const input=$('smNativeStoryTextInput');if($('storyCaption'))$('storyCaption').value=input.value;updateStoryEditorPreview();layer.classList.remove('open');input.blur();}
 function cycleStoryTextAlign(){window.storyTextAlign=window.storyTextAlign==='left'?'center':window.storyTextAlign==='center'?'right':'left';const i=$('smNativeStoryTextInput');if(i)i.style.textAlign=window.storyTextAlign;updateStoryEditorPreview();}
 function cycleStoryTextStyle(){const a=['classic','bold','poster','bubble','neon','typewriter'];setStoryTextStyle(a[(a.indexOf(window.storyTextStyle||'classic')+1)%a.length]);}
@@ -2645,9 +2653,28 @@ function toggleStoryPanel(name){
 function closeStoryPanel(){const p=$('smStoryPanel');if(p)p.hidden=true;['smStoryTextPanel','smStoryMentionPanel','smStoryStickersPanel','smStoryFiltersPanel','smStoryEffectsPanel','smStoryMusicPanel'].forEach(id=>{const e=$(id);if(e)e.hidden=true;});document.querySelectorAll('.sm-story-tool').forEach(b=>b.classList.remove('active'));}
 function showStickerTab(tab){['brand','emoji','custom'].forEach(k=>{const e=$('smSticker'+k[0].toUpperCase()+k.slice(1)+'Tab');if(e)e.hidden=k!==tab;});document.querySelectorAll('.sm-sticker-tabs button').forEach((b,i)=>b.classList.toggle('active',['brand','emoji','custom'][i]===tab));filterStoryStickerOptions();}
 function filterStoryStickerOptions(){const q=($('storyStickerSearch')?.value||'').trim().toLowerCase();document.querySelectorAll('#smStoryStickersPanel [id^="smSticker"][id$="Tab"] button').forEach(b=>b.hidden=false);const active=document.querySelector('#smStoryStickersPanel [id^="smSticker"][id$="Tab"]:not([hidden])');if(active)active.querySelectorAll('button').forEach(b=>b.hidden=!!q&&!b.textContent.toLowerCase().includes(q));}
-function setStoryTextStyle(style){window.storyTextStyle=['classic','bold','poster','bubble'].includes(style)?style:'classic';document.querySelectorAll('.sm-pdf-text-styles button').forEach(b=>b.classList.toggle('active',b.textContent.toLowerCase().includes(window.storyTextStyle)));updateStoryEditorPreview();}
+function setStoryTextStyle(style){
+ window.storyTextStyle=style;const i=$('smNativeStoryTextInput');
+ if(i){i.style.fontFamily=style==='poster'?'Impact,system-ui':style==='classic'?'Georgia,serif':style==='typewriter'?'monospace':'system-ui,sans-serif';i.style.fontWeight=['bold','poster','bubble','neon'].includes(style)?'900':'600';i.style.fontStyle=style==='bubble'?'italic':'normal';i.style.textShadow=style==='neon'?'0 0 8px currentColor,0 0 16px currentColor':'0 2px 6px #0009';}
+ document.querySelectorAll('#smStoryNativeTextComposer nav button').forEach(b=>b.classList.toggle('active',b.textContent.toLowerCase().includes(style)));updateStoryEditorPreview();
+}
 function addStoryTextSticker(){const input=$('storyCaption'),value=(input?.value||'').trim();if(!value){showToast('Type your text first.');return;}addStorySticker({type:'text',e:value,style:window.storyTextStyle||'classic',x:50,y:50,scale:1});input.value='';updateStoryEditorPreview();}
-function updateStoryEditorPreview(){const media=$('storyEditorMedia')?.firstElementChild;if(media)media.style.filter=[$('storyFilter')?.value||'none',window.storyEffectFilter||'none'].filter(x=>x&&x!=='none').join(' ')||'none';const c=$('storyEditorCaption');if(c){const m=$('storyMention')?.value?.trim()||'',t=$('storyCaption')?.value?.trim()||$('storyCaptionFallback')?.value?.trim()||'';c.textContent=[m,t].filter(Boolean).join(' ');}}
+function updateStoryEditorPreview(){
+ const media=$('storyEditorMedia')?.firstElementChild;
+ if(media)media.style.filter=[$('storyFilter')?.value||'none',window.storyEffectFilter||'none'].filter(x=>x&&x!=='none').join(' ')||'none';
+ const caption=$('storyEditorCaption');
+ if(caption){
+  const mention=$('storyMention')?.value?.trim()||'',text=$('storyCaption')?.value||$('storyCaptionFallback')?.value||'';
+  caption.textContent=[text,mention].filter(Boolean).join(' ');
+  caption.style.fontFamily=window.storyTextStyle==='poster'?'Impact,system-ui':window.storyTextStyle==='classic'?'Georgia,serif':window.storyTextStyle==='typewriter'?'monospace':'system-ui,sans-serif';
+  caption.style.fontWeight=['bold','poster','bubble','neon'].includes(window.storyTextStyle)?'900':'600';
+  caption.style.fontStyle=window.storyTextStyle==='bubble'?'italic':'normal';
+  caption.style.color=window.storyTextColor||'#fff';caption.style.textAlign=window.storyTextAlign||'center';
+  caption.style.fontSize=(window.storyTextSize||26)+'px';caption.style.background=window.storyTextBackground?'rgba(0,0,0,.58)':'transparent';
+  caption.style.padding=window.storyTextBackground?'8px 13px':'4px 8px';caption.style.borderRadius=window.storyTextBackground?'12px':'0';
+  caption.style.textShadow=window.storyTextStyle==='neon'?'0 0 9px currentColor':'0 2px 6px #0009';
+ }
+}
 function renderStoryEditorEmojis(){
  const layer=$('storyEditorEmoji');if(!layer)return;
  const styles={classic:'font-family:Arial,sans-serif;font-weight:700;color:#fff;text-shadow:0 2px 7px #000',bold:'font-family:Arial,sans-serif;font-weight:1000;color:#fff;text-shadow:0 3px 8px #000,-1px -1px 0 #000,1px 1px 0 #000',poster:'font-family:Georgia,serif;font-weight:900;color:#ffe08a;text-shadow:0 3px 8px #241400;letter-spacing:1px',bubble:'font-family:Arial,sans-serif;font-weight:800;color:#222;background:#fff;padding:8px 13px;border-radius:18px;text-shadow:none;box-shadow:0 2px 8px #0006'};
