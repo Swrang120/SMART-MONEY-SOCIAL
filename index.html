@@ -3038,4 +3038,70 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
  document.addEventListener('click',e=>{if(e.target.closest('.sm-story-tool[aria-label="Add text"]')){install();requestAnimationFrame(install);}});
 })();
 </script>
+<style id="story-text-transparent-default-v12">
+/* Text entry should sit directly on the photo. A background is opt-in only. */
+#smStoryNativeTextComposer{background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+#smStoryNativeTextComposer main{background:transparent!important}
+#smStoryNativeTextComposer #smNativeTextPhoto{background:transparent!important;opacity:1!important}
+#smStoryNativeTextComposer textarea,
+#smStoryNativeTextComposer textarea:focus,
+#modalBack.story-mode .sm-native-text-composer textarea{
+ background:transparent!important;
+ background-color:transparent!important;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ outline:0!important;
+ color:var(--sm-story-text-color,#fff)!important;
+ -webkit-appearance:none!important;
+ appearance:none!important;
+}
+#smStoryNativeTextComposer textarea::placeholder{color:#ffffffb8!important;text-shadow:0 2px 6px #0009!important}
+#smStoryNativeTextComposer #smNativeTextHighlight{background:transparent!important;border-color:#ffffff55!important}
+#smStoryNativeTextComposer #smNativeTextHighlight[aria-pressed="true"]{background:#ffffff26!important;border-color:#fff!important}
+</style>
+<script id="story-text-transparent-default-v12">
+(function(){
+ const layer=document.getElementById('smStoryNativeTextComposer');
+ const input=document.getElementById('smNativeStoryTextInput');
+ if(input){
+  input.style.setProperty('background','transparent','important');
+  input.style.setProperty('background-color','transparent','important');
+  input.style.setProperty('border','0','important');
+  input.style.setProperty('box-shadow','none','important');
+  input.style.setProperty('border-radius','0','important');
+ }
+ const highlight=document.getElementById('smNativeTextHighlight');
+ if(highlight){
+  highlight.setAttribute('aria-pressed',String(!!window.storyTextBackground));
+  highlight.title='Optional text background';
+ }
+ const baseOpen=window.openStoryTextComposer;
+ if(typeof baseOpen==='function'&&!baseOpen.__v12transparent){
+  const wrapped=function(){
+   const result=baseOpen.apply(this,arguments);
+   const el=document.getElementById('smStoryNativeTextComposer');
+   const field=document.getElementById('smNativeStoryTextInput');
+   const toggle=document.getElementById('smNativeTextHighlight');
+   if(el){el.style.setProperty('background','transparent','important');el.style.setProperty('backdrop-filter','none','important');}
+   if(field){['background','background-color','border','box-shadow','border-radius','outline'].forEach(k=>field.style.setProperty(k,k==='background'||k==='background-color'?'transparent':k==='border'?'0':'none','important'));}
+   if(toggle){toggle.setAttribute('aria-pressed',String(!!window.storyTextBackground));toggle.title='Optional text background';}
+   return result;
+  };
+  wrapped.__v12transparent=true;
+  window.openStoryTextComposer=wrapped;
+ }
+ const oldSet=window.setStoryTextBackground;
+ window.setStoryTextBackground=function(enabled){
+  window.storyTextBackground=!!enabled;
+  const field=document.getElementById('smNativeStoryTextInput');
+  const toggle=document.getElementById('smNativeTextHighlight');
+  if(toggle){toggle.setAttribute('aria-pressed',String(!!enabled));toggle.title=enabled?'Text background on':'Text background off';}
+  if(field){field.style.setProperty('background','transparent','important');field.style.setProperty('background-color','transparent','important');}
+  const caption=document.getElementById('storyEditorCaption');
+  if(caption){caption.style.background=enabled?'rgba(0,0,0,.58)':'transparent';caption.style.padding=enabled?'8px 13px':'4px 8px';caption.style.borderRadius=enabled?'12px':'0';}
+  if(typeof oldSet==='function')oldSet(!!enabled);
+ };
+})();
+</script>
 </body></html>
