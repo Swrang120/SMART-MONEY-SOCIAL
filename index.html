@@ -4140,5 +4140,73 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
 #modalBack.story-mode .sm-story-delete-zone{display:none!important}
 </style>
 
+
+<style id="sm-story-effects-clean-v32">
+/* Effects/filters: compact floating glass strip; keep the photo visible. */
+#modalBack.story-mode #smStoryPanel[data-active-tool="effects"],
+#modalBack.story-mode #smStoryPanel[data-active-tool="filters"]{
+  height:auto!important;min-height:0!important;max-height:126px!important;
+  padding:5px 12px calc(7px + env(safe-area-inset-bottom,0px))!important;
+  background:rgba(20,24,31,.22)!important;
+  border:1px solid rgba(255,255,255,.18)!important;
+  border-bottom:0!important;border-radius:18px 18px 0 0!important;
+  box-shadow:0 -5px 22px rgba(0,0,0,.12)!important;
+  -webkit-backdrop-filter:blur(7px)!important;backdrop-filter:blur(7px)!important;
+}
+#modalBack.story-mode #smStoryPanel[data-active-tool="effects"] .sm-story-panel-head,
+#modalBack.story-mode #smStoryPanel[data-active-tool="filters"] .sm-story-panel-head{
+  min-height:27px!important;height:27px!important;flex:0 0 27px!important;
+  padding:0 3px!important;background:transparent!important;
+}
+#modalBack.story-mode #smStoryPanel[data-active-tool="effects"] #smStoryEffectsPanel,
+#modalBack.story-mode #smStoryPanel[data-active-tool="filters"] #smStoryFiltersPanel{
+  max-height:88px!important;height:auto!important;min-height:0!important;
+  overflow:hidden!important;padding:2px 2px 4px!important;
+  background:transparent!important;border:0!important;box-shadow:none!important;
+}
+#modalBack.story-mode #smStoryEffectsPanel>label,
+#modalBack.story-mode #smStoryFiltersPanel>label{
+  display:none!important;
+}
+#modalBack.story-mode .v23-effect-list{
+  display:flex!important;flex-flow:row nowrap!important;align-items:flex-start!important;
+  justify-content:flex-start!important;gap:13px!important;width:100%!important;
+  overflow-x:auto!important;overflow-y:hidden!important;padding:4px 3px 6px!important;
+  background:transparent!important;scrollbar-width:none!important;
+}
+#modalBack.story-mode .v23-effect-list::-webkit-scrollbar{display:none!important}
+#modalBack.story-mode .v23-effect-list button,
+#modalBack.story-mode .sm-pdf-effect-grid button,
+#modalBack.story-mode .sm-story-filter-grid button{
+  position:relative!important;display:flex!important;flex:0 0 62px!important;
+  width:62px!important;min-width:62px!important;height:76px!important;min-height:76px!important;
+  padding:0!important;flex-direction:column!important;align-items:center!important;
+  justify-content:flex-start!important;gap:5px!important;border:0!important;
+  border-radius:0!important;background:transparent!important;box-shadow:none!important;
+  color:#fff!important;font-size:10px!important;
+}
+#modalBack.story-mode .v23-effect-list button:before,
+#modalBack.story-mode .sm-pdf-effect-grid button span,
+#modalBack.story-mode .sm-story-filter-grid button .story-filter-thumb{
+  content:""!important;display:block!important;flex:0 0 54px!important;
+  width:54px!important;height:54px!important;min-width:54px!important;min-height:54px!important;
+  border-radius:50%!important;border:1.5px solid rgba(255,255,255,.58)!important;
+  background:rgba(255,255,255,.10)!important;box-shadow:0 1px 5px rgba(0,0,0,.16)!important;
+}
+#modalBack.story-mode .v23-effect-list button.active:before,
+#modalBack.story-mode .sm-pdf-effect-grid button.active span,
+#modalBack.story-mode .sm-story-filter-grid button.active .story-filter-thumb{
+  border:2px solid #e8c66d!important;box-shadow:0 0 0 2px rgba(232,198,109,.2)!important;
+}
+#modalBack.story-mode .v23-effect-list button{font-size:10px!important;white-space:nowrap!important}
+#modalBack.story-mode #smStoryEffectIntensityV23{display:none!important}
+@media(max-height:700px){
+ #modalBack.story-mode #smStoryPanel[data-active-tool="effects"],
+ #modalBack.story-mode #smStoryPanel[data-active-tool="filters"]{max-height:112px!important}
+ #modalBack.story-mode #smStoryPanel[data-active-tool="effects"] #smStoryEffectsPanel,
+ #modalBack.story-mode #smStoryPanel[data-active-tool="filters"] #smStoryFiltersPanel{max-height:76px!important}
+}
+</style>
+
 </body>
 </html>
