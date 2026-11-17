@@ -1891,7 +1891,7 @@ const STORY_BRAND_STICKERS=[
 const STORY_FILTERS=[['Original','none'],['Vivid','saturate(1.7) contrast(1.08)'],['Warm','sepia(.65) saturate(1.2)'],['B&W','grayscale(1)'],['Soft','brightness(1.12) saturate(.85)'],['Cool','hue-rotate(18deg) saturate(1.15)'],['Vintage','sepia(.35) contrast(1.12) saturate(.8)'],['Bright','brightness(1.22) contrast(1.04)'],['Dream','saturate(1.35) brightness(1.08)'],['Dramatic','contrast(1.35) saturate(1.2)']];
 function openStoryComposer(){
  if(!myId()){showToast('Please sign in to publish a story.');return;}
- storyEditorEmojis=[];storyEditorObjectUrl='';storyMusicDuration=0;storyMusicReady=false;storySelectedMusic=null;
+ storyEditorEmojis=[];window.storyMentionSelection=[];storyEditorObjectUrl='';storyMusicDuration=0;storyMusicReady=false;storySelectedMusic=null;
  openModal(`<div class="sm-story-shell">
  <header class="sm-story-top"><button type="button" onclick="closeModal()">✕</button><b>Add to story</b><button type="button" onclick="document.getElementById('storyFile').click()">＋</button></header>
  <section id="smStoryPicker" class="sm-story-picker sm-story-picker-clean"><div class="sm-gallery-prompt"><div class="sm-gallery-icon">▧</div><b>Select a photo or video</b><p>Your phone gallery opens automatically. Choose one item to start editing.</p><button type="button" onclick="document.getElementById('storyFile').click()">Open Gallery</button></div></section>
@@ -1910,7 +1910,7 @@ function openStoryComposer(){
  <div id="smStoryPanel" class="sm-story-panel" hidden>
  <div class="sm-story-panel-head"><b id="smStoryPanelTitle">Story tools</b><div class="sm-story-panel-actions"><button type="button" class="sm-story-panel-min" onclick="minimizeStoryPanel()" aria-label="Minimize tools" title="Minimize">−</button><button type="button" class="sm-story-panel-close" onclick="closeStoryPanel()" aria-label="Close tools" title="Close">✕</button></div></div>
  <div id="smStoryTextPanel" hidden><div class="sm-pdf-text-top"><b>Text editor</b><button type="button" onclick="finishStoryPanel()">Done</button></div><label>Write text on your story</label><textarea id="storyCaption" maxlength="120" placeholder="Type something…" oninput="updateStoryEditorPreview()"></textarea><div class="sm-pdf-text-styles"><button type="button" onclick="setStoryTextStyle('classic')">Aa Classic</button><button type="button" onclick="setStoryTextStyle('bold')">𝗔𝗮 Bold</button><button type="button" onclick="setStoryTextStyle('poster')">Poster</button><button type="button" onclick="setStoryTextStyle('bubble')">Bubble</button></div><button type="button" class="primary" onclick="addStoryTextSticker()">＋ Add text to canvas</button><p class="tiny muted">After adding, drag the text anywhere on your photo or video.</p></div>
- <div id="smStoryMentionPanel" hidden><input id="storyMention" type="hidden" value=""><div class="sm-pdf-sheet-search"><span>⌕</span><input id="storyMentionSearch" type="search" placeholder="Search people" oninput="filterStoryMentionPeople()"></div><p class="sm-pdf-mention-help">Selected usernames will be added to your story caption.</p><div id="storyMentionPeopleList" class="sm-pdf-mention-list"></div><div class="sm-pdf-sheet-footer"><span id="storyMentionSelectedCount">0 selected</span><button type="button" id="storyMentionAddButton" onclick="applyStoryMentions()" disabled>Add</button></div></div>
+ <div id="smStoryMentionPanel" hidden><input id="storyMention" type="hidden" value=""><div class="sm-pdf-sheet-search"><span>⌕</span><input id="storyMentionSearch" type="search" placeholder="Search people" oninput="filterStoryMentionPeople()"></div><p class="sm-pdf-mention-help">यहाँ जोड़े गए लोग आपकी स्टोरी में मेंशन होंगे, लेकिन उनका यूज़रनेम स्क्रीन पर दिखाई नहीं देगा</p><div id="storyMentionPeopleList" class="sm-pdf-mention-list"></div><div class="sm-pdf-sheet-footer"><span id="storyMentionSelectedCount">0 selected</span><button type="button" id="storyMentionAddButton" onclick="applyStoryMentions()" disabled>Add</button></div></div>
  <div id="smStoryStickersPanel" hidden><div class="sm-pdf-sheet-search"><span>⌕</span><input id="storyStickerSearch" type="search" placeholder="Search stickers" oninput="filterStoryStickerOptions()"></div><div class="sm-sticker-tabs"><button type="button" class="active" onclick="showStickerTab('brand')">Smart Money Stickers</button><button type="button" onclick="showStickerTab('emoji')">Emoji</button><button type="button" onclick="showStickerTab('custom')">My Stickers</button></div>
  <div id="smStickerBrandTab"><label>Smart Money Sticker Collection · 24 designs</label><div class="sm-brand-sticker-grid">${STORY_BRAND_STICKERS.map((x,i)=>'<button type="button" onclick="addBrandStorySticker('+i+')"><span>'+x.icon+'</span><b>'+x.label+'</b></button>').join('')}</div></div>
  <div id="smStickerEmojiTab" hidden><label>Emoji stickers</label><div class="sm-story-sticker-grid">${['❤️','😍','🔥','✨','😂','🥰','🎉','🌸','💫','👍','🎶','🌈','💖','😎','🦋','🌙','⭐','💯','💚','🚀','🏆','📚','💡','🤝'].map(e=>'<button type="button" onclick="addStoryEmoji(\''+e+'\')">'+e+'</button>').join('')}</div></div>
@@ -2046,7 +2046,7 @@ function clearStoryMusicSelection(){
  const panel=$('storyMusicPreview');if(panel)panel.hidden=true;
  document.querySelectorAll('[data-story-track]').forEach(el=>{el.style.borderColor='#e5dcfb';el.style.background='#fff';});
 }
-async function publishStory(){const f=$('storyFile')?.files?.[0],music=storySelectedMusic,mode=$('storyAudience')?.value||'public',recipients=mode==='selected'?getSelectedStoryAudience():[];if(!f){showToast('Choose a photo or video');return;}if(!canPublish){showToast('Your account needs Social admin approval before publishing.');return;}if(mode==='selected'&&!recipients.length){showToast('Select at least one person who can view this story.');return;}if(music&&(!storyMusicReady||!music.url)){showToast('Wait for the selected music preview to load, then share.');return;}const button=$('storyPublishButton');if(button){button.disabled=true;button.textContent='Uploading…';}const musicStart=music?Math.max(0,Number(window.storyMusicStart)||0):0,musicEnd=music?Math.min(musicStart+30,storyMusicDuration||30):null;let uploadedPath=null,storyId=null;try{uploadedPath=await uploadMedia(f,'stories');const {data:story,error}=await supabaseClient.from('social_stories').insert({user_id:myId(),media_path:uploadedPath,media_type:f.type.startsWith('video/')?'video':'image',audience:mode,music_path:music?.file_path||null,music_name:music?music.title+(music.artist?' — '+music.artist:''):null,music_start_seconds:musicStart,music_end_seconds:musicEnd,sticker_emoji:JSON.stringify(storyEditorEmojis),story_filter:[$('storyFilter')?.value||'none',window.storyEffectFilter||'none'].filter(x=>x&&x!=='none').join(' ')||'none',caption:[$('storyMention')?.value?.trim(),$('storyCaption')?.value?.trim()||$('storyCaptionFallback')?.value?.trim()].filter(Boolean).join(' '),moderation_status:'published',expires_at:new Date(Date.now()+24*60*60*1000).toISOString()}).select('id').single();if(error)throw error;storyId=story.id;if(mode==='selected'){const {error:audienceError}=await supabaseClient.from('social_story_audience').insert(recipients.map(user_id=>({story_id:storyId,user_id})));if(audienceError)throw audienceError;}closeModal();showToast(mode==='public'?'Story shared publicly.':mode==='private'?'Story shared privately — only you can see it.':'Story shared with your selected people.');await loadSocialData();}catch(e){if(storyId)await supabaseClient.from('social_stories').delete().eq('id',storyId);if(uploadedPath)await supabaseClient.storage.from(bucket).remove([uploadedPath]);showToast(e.message||'Story upload failed');}finally{if(button){button.disabled=false;button.innerHTML='Share Story <span>➤</span>';}}}
+async function publishStory(){const f=$('storyFile')?.files?.[0],music=storySelectedMusic,mode=$('storyAudience')?.value||'public',recipients=mode==='selected'?getSelectedStoryAudience():[];if(!f){showToast('Choose a photo or video');return;}if(!canPublish){showToast('Your account needs Social admin approval before publishing.');return;}if(mode==='selected'&&!recipients.length){showToast('Select at least one person who can view this story.');return;}if(music&&(!storyMusicReady||!music.url)){showToast('Wait for the selected music preview to load, then share.');return;}const button=$('storyPublishButton');if(button){button.disabled=true;button.textContent='Uploading…';}const musicStart=music?Math.max(0,Number(window.storyMusicStart)||0):0,musicEnd=music?Math.min(musicStart+30,storyMusicDuration||30):null;let uploadedPath=null,storyId=null;try{uploadedPath=await uploadMedia(f,'stories');const {data:story,error}=await supabaseClient.from('social_stories').insert({user_id:myId(),media_path:uploadedPath,media_type:f.type.startsWith('video/')?'video':'image',audience:mode,music_path:music?.file_path||null,music_name:music?music.title+(music.artist?' — '+music.artist:''):null,music_start_seconds:musicStart,music_end_seconds:musicEnd,sticker_emoji:JSON.stringify([...(storyEditorEmojis||[]),...(window.storyMentionSelection||[]).map(user_id=>({type:'hidden_mention',user_id}))]),story_filter:[$('storyFilter')?.value||'none',window.storyEffectFilter||'none'].filter(x=>x&&x!=='none').join(' ')||'none',caption:[$('storyCaption')?.value?.trim()||$('storyCaptionFallback')?.value?.trim()].filter(Boolean).join(' '),moderation_status:'published',expires_at:new Date(Date.now()+24*60*60*1000).toISOString()}).select('id').single();if(error)throw error;storyId=story.id;if(mode==='selected'){const {error:audienceError}=await supabaseClient.from('social_story_audience').insert(recipients.map(user_id=>({story_id:storyId,user_id})));if(audienceError)throw audienceError;}closeModal();showToast(mode==='public'?'Story shared publicly.':mode==='private'?'Story shared privately — only you can see it.':'Story shared with your selected people.');await loadSocialData();}catch(e){if(storyId)await supabaseClient.from('social_stories').delete().eq('id',storyId);if(uploadedPath)await supabaseClient.storage.from(bucket).remove([uploadedPath]);showToast(e.message||'Story upload failed');}finally{if(button){button.disabled=false;button.innerHTML='Share Story <span>➤</span>';}}}
 function bindStoryMusicClip(audio,start,end){if(!audio||audio.dataset.clipBound==='1')return;audio.dataset.clipBound='1';const from=Math.max(0,Number(start)||0),to=Math.min(Number.isFinite(Number(end))?Number(end):audio.duration,audio.duration);try{audio.currentTime=from;}catch(e){}audio.addEventListener('play',()=>{if(audio.currentTime<from||audio.currentTime>=to)audio.currentTime=from;});audio.addEventListener('timeupdate',()=>{if(audio.currentTime>=to){audio.pause();audio.currentTime=from;}});audio.addEventListener('seeking',()=>{if(audio.currentTime<from)audio.currentTime=from;if(audio.currentTime>to)audio.currentTime=to;});}
 let storySequence=[],storySequenceIndex=0,storyAutoTimer=null;
 function viewStory(id){storySequence=orderedStoryGroups().flatMap(g=>g.items);storySequenceIndex=Math.max(0,storySequence.findIndex(x=>x.id===id));renderStoryViewer();}
@@ -2824,4 +2824,124 @@ body.story-modal-open .mobile-nav{display:none!important}
  window.minimizeStoryPanel=window.closeStoryPanel;
 })();
 </script>
+
+<style id="story-editor-complete-v9">
+#modalBack.story-mode .sm-story-tools{gap:2px!important}
+#modalBack.story-mode #smStoryPanel:not([hidden]){max-height:42dvh!important}
+#modalBack.story-mode #smStoryMentionPanel .sm-pdf-mention-help{font-size:11px!important;line-height:1.45!important;color:#e9edf5!important}
+#modalBack.story-mode #smStoryMentionPanel .sm-pdf-mention-row small{display:block!important;opacity:.76!important}
+#modalBack.story-mode .sm-pdf-mention-row input{width:19px!important;height:19px!important;accent-color:#1688e8!important}
+#modalBack.story-mode .sm-story-native-extra{display:flex;gap:7px;align-items:center;flex-wrap:wrap;padding:8px 10px;background:#111923;color:#fff}
+#modalBack.story-mode .sm-story-native-extra button{border:1px solid #ffffff35;border-radius:18px;background:#ffffff12;color:#fff;padding:7px 10px;font-size:12px}
+#modalBack.story-mode .sm-story-native-extra input[type=color]{width:30px;height:30px;padding:0;border:0;background:transparent}
+#modalBack.story-mode .sm-native-text-composer nav{display:flex;gap:8px;overflow-x:auto}
+#modalBack.story-mode .sm-native-text-composer nav button{white-space:nowrap}
+#modalBack.story-mode .sm-story-sticker-presets{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:10px 0}
+#modalBack.story-mode .sm-story-sticker-presets button{min-height:68px;border:1px solid #ffffff25;border-radius:13px;background:#ffffff12;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:11px}
+#modalBack.story-mode .sm-story-sticker-presets button strong{font-size:22px}
+#modalBack.story-mode .sm-story-sticker-presets button:active{background:#1688e8}
+</style>
+<script id="story-editor-complete-v9">
+(function(){
+ const $=id=>document.getElementById(id);
+ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const hiddenMentions=()=>Array.isArray(window.storyMentionSelection)?window.storyMentionSelection:[];
+ const originalRender=window.renderStoryEditorEmojis;
+ window.renderStoryEditorEmojis=function(){
+   if(!Array.isArray(window.storyEditorEmojis))return;
+   const visible=window.storyEditorEmojis.filter(x=>x.type!=='hidden_mention');
+   const save=window.storyEditorEmojis;window.storyEditorEmojis=visible;
+   try{originalRender?.();}finally{window.storyEditorEmojis=save;}
+ };
+ window.renderStoryMentionPeople=function(){
+   const host=$('storyMentionPeopleList');if(!host)return;
+   const selected=new Set(hiddenMentions());
+   const rows=(window.people||[]).filter(p=>p.id!==window.myId()).sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+   host.innerHTML=rows.map(p=>'<label class="sm-pdf-mention-row" data-search="'+esc(((p.name||'')+' '+(p.handle||'')).toLowerCase())+'">'+(window.avatar?window.avatar(p,'small'):'<span class="sm-avatar">👤</span>')+'<span><b>'+esc(p.handle||p.name||'Member')+'</b><small>'+esc(p.name||'')+'</small></span><input type="checkbox" value="'+esc(p.id)+'" '+(selected.has(p.id)?'checked':'')+' onchange="toggleStoryMentionPerson(this)"></label>').join('')||'<div class="sm-pdf-empty">No members available.</div>';
+   window.updateStoryMentionCount?.();
+ };
+ window.applyStoryMentions=function(){
+   const ids=hiddenMentions();if(!ids.length){window.showToast?.('Select at least one person first.');return;}
+   // User IDs are stored as hidden metadata in the existing sticker_emoji JSON field.
+   const input=$('storyMention');if(input)input.value='';
+   window.closeStoryPanel?.();window.showToast?.(ids.length+' hidden mention(s) added. Usernames will not appear on the story.');
+ };
+ window.toggleStoryMentionPerson=function(input){
+   const set=new Set(hiddenMentions());input.checked?set.add(input.value):set.delete(input.value);
+   window.storyMentionSelection=[...set];window.updateStoryMentionCount?.();
+ };
+ window.updateStoryMentionCount=function(){
+   const n=hiddenMentions().length,el=$('storyMentionSelectedCount'),btn=$('storyMentionAddButton');
+   if(el)el.textContent=n+' selected';if(btn)btn.disabled=!n;
+ };
+ window.filterStoryMentionPeople=function(){
+   const q=($('storyMentionSearch')?.value||'').trim().toLowerCase();
+   document.querySelectorAll('#storyMentionPeopleList .sm-pdf-mention-row').forEach(row=>row.hidden=!row.dataset.search.includes(q));
+ };
+ window.toggleStoryPanel=function(name){
+   const panel=$('smStoryPanel'),ids={mention:'smStoryMentionPanel',stickers:'smStoryStickersPanel',filters:'smStoryFiltersPanel',effects:'smStoryEffectsPanel',music:'smStoryMusicPanel'};
+   if(name==='text'){window.openStoryTextComposer?.();return;}
+   const target=$(ids[name]);if(!panel||!target){window.showToast?.('This story tool is unavailable.');return;}
+   const wasOpen=!panel.hidden&&!target.hidden;
+   ['smStoryMentionPanel','smStoryStickersPanel','smStoryFiltersPanel','smStoryEffectsPanel','smStoryMusicPanel','smStoryTextPanel'].forEach(id=>{const el=$(id);if(el){el.hidden=true;el.style.display='none';}});
+   panel.hidden=true;panel.style.display='none';delete panel.dataset.activeTool;
+   document.querySelectorAll('#modalBack.story-mode .sm-story-tool').forEach(b=>b.classList.remove('active'));
+   if(wasOpen)return;
+   target.hidden=false;target.style.display='block';panel.hidden=false;panel.style.display='flex';panel.dataset.activeTool=name;
+   const title=$('smStoryPanelTitle');if(title)title.textContent=({mention:'Mention',stickers:'Stickers',filters:'Restyle',effects:'Effects',music:'Music'})[name]||'Story tools';
+   document.querySelectorAll('#modalBack.story-mode .sm-story-tool').forEach(b=>b.classList.toggle('active',b.getAttribute('onclick')===("toggleStoryPanel('"+name+"')")));
+   if(name==='mention'){if(!Array.isArray(window.storyMentionSelection))window.storyMentionSelection=[];if($('storyMentionSearch'))$('storyMentionSearch').value='';window.renderStoryMentionPeople();}
+   if(name==='music'){window.storyMusicTab='for-you';if($('storyMusicSearch'))$('storyMusicSearch').value='';window.loadStoryMusicLibrary?.();}
+   if(name==='stickers'){window.showStickerTab?.('brand');if($('storyStickerSearch'))$('storyStickerSearch').value='';window.filterStoryStickerOptions?.();window.ensureStoryStickerPresets?.();}
+ };
+ window.closeStoryPanel=function(){
+   const p=$('smStoryPanel');if(p){p.hidden=true;p.style.display='none';delete p.dataset.activeTool;}
+   ['smStoryMentionPanel','smStoryStickersPanel','smStoryFiltersPanel','smStoryEffectsPanel','smStoryMusicPanel','smStoryTextPanel'].forEach(id=>{const e=$(id);if(e){e.hidden=true;e.style.display='none';}});
+   document.querySelectorAll('#modalBack.story-mode .sm-story-tool').forEach(b=>b.classList.remove('active'));
+ };
+ window.minimizeStoryPanel=window.closeStoryPanel;
+ window.ensureStoryStickerPresets=function(){
+   const host=$('smStickerBrandTab');if(!host||$('smStoryStickerPresets'))return;
+   const wrap=document.createElement('div');wrap.id='smStoryStickerPresets';wrap.className='sm-story-sticker-presets';
+   const options=[
+    ['📍','LOCATION','Location'],['@','MENTION','Mention'],['♫','MUSIC','Music'],['GIF','GIF','GIF'],['➕','ADD YOURS','Add Yours'],['▣','FRAMES','Frames'],['▤','PHOTO','Photo'],['✂','CUTOUTS','Cutouts'],['✨','HIGHLIGHT','Highlight'],['?','QUESTIONS','Questions'],['🔔','NOTIFY','Notify'],['🙂','AVATAR','Avatar'],['😍','EMOJI SLIDER','Emoji Slider'],['☑','POLL','Poll'],['↗','LINK','Link'],['#','HASHTAG','Hashtag'],['⏳','COUNTDOWN','Countdown'],['🌡','TEMPERATURE','Temperature'],['◷','TIME','Time'],['♥','LIKE','Like counter'],['🔊','SOUND ON','Sound On']
+   ];
+   wrap.innerHTML=options.map((x,i)=>'<button type="button" onclick="addStoryPresetSticker('+i+')"><strong>'+x[0]+'</strong><span>'+x[1]+'</span></button>').join('');
+   host.insertBefore(wrap,host.firstChild);
+ };
+ window.addStoryPresetSticker=function(i){
+   const options=[['📍','LOCATION'],['@','MENTION'],['♫','MUSIC'],['GIF','GIF'],['➕','ADD YOURS'],['▣','FRAMES'],['▤','PHOTO'],['✂','CUTOUTS'],['✨','HIGHLIGHT'],['?','QUESTIONS'],['🔔','NOTIFY'],['🙂','AVATAR'],['😍','EMOJI SLIDER'],['☑','POLL'],['↗','LINK'],['#','HASHTAG'],['⏳','COUNTDOWN'],['🌡','TEMPERATURE'],['◷','TIME'],['♥','LIKE'],['🔊','SOUND ON']];
+   const x=options[i];if(!x)return;
+   if(x[1]==='MENTION'){window.toggleStoryPanel('mention');return;}
+   if(x[1]==='MUSIC'){window.toggleStoryPanel('music');return;}
+   if(x[1]==='LOCATION'){const v=prompt('Enter a location to show on your story');if(v)window.addStorySticker?.({type:'text',e:'📍 '+v,style:'bubble',x:50,y:50,scale:1});return;}
+   if(x[1]==='HASHTAG'){const v=prompt('Enter a hashtag');if(v)window.addStorySticker?.({type:'text',e:'#'+v.replace(/^#/,'').replace(/\s+/g,''),style:'bold',x:50,y:50,scale:1});return;}
+   if(x[1]==='POLL'||x[1]==='QUESTIONS'||x[1]==='ADD YOURS'||x[1]==='COUNTDOWN'||x[1]==='LINK'){
+     const v=prompt(x[1]==='POLL'?'Enter your poll question':x[1]==='QUESTIONS'?'Enter your question':x[1]==='ADD YOURS'?'Enter your prompt':x[1]==='COUNTDOWN'?'Enter countdown title':'Enter link URL or label');
+     if(v)window.addStorySticker?.({type:'text',e:x[0]+' '+v,style:'bubble',x:50,y:50,scale:1});return;
+   }
+   if(x[1]==='EMOJI SLIDER'){window.addStorySticker?.({type:'text',e:'😍 ━━━━━━━',style:'bubble',x:50,y:50,scale:1});return;}
+   if(x[1]==='TIME'){window.addStorySticker?.({type:'text',e:new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}),style:'bubble',x:50,y:50,scale:1});return;}
+   if(x[1]==='TEMPERATURE'){window.addStorySticker?.({type:'text',e:'🌡 Temperature',style:'bubble',x:50,y:50,scale:1});return;}
+   window.addStorySticker?.({type:'text',e:x[0]+' '+x[1],style:'bubble',x:50,y:50,scale:1});
+ };
+ const oldOpen=window.openStoryTextComposer;
+ window.openStoryTextComposer=function(){
+   oldOpen?.();
+   const nav=$('#smStoryNativeTextComposer nav');if(nav&&!$('#smStoryTextExtras')){
+     const extra=document.createElement('div');extra.id='smStoryTextExtras';extra.className='sm-story-native-extra';
+     extra.innerHTML='<button type="button" onclick="setStoryTextMotion()">Motion Text</button><button type="button" onclick="cycleStoryTextAlign()">Alignment</button><button type="button" onclick="setStoryTextBackground(!window.storyTextBackground)">Highlight</button><button type="button" onclick="setStoryTextGlow()">✦ Glow</button><label>Color <input id="smStoryTextColorPicker" type="color" value="#ffffff" aria-label="Text color"></label><button type="button" onclick="insertStoryTextShortcut(\'@\')">@ Mention</button><button type="button" onclick="insertStoryTextShortcut(\'📍 \')">Location</button>';
+     nav.insertAdjacentElement('afterend',extra);
+     $('#smStoryTextColorPicker').addEventListener('input',e=>{window.storyTextColor=e.target.value;const i=$('smNativeStoryTextInput');if(i)i.style.color=e.target.value;window.updateStoryEditorPreview?.();});
+   }
+   const i=$('smNativeStoryTextInput');if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length);}
+ };
+ window.insertStoryTextShortcut=function(prefix){const i=$('smNativeStoryTextInput');if(!i)return;i.value+=prefix;i.dispatchEvent(new Event('input',{bubbles:true}));i.focus();};
+ window.setStoryTextMotion=function(){window.storyTextMotion=!window.storyTextMotion;const c=$('storyEditorCaption');if(c)c.style.animation=window.storyTextMotion?'smStoryTextPulse 1.2s ease-in-out infinite alternate':'none';window.showToast?.(window.storyTextMotion?'Motion text enabled':'Motion text disabled');};
+ window.setStoryTextGlow=function(){window.storyTextGlow=!window.storyTextGlow;const c=$('storyEditorCaption');if(c)c.style.textShadow=window.storyTextGlow?'0 0 8px #fff,0 0 18px #8bd5ff':'0 2px 6px #0009';};
+})();
+</script>
+<style>
+@keyframes smStoryTextPulse{from{transform:translate(-50%,-50%) scale(.98)}to{transform:translate(-50%,-50%) scale(1.06)}}
+</style>
 </body></html>
