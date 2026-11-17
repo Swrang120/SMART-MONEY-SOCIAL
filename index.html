@@ -1608,6 +1608,21 @@ body .profile-story-dot{display:none!important}
 #smStoryNativeTextComposer nav{position:relative!important;z-index:5!important;min-height:76px!important;background:#080d16b8!important;backdrop-filter:blur(16px)!important}
 #smStoryNativeTextComposer nav button{border:1px solid #ffffff2b!important;background:#ffffff18!important}
 @media(max-height:680px){#modalBack.story-mode #smStoryPanel:not([hidden]){height:56vh!important;min-height:190px!important}#smStoryNativeTextComposer header{height:52px!important;min-height:52px!important}#smStoryNativeTextComposer nav{min-height:62px!important}}
+
+/* v3 layout correction: keep the media full-bleed beneath the floating tools */
+#modalBack.story-mode .sm-story-stage{padding:8px!important;min-height:0!important}
+#modalBack.story-mode .sm-story-preview{width:100%!important;height:100%!important;max-width:100%!important}
+#modalBack.story-mode .sm-story-tools{top:14px!important;right:12px!important;left:auto!important;bottom:auto!important;max-height:calc(100% - 28px)!important;overflow-y:auto!important;justify-content:flex-start!important}
+#modalBack.story-mode .sm-story-tool{flex:0 0 40px!important;box-shadow:0 2px 12px #0005!important}
+#modalBack.story-mode #smStoryPanel:not([hidden]){max-height:min(68vh,560px)!important;overflow:hidden!important}
+#modalBack.story-mode #smStoryMentionPanel:not([hidden]){display:flex!important;flex-direction:column!important;min-height:0!important}
+#modalBack.story-mode #storyMentionPeopleList{min-height:0!important;overflow-y:auto!important}
+#modalBack.story-mode #smStoryFiltersPanel:not([hidden]),#modalBack.story-mode #smStoryEffectsPanel:not([hidden]){min-height:0!important}
+#modalBack.story-mode .sm-pdf-effect-grid button span{display:grid!important;place-items:center!important;width:58px!important;height:58px!important;margin:0 auto 6px!important;border-radius:50%!important;border:2px solid #ffffff80!important;background:linear-gradient(145deg,#596b83,#b8a6a1)!important;font-size:23px!important}
+#smStoryNativeTextComposer nav{position:absolute!important;z-index:6!important;top:68px!important;left:50%!important;transform:translateX(-50%)!important;width:min(82%,420px)!important;min-height:58px!important;height:58px!important;justify-content:center!important;padding:0 8px!important;border-radius:30px!important;background:#101722a8!important}
+#smStoryNativeTextComposer nav button{flex:0 0 46px!important;width:46px!important;height:46px!important}
+#smStoryNativeTextComposer main{padding-top:70px!important}
+@media(max-height:680px){#smStoryNativeTextComposer nav{top:56px!important;height:50px!important;min-height:50px!important}#smStoryNativeTextComposer main{padding-top:58px!important}}
 </style></head>
 <body>
 
