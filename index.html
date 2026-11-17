@@ -3651,5 +3651,98 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
 #modalBack.story-mode.story-tool-sheet-open .sm-story-bottom{display:none!important}
 </style>
 
+
+<style id="story-text-keyboard-layout-v25">
+#smStoryNativeTextComposer{
+ position:fixed!important;inset:0 0 auto 0!important;height:var(--sm-text-vv-height,100dvh)!important;
+ min-height:0!important;max-height:var(--sm-text-vv-height,100dvh)!important;
+ padding-top:env(safe-area-inset-top,0px)!important;padding-bottom:0!important;
+ overflow:hidden!important;z-index:100200!important;
+}
+#smStoryNativeTextComposer.open{display:flex!important}
+#smStoryNativeTextComposer header{flex:0 0 50px!important;height:50px!important;min-height:50px!important}
+#smStoryNativeTextComposer nav{
+ order:1!important;flex:0 0 auto!important;min-height:50px!important;max-height:58px!important;
+ padding:5px 10px!important;background:rgba(13,19,29,.96)!important;
+ border-top:1px solid #ffffff20!important;border-bottom:1px solid #ffffff20!important;
+ position:relative!important;z-index:8!important;
+}
+#smStoryNativeTextComposer main{order:2!important;flex:1 1 auto!important;min-height:72px!important}
+#smStoryNativeTextComposer textarea{max-height:75%!important;min-height:48px!important;max-width:84%!important}
+#smStoryNativeTextComposer #smNativeTextColorRail{height:30%!important;top:35%!important;right:10px!important;width:20px!important;cursor:pointer!important}
+#smStoryNativeTextComposer #smNativeTextSizeSlider{height:42%!important;top:29%!important;left:8px!important;width:30px!important;cursor:pointer!important}
+#smStoryNativeTextComposer .sm-native-color-palette{
+ position:absolute;z-index:20;right:38px;top:34%;display:grid;grid-template-columns:repeat(4,30px);
+ gap:9px;padding:12px;border-radius:18px;background:#182334;border:1px solid #ffffff40;
+ box-shadow:0 8px 30px #0009;
+}
+#smStoryNativeTextComposer .sm-native-color-palette[hidden]{display:none!important}
+#smStoryNativeTextComposer .sm-native-color-palette button{
+ width:28px;height:28px;min-width:28px;padding:0;border-radius:50%;border:2px solid #ffffffaa;
+}
+#smStoryNativeTextComposer nav button{min-height:38px!important;height:40px!important}
+@media(max-height:620px){
+ #smStoryNativeTextComposer header{flex-basis:44px!important;height:44px!important;min-height:44px!important}
+ #smStoryNativeTextComposer nav{min-height:44px!important;max-height:48px!important;padding:3px 8px!important}
+ #smStoryNativeTextComposer nav button{height:36px!important;min-height:36px!important;padding:0 10px!important}
+}
+</style>
+<script id="story-text-keyboard-layout-v25">
+(function(){
+ const $=id=>document.getElementById(id);
+ const layer=$('smStoryNativeTextComposer');
+ const vv=window.visualViewport;
+ function fitKeyboardViewport(){
+  const node=$('smStoryNativeTextComposer');if(!node)return;
+  if(window.visualViewport){
+   node.style.setProperty('--sm-text-vv-height',Math.max(260,window.visualViewport.height)+'px');
+   node.style.top=Math.max(0,window.visualViewport.offsetTop)+'px';
+  }else{
+   node.style.setProperty('--sm-text-vv-height',window.innerHeight+'px');
+   node.style.top='0px';
+  }
+ }
+ if(vv){vv.addEventListener('resize',fitKeyboardViewport);vv.addEventListener('scroll',fitKeyboardViewport);}
+ window.addEventListener('resize',fitKeyboardViewport);
+ const original=window.openStoryTextComposer;
+ if(typeof original==='function'&&!window.__storyTextKeyboardV25){
+  window.__storyTextKeyboardV25=true;
+  window.openStoryTextComposer=function(){
+   original();
+   const composer=$('smStoryNativeTextComposer');if(!composer)return;
+   const head=composer.querySelector('header'),main=composer.querySelector('main'),nav=composer.querySelector('nav');
+   /* Put font choices directly under Done, never below the image where the keyboard hides them. */
+   if(head&&nav&&nav.previousElementSibling!==head)head.after(nav);
+   if(main&&nav&&main.previousElementSibling!==nav)nav.after(main);
+   fitKeyboardViewport();
+   const input=$('smNativeStoryTextInput');
+   if(input){
+    input.addEventListener('focus',fitKeyboardViewport,{once:true});
+    setTimeout(fitKeyboardViewport,180);
+   }
+   let palette=$('smNativeTextColorPaletteV25');
+   if(!palette){
+    palette=document.createElement('div');palette.id='smNativeTextColorPaletteV25';palette.className='sm-native-color-palette';palette.hidden=true;
+    const colors=['#ffffff','#fff2b3','#ffd43b','#ff9f43','#ff4d4d','#ff6b9a','#d66bff','#9b7bff','#557bff','#37c8ff','#36d6a0','#b6e35b','#111827','#000000'];
+    palette.innerHTML=colors.map(c=>'<button type="button" data-text-color="'+c+'" style="background:'+c+'" aria-label="Text color '+c+'"></button>').join('');
+    composer.appendChild(palette);
+    palette.addEventListener('click',e=>{
+     const b=e.target.closest('[data-text-color]');if(!b)return;
+     const color=b.dataset.textColor,txt=$('smNativeStoryTextInput');
+     window.storyTextColor=color;if(txt){txt.style.color=color;txt.focus();}
+     window.updateStoryEditorPreview?.();
+     palette.hidden=true;
+    });
+   }
+   const wheel=$('smNativeTextColorRail');
+   if(wheel&&!wheel.dataset.v25){
+    wheel.dataset.v25='1';
+    wheel.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();palette.hidden=!palette.hidden;},{capture:true});
+   }
+  };
+ }
+})();
+</script>
+
 </body>
 </html>
