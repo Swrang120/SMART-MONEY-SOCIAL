@@ -3367,5 +3367,204 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
  };
 })();
 </script>
+
+<style id="story-redesign-v23-css">
+/* One consistent Instagram-inspired story editing surface */
+#modalBack.story-mode .sm-story-shell{background:#080b11!important}
+#modalBack.story-mode .sm-story-top{height:48px!important;min-height:48px!important;background:#080b11!important}
+#modalBack.story-mode .sm-story-quick-tabs{height:44px;flex:0 0 44px;display:flex;align-items:center;justify-content:space-around;gap:8px;padding:0 12px;background:#0b1019;border-bottom:1px solid #ffffff12}
+#modalBack.story-mode .sm-story-quick-tabs button{border:1px solid #ffffff22;border-radius:20px;background:#ffffff0d;color:#fff;padding:8px 13px;font-size:12px;font-weight:750;white-space:nowrap}
+#modalBack.story-mode .sm-story-quick-tabs button:active{background:#1688f5}
+#modalBack.story-mode .sm-story-stage{padding:8px 66px 8px 8px!important}
+#modalBack.story-mode .sm-story-preview{border-radius:12px!important}
+#modalBack.story-mode .sm-story-tools{right:5px!important;top:8px!important;bottom:8px!important;display:flex!important;flex-direction:column!important;justify-content:space-evenly!important;gap:2px!important;width:58px!important}
+#modalBack.story-mode .sm-story-tools button{width:54px!important;min-height:42px!important;height:calc((100% - 10px)/8)!important;color:#fff!important;background:transparent!important}
+#modalBack.story-mode .sm-story-tools i{width:36px!important;height:36px!important;background:#1017229c!important;border:1px solid #ffffff30!important;backdrop-filter:blur(10px)!important}
+#modalBack.story-mode .sm-story-tools span{font-size:9px!important}
+#modalBack.story-mode .sm-story-panel{position:fixed!important;left:0!important;right:0!important;bottom:0!important;top:auto!important;width:100%!important;max-height:43dvh!important;height:auto!important;overflow:hidden!important;z-index:100020!important;padding:0 12px env(safe-area-inset-bottom)!important;border:1px solid #ffffff20!important;border-radius:20px 20px 0 0!important;background:#111a27ed!important;backdrop-filter:blur(18px)!important;box-shadow:0 -12px 35px #0007!important;display:flex!important;flex-direction:column!important}
+#modalBack.story-mode .sm-story-panel[hidden]{display:none!important}
+#modalBack.story-mode .sm-story-panel-head{min-height:44px!important;flex:0 0 44px!important;background:transparent!important}
+#modalBack.story-mode #smStoryMentionPanel,#modalBack.story-mode #smStoryStickersPanel,#modalBack.story-mode #smStoryFiltersPanel,#modalBack.story-mode #smStoryEffectsPanel{min-height:0!important;overflow-y:auto!important;max-height:calc(43dvh - 48px)!important;padding:6px 2px 12px!important}
+#modalBack.story-mode .sm-story-panel input{box-sizing:border-box!important}
+#modalBack.story-mode .sm-story-bottom{max-height:none!important;overflow:visible!important;background:transparent!important;padding:8px 12px calc(8px + env(safe-area-inset-bottom))!important}
+#modalBack.story-mode .sm-story-bottom>input{margin:0!important;min-height:44px!important;border-radius:24px!important;background:#202a38!important}
+#modalBack.story-mode .sm-story-share{background:transparent!important;padding:8px 0 0!important}
+#modalBack.story-mode .sm-story-share button{min-height:44px!important;border-radius:24px!important}
+#modalBack.story-mode .sm-story-caption{pointer-events:auto!important;touch-action:none!important;user-select:none!important;z-index:3!important;max-width:90%!important;left:50%!important;right:auto!important;transform:translateX(-50%)!important;white-space:pre-wrap!important;overflow-wrap:anywhere!important}
+#smStoryTextEditorV23{position:fixed;inset:0;z-index:100090;display:flex;flex-direction:column;background:#080b11;color:#fff;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+#smStoryTextEditorV23[hidden]{display:none!important}
+#smStoryTextEditorV23 .v23-head{height:54px;flex:0 0 54px;display:flex;align-items:center;justify-content:space-between;padding:0 16px}
+#smStoryTextEditorV23 .v23-head button{border:0;background:transparent;color:#fff;font-weight:800;font-size:16px}
+#smStoryTextEditorV23 .v23-head .v23-done{background:#1688f5;border-radius:22px;padding:9px 19px}
+#smStoryTextEditorV23 .v23-preview{position:relative;flex:1;min-height:120px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#smStoryTextEditorV23 .v23-preview img,#smStoryTextEditorV23 .v23-preview video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none}
+#smStoryTextEditorV23 textarea{position:relative;z-index:2;width:78%;min-height:60px;max-height:55%;resize:none;border:0!important;outline:0!important;background:transparent!important;color:#fff;text-align:center;font:700 28px/1.25 system-ui;text-shadow:0 2px 8px #000b;padding:12px;touch-action:pan-y}
+#smStoryTextEditorV23 .v23-fonts,#smStoryTextEditorV23 .v23-toolbar,#smStoryTextEditorV23 .v23-colors{display:flex;gap:8px;overflow-x:auto;white-space:nowrap;align-items:center;touch-action:pan-x}
+#smStoryTextEditorV23 .v23-controls{flex:0 0 auto;background:#121b29;padding:8px 12px 12px;display:flex;flex-direction:column;gap:9px}
+#smStoryTextEditorV23 .v23-fonts button{flex:0 0 auto;border:1px solid #ffffff30;border-radius:22px;background:#253247;color:#fff;padding:10px 15px;font-weight:700}
+#smStoryTextEditorV23 .v23-fonts button.active{background:#1688f5;border-color:#1688f5}
+#smStoryTextEditorV23 .v23-toolbar button{flex:0 0 42px;width:42px;height:42px;border:1px solid #ffffff25;border-radius:12px;background:#ffffff0d;color:#fff;font-size:20px}
+#smStoryTextEditorV23 .v23-colors button{flex:0 0 28px;width:28px;height:28px;border:2px solid #ffffff90;border-radius:50%;padding:0}
+#smStoryTextEditorV23 .v23-colors button.active{outline:2px solid #fff;outline-offset:2px}
+#smStoryTextEditorV23 .v23-size{position:absolute;z-index:5;left:9px;top:18%;height:54%;display:flex;align-items:center;gap:5px}
+#smStoryTextEditorV23 .v23-size input{height:100%;width:28px;writing-mode:vertical-lr;direction:rtl;accent-color:#fff;touch-action:pan-y}
+#smStoryTextEditorV23 .v23-size span{font-size:11px;text-shadow:0 1px 4px #000}
+#smStoryMusicFullPage{z-index:100080!important}
+#smStoryMusicFullPage .sm-music-full-search{margin:12px 14px!important}
+#smStoryMusicFullPage .sm-pdf-track{border-bottom:1px solid #ffffff18!important}
+#smStoryMusicFullPage .sm-pdf-track-main{color:#fff!important}
+#smStoryMusicFullPage .sm-pdf-track-save{color:#ffd34f!important}
+#smStoryMusicFullPage .sm-pdf-track.selected{background:#1d2d43!important;border-radius:12px}
+#smStoryMusicFullPage .sm-pdf-track-info small{color:#bdc9d8!important}
+@media(max-height:650px){#smStoryTextEditorV23 .v23-head{height:46px;flex-basis:46px}#smStoryTextEditorV23 .v23-controls{gap:5px;padding:5px 10px}#smStoryTextEditorV23 .v23-fonts button{padding:7px 12px}}
+</style>
+<script id="story-redesign-v23">
+(function(){
+ const el=id=>document.getElementById(id);
+ const fontMap={signature:'cursive',editor:'system-ui,sans-serif',classic:'Georgia,serif',bold:'system-ui,sans-serif',poster:'Impact,system-ui',bubble:'Trebuchet MS,system-ui',neon:'system-ui,sans-serif',deco:'Georgia,serif',type:'monospace'};
+ const colors=['#ffffff','#fff2b3','#ffd43b','#ff9f43','#ff4d4d','#ff6b9a','#d66bff','#9b7bff','#557bff','#37c8ff','#36d6a0','#b6e35b','#111827'];
+ const styles=['signature','editor','poster','bubble','deco','classic','bold','neon','type'];
+ let textLayer=null,musicPage=null;
+ function textValue(){return el('storyCaption')?.value||el('storyCaptionFallback')?.value||'';}
+ function syncText(value){
+  const v=String(value??'');
+  if(el('storyCaption'))el('storyCaption').value=v;
+  if(el('storyCaptionFallback'))el('storyCaptionFallback').value=v;
+  const cap=el('storyEditorCaption');if(cap){cap.textContent=v;styleCaption();}
+ }
+ function styleCaption(){
+  const c=el('storyEditorCaption');if(!c)return;
+  const style=window.storyTextStyle||'editor',font=fontMap[style]||fontMap.editor;
+  c.style.fontFamily=font;c.style.fontSize=(Number(window.storyTextSize)||28)+'px';
+  c.style.fontWeight=['bold','poster','neon'].includes(style)?'900':'650';
+  c.style.fontStyle=style==='bubble'?'italic':'normal';
+  c.style.color=window.storyTextColor||'#fff';
+  c.style.textAlign=window.storyTextAlign||'center';
+  c.style.background=window.storyTextBackground?(window.storyTextBgColor||'#111827'):'transparent';
+  c.style.padding=window.storyTextBackground?'9px 14px':'4px 8px';
+  c.style.borderRadius=window.storyTextBackground?'14px':'0';
+  c.style.webkitTextStroke=window.storyTextOutline?'1px #111':'0 transparent';
+  c.style.textShadow=window.storyTextGlow?'0 0 8px currentColor,0 0 18px currentColor':'0 2px 6px #000b';
+  c.style.animation=window.storyTextMotion?'smStoryTextPulseV23 1.8s ease-in-out infinite':'none';
+ }
+ function setStyle(style){
+  if(!fontMap[style])return;window.storyTextStyle=style;
+  const input=el('smStoryTextInputV23');if(input){input.style.fontFamily=fontMap[style];input.style.fontWeight=['bold','poster','neon'].includes(style)?'900':'650';input.style.fontStyle=style==='bubble'?'italic':'normal';input.style.textShadow=style==='neon'?'0 0 8px currentColor,0 0 18px currentColor':'0 2px 6px #000b';}
+  textLayer?.querySelectorAll('[data-v23-font]').forEach(b=>b.classList.toggle('active',b.dataset.v23Font===style));styleCaption();
+ }
+ function setColor(color){window.storyTextColor=color;const i=el('smStoryTextInputV23');if(i)i.style.color=color;textLayer?.querySelectorAll('[data-v23-color]').forEach(b=>b.classList.toggle('active',b.dataset.v23Color===color));styleCaption();}
+ function setSize(value){window.storyTextSize=Math.max(12,Math.min(88,Number(value)||28));const i=el('smStoryTextInputV23'),o=el('smStoryTextSizeOutV23');if(i)i.style.fontSize=window.storyTextSize+'px';if(o)o.textContent=window.storyTextSize+'px';styleCaption();}
+ window.setStoryTextStyle=setStyle;window.setStoryTextSize=setSize;
+ window.setStoryTextBackground=function(on){window.storyTextBackground=!!on;const b=el('smStoryTextBgV23');if(b)b.classList.toggle('active',!!on);styleCaption();};
+ window.cycleStoryTextAlign=function(){window.storyTextAlign=window.storyTextAlign==='left'?'center':window.storyTextAlign==='center'?'right':'left';const i=el('smStoryTextInputV23');if(i)i.style.textAlign=window.storyTextAlign;styleCaption();};
+ window.toggleStoryTextMotion=function(){window.storyTextMotion=!window.storyTextMotion;styleCaption();};
+ window.toggleStoryTextOutline=function(){window.storyTextOutline=!window.storyTextOutline;styleCaption();};
+ window.toggleStoryTextGlow=function(){window.storyTextGlow=!window.storyTextGlow;styleCaption();};
+ window.openStoryTextComposer=function(){
+  if(typeof closeStoryPanel==='function')closeStoryPanel();
+  el('smStoryNativeTextComposer')?.remove();el('smStoryTextFullPage')?.remove();
+  if(!textLayer){
+   textLayer=document.createElement('section');textLayer.id='smStoryTextEditorV23';
+   textLayer.innerHTML='<header class="v23-head"><button type="button" onclick="closeStoryTextComposer()">Cancel</button><b>Text</b><button type="button" class="v23-done" onclick="closeStoryTextComposer()">Done ✓</button></header><div class="v23-preview" id="smStoryTextPreviewV23"><div class="v23-size"><span>A−</span><input id="smStoryTextSizeV23" type="range" min="12" max="88" value="28"><span>A+</span></div><textarea id="smStoryTextInputV23" maxlength="180" placeholder="Type your story text"></textarea></div><div class="v23-controls"><div class="v23-fonts">'+styles.map(x=>'<button type="button" data-v23-font="'+x+'">'+({signature:'Signature',editor:'Editor',poster:'Poster',bubble:'Bubble',deco:'Deco',classic:'Classic',bold:'Bold',neon:'Neon',type:'Type'}[x])+'</button>').join('')+'</div><div class="v23-toolbar"><button type="button" title="Font family" onclick="cycleStoryTextStyle()">Aa</button><button type="button" title="Color palette" id="smStoryColorWheelV23">🌈</button><button type="button" title="Text motion" onclick="toggleStoryTextMotion()">ⅡA</button><button type="button" title="Highlight" id="smStoryTextBgV23" onclick="setStoryTextBackground(!window.storyTextBackground)">▧</button><button type="button" title="Alignment" onclick="cycleStoryTextAlign()">☰</button><button type="button" title="Outline" onclick="toggleStoryTextOutline()">Ⓐ</button><button type="button" title="Glow" onclick="toggleStoryTextGlow()">A✦</button></div><div class="v23-colors" id="smStoryTextColorsV23" hidden>'+colors.map(c=>'<button type="button" data-v23-color="'+c+'" style="background:'+c+'" aria-label="Text color '+c+'"></button>').join('')+'</div><div class="v23-shortcuts"><button type="button" onclick="closeStoryTextComposer();toggleStoryPanel(\'mention\')">@ Mention</button><button type="button" onclick="closeStoryTextComposer();showToast(\'Add a location sticker from Stickers.\')">⌖ Location</button></div></div>';
+   document.querySelector('#modalBack.story-mode .modal')?.appendChild(textLayer);
+   const input=el('smStoryTextInputV23'),slider=el('smStoryTextSizeV23');
+   input.addEventListener('input',()=>syncText(input.value));
+   slider.addEventListener('input',()=>setSize(slider.value));
+   textLayer.querySelectorAll('[data-v23-font]').forEach(b=>b.addEventListener('click',()=>setStyle(b.dataset.v23Font)));
+   textLayer.querySelectorAll('[data-v23-color]').forEach(b=>b.addEventListener('click',()=>{setColor(b.dataset.v23Color);el('smStoryTextColorsV23').hidden=false;}));
+   el('smStoryColorWheelV23').addEventListener('click',()=>{el('smStoryTextColorsV23').hidden=!el('smStoryTextColorsV23').hidden;});
+   let start=0,base=28;
+   input.addEventListener('touchstart',e=>{if(e.touches.length===2){start=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);base=window.storyTextSize||28;}},{passive:true});
+   input.addEventListener('touchmove',e=>{if(e.touches.length===2&&start){e.preventDefault();const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);setSize(base*d/start);slider.value=window.storyTextSize;}},{passive:false});
+   input.addEventListener('touchend',()=>start=0,{passive:true});
+  }
+  const preview=el('smStoryTextPreviewV23'),media=el('storyEditorMedia')?.firstElementChild;
+  preview.querySelectorAll('img,video').forEach(n=>n.remove());
+  if(media){const clone=media.cloneNode(true);clone.removeAttribute('id');clone.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none';preview.insertBefore(clone,preview.firstChild);}
+  const input=el('smStoryTextInputV23');input.value=textValue();
+  window.storyTextSize=Number(window.storyTextSize)||28;window.storyTextColor=window.storyTextColor||'#fff';
+  input.style.color=window.storyTextColor;input.style.textAlign=window.storyTextAlign||'center';
+  el('smStoryTextSizeV23').value=window.storyTextSize;setSize(window.storyTextSize);setColor(window.storyTextColor);setStyle(window.storyTextStyle||'editor');
+  el('smStoryTextColorsV23').hidden=true;textLayer.hidden=false;setTimeout(()=>input.focus(),100);
+ };
+ window.closeStoryTextComposer=function(){
+  const input=el('smStoryTextInputV23');if(input){syncText(input.value);input.blur();}
+  if(textLayer)textLayer.hidden=true;
+ };
+ function buildMusicPage(){
+  if(musicPage)return musicPage;
+  musicPage=document.createElement('section');musicPage.id='smStoryMusicFullPage';
+  musicPage.innerHTML='<header class="sm-music-full-head"><button type="button" id="smStoryMusicBackV23">‹</button><strong>Music Library</strong></header><div class="sm-music-full-search"><span>⌕</span><input id="smStoryMusicSearchV22" type="search" placeholder="Search songs, artists…" autocomplete="off"></div><nav class="sm-pdf-music-tabs"><button class="active" type="button" data-music-tab="for-you">For You</button><button type="button" data-music-tab="trending">Trending</button><button type="button" data-music-tab="saved">Saved</button><button type="button" data-music-tab="original">Original Audio</button></nav><div id="smStoryMusicRowsV22" class="story-music-catalog"><p class="tiny muted">Loading music library…</p></div><footer class="sm-music-full-bottom"><div id="smStoryMusicPreviewMountV23"></div><div class="sm-music-full-actions"><button type="button" onclick="clearStoryMusicSelection()">Remove</button><button type="button" class="apply" id="smStoryMusicApplyV23">Add to story ✓</button></div></footer>';
+  document.querySelector('#modalBack.story-mode .modal')?.appendChild(musicPage);
+  el('smStoryMusicBackV23').addEventListener('click',closeMusicPage);
+  el('smStoryMusicSearchV22').addEventListener('input',()=>window.renderStoryMusicRows?.());
+  musicPage.querySelectorAll('[data-music-tab]').forEach(b=>b.addEventListener('click',()=>{window.storyMusicTab=b.dataset.musicTab;musicPage.querySelectorAll('[data-music-tab]').forEach(x=>x.classList.toggle('active',x===b));window.renderStoryMusicRows?.();}));
+  el('smStoryMusicApplyV23').addEventListener('click',()=>{if(!window.storySelectedMusic){showToast('Select a song first.');return;}closeMusicPage();showToast('Music added to your story.');});
+  return musicPage;
+ }
+ function openMusicPage(){
+  closeStoryPanel();const page=buildMusicPage(),preview=el('storyMusicPreview');
+  if(preview)el('smStoryMusicPreviewMountV23').appendChild(preview);
+  page.hidden=false;window.storyMusicTab='for-you';
+  musicPage.querySelectorAll('[data-music-tab]').forEach(b=>b.classList.toggle('active',b.dataset.musicTab==='for-you'));
+  if(typeof window.loadStoryMusicLibrary==='function')window.loadStoryMusicLibrary();
+ }
+ function closeMusicPage(){
+  const preview=el('storyMusicPreview'),panel=el('smStoryMusicPanel');
+  if(preview&&panel)panel.appendChild(preview);
+  if(musicPage)musicPage.hidden=true;
+ }
+ window.closeStoryMusicPage=closeMusicPage;
+ window.toggleStoryPanel=function(name){
+  if(name==='music'){openMusicPage();return;}
+  const panel=el('smStoryPanel'),ids={mention:'smStoryMentionPanel',stickers:'smStoryStickersPanel',filters:'smStoryFiltersPanel',effects:'smStoryEffectsPanel'};
+  if(!panel||!ids[name])return;
+  closeMusicPage();if(textLayer)textLayer.hidden=true;
+  const target=el(ids[name]),wasOpen=target&&!target.hidden;
+  Object.values(ids).forEach(id=>{const node=el(id);if(node){node.hidden=true;node.style.display='none';}});
+  if(wasOpen){window.closeStoryPanel?.();return;}
+  target.hidden=false;target.style.display='block';panel.hidden=false;panel.style.display='flex';panel.dataset.activeTool=name;
+  const title=el('smStoryPanelTitle');if(title)title.textContent=({mention:'Mention people',stickers:'Stickers',filters:'Restyle',effects:'Effects'})[name];
+  if(name==='mention'){window.storyMentionSelection=[];const q=el('storyMentionSearch');if(q)q.value='';const help=document.querySelector('.sm-pdf-mention-help');if(help)help.textContent='People added here will be mentioned in your story but their username won’t be visible.';window.renderStoryMentionPeople?.();}
+  if(name==='stickers'){window.showStickerTab?.('brand');const q=el('storyStickerSearch');if(q)q.value='';window.filterStoryStickerOptions?.();}
+  if(name==='filters'||name==='effects')buildEffectsControls(name);
+ };
+ window.closeStoryPanel=function(){
+  const panel=el('smStoryPanel');if(panel){panel.hidden=true;panel.style.display='none';delete panel.dataset.activeTool;}
+  ['smStoryMentionPanel','smStoryStickersPanel','smStoryFiltersPanel','smStoryEffectsPanel'].forEach(id=>{const node=el(id);if(node){node.hidden=true;node.style.display='none';}});
+  document.querySelectorAll('.sm-story-tool').forEach(b=>b.classList.remove('active'));
+ };
+ function buildEffectsControls(name){
+  const host=el(name==='filters'?'smStoryFiltersPanel':'smStoryEffectsPanel');if(!host)return;
+  if(host.dataset.v23Built==='1')return;host.dataset.v23Built='1';
+  const values=[['No effect','none'],['Glow','brightness(1.12) saturate(1.18)'],['Cinema','contrast(1.18) saturate(1.12)'],['Mono','grayscale(1)'],['Vintage','sepia(.35) contrast(1.08)'],['Dream','saturate(1.35) brightness(1.08)']];
+  host.insertAdjacentHTML('beforeend','<div class="v23-effect-list" style="display:flex;gap:8px;overflow:auto;padding:10px 0">'+values.map(([label,val])=>'<button type="button" data-v23-effect="'+val.replace(/"/g,'&quot;')+'" style="flex:0 0 auto;border:1px solid #ffffff30;border-radius:20px;background:#263448;color:#fff;padding:10px 14px">'+label+'</button>').join('')+'</div><label style="display:flex;align-items:center;gap:10px">Intensity <input id="smStoryEffectIntensityV23" type="range" min="0" max="100" value="100" style="flex:1"></label>');
+  host.querySelectorAll('[data-v23-effect]').forEach(b=>b.addEventListener('click',()=>{window.storyEffectFilter=b.dataset.v23Effect==='none'?'none':b.dataset.v23Effect;host.querySelectorAll('[data-v23-effect]').forEach(x=>x.classList.toggle('active',x===b));applyEffect();}));
+  el('smStoryEffectIntensityV23').addEventListener('input',applyEffect);
+ }
+ function applyEffect(){const media=el('storyEditorMedia')?.firstElementChild;if(!media)return;const v=Number(el('smStoryEffectIntensityV23')?.value??100)/100;media.style.filter=window.storyEffectFilter==='none'?'none':(window.storyEffectFilter||'none')+' opacity('+Math.max(.25,v)+')';}
+ function installEditorChrome(){
+  const editor=el('smStoryEditor');if(!editor||editor.dataset.v23Chrome==='1')return;editor.dataset.v23Chrome='1';
+  const tabs=document.createElement('nav');tabs.className='sm-story-quick-tabs';tabs.innerHTML='<button type="button" data-q="templates">Templates</button><button type="button" data-q="music">Music</button><button type="button" data-q="collage">Collage</button><button type="button" data-q="effects">Effects</button>';
+  editor.insertBefore(tabs,editor.firstChild);
+  tabs.querySelector('[data-q="music"]').addEventListener('click',openMusicPage);
+  tabs.querySelector('[data-q="effects"]').addEventListener('click',()=>window.toggleStoryPanel('effects'));
+  tabs.querySelector('[data-q="templates"]').addEventListener('click',()=>window.toggleStoryPanel('filters'));
+  tabs.querySelector('[data-q="collage"]').addEventListener('click',()=>showToast('Collage layout is being prepared; choose one photo or video for this story.'));
+  const tools=editor.querySelector('.sm-story-tools');
+  if(tools&&!tools.querySelector('[data-v23-draw]')){
+   const add=(label,icon,action,attr)=>{const b=document.createElement('button');b.type='button';b.className='sm-story-tool';b.innerHTML='<i>'+icon+'</i><span>'+label+'</span>';if(attr)b.setAttribute(attr,'');b.addEventListener('click',action);tools.appendChild(b);};
+   add('Draw','✎',()=>showToast('Drawing tool is not connected yet.'),'data-v23-draw');
+   add('AI / More','✦',()=>showToast('More story tools are being prepared.'),'data-v23-ai');
+  }
+ }
+ const originalPreview=window.previewStoryMedia;
+ window.previewStoryMedia=function(input){if(typeof originalPreview==='function')originalPreview(input);installEditorChrome();};
+ const originalOpen=window.openStoryComposer;
+ window.openStoryComposer=function(){if(typeof originalOpen==='function')originalOpen();const picker=el('storyFile');if(picker){picker.value='';picker.click();}};
+ document.addEventListener('animationend',e=>{if(e.target?.id==='storyEditorCaption')e.target.style.animation='none';});
+ const style=document.createElement('style');style.textContent='@keyframes smStoryTextPulseV23{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.06)}}';document.head.appendChild(style);
+})();
+</script>
 </body>
 </html>
