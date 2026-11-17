@@ -4343,5 +4343,127 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
  }
 })();
 </script>
+
+<!-- SMART-MONEY-SOCIAL FULLSCREEN MUSIC LIBRARY + EDITOR -->
+<style>
+#smMusicExperience{position:fixed;inset:0;z-index:100500;background:#f7f8fb;color:#151b27;display:none;flex-direction:column;font-family:inherit; padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);box-sizing:border-box}
+#smMusicExperience.open{display:flex}
+#smMusicExperience .smml-head{padding:12px 16px 8px;background:#fff;flex:none}
+#smMusicExperience .smml-search{height:48px;border-radius:15px;background:#f0f2f6;display:flex;align-items:center;gap:10px;padding:0 14px}
+#smMusicExperience .smml-search input{border:0!important;outline:0!important;background:transparent!important;color:#151b27!important;width:100%;font-size:15px;min-height:44px}
+#smMusicExperience .smml-tabs{display:flex;gap:8px;overflow-x:auto;padding:12px 0 4px;scrollbar-width:none}
+#smMusicExperience .smml-tabs button{white-space:nowrap;border:0;border-radius:22px;padding:10px 15px;background:#eef0f5;color:#586174;font-weight:750}
+#smMusicExperience .smml-tabs button.active{background:#172033;color:#fff}
+#smMusicExperience .smml-list{flex:1;overflow:auto;padding:8px 14px 120px}
+#smMusicExperience .smml-row{display:flex;align-items:center;gap:12px;padding:10px 2px;border-bottom:1px solid #e8eaf0}
+#smMusicExperience .smml-row.selected{background:#eaf2ff;border-radius:14px;padding-left:8px;padding-right:8px}
+#smMusicExperience .smml-art{width:54px;height:54px;flex:none;object-fit:cover;border-radius:10px;background:#e4e7ed;display:grid;place-items:center;font-size:23px}
+#smMusicExperience .smml-meta{flex:1;min-width:0;text-align:left}
+#smMusicExperience .smml-meta b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px}
+#smMusicExperience .smml-meta small{display:block;color:#7b8495;margin-top:4px;font-size:12px}
+#smMusicExperience .smml-select,#smMusicExperience .smml-save{border:0;background:transparent;color:#1d2738;font-size:20px;padding:9px}
+#smMusicExperience .smml-player{position:absolute;bottom:0;left:0;right:0;display:none;align-items:center;gap:12px;padding:12px 15px calc(12px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #e7e9ef;box-shadow:0 -8px 28px #17203314}
+#smMusicExperience .smml-player.show{display:flex}
+#smMusicExperience .smml-player-art{width:44px;height:44px;border-radius:9px;object-fit:cover;background:#e7eaf0}
+#smMusicExperience .smml-player-info{flex:1;min-width:0}
+#smMusicExperience .smml-player-info b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
+#smMusicExperience .smml-player-info small{color:#788296;font-size:11px}
+#smMusicExperience .smml-play,#smMusicExperience .smml-next{border:0;border-radius:50%;width:42px;height:42px;background:#182338;color:white;font-size:18px}
+#smMusicExperience .smml-next{border-radius:13px;background:#2368e8}
+#smMusicExperience .smme{position:absolute;inset:0;background:#090e19;color:#fff;display:none;flex-direction:column}
+#smMusicExperience .smme.open{display:flex}
+#smMusicExperience .smme-top{height:58px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:#0c1321}
+#smMusicExperience .smme-top button{border:0;background:transparent;color:#fff;font-weight:750;font-size:15px}
+#smMusicExperience .smme-top .smme-done{background:#fff;color:#111b2b;border-radius:22px;padding:9px 18px}
+#smMusicExperience .smme-stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:20px;position:relative;background:radial-gradient(circle at 50% 40%,#28334a,#090e19 70%)}
+#smMusicExperience .smme-sticker{display:flex;align-items:center;gap:12px;max-width:90%;padding:12px 16px;border-radius:15px;background:#fff;color:#182033;box-shadow:0 12px 35px #0005}
+#smMusicExperience .smme-sticker img{width:54px;height:54px;object-fit:cover;border-radius:9px}
+#smMusicExperience .smme-sticker b{display:block;font-size:14px}
+#smMusicExperience .smme-sticker small{display:block;color:#6c7586;margin-top:4px}
+#smMusicExperience .smme-tools{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#101827}
+#smMusicExperience .smme-tools button{border:1px solid #ffffff25;background:#ffffff12;color:#fff;border-radius:20px;padding:8px 12px}
+#smMusicExperience .smme-colors{display:flex;gap:8px;align-items:center}
+#smMusicExperience .smme-colors button{width:25px;height:25px;padding:0;border-radius:50%;border:2px solid #ffffff99}
+#smMusicExperience .smme-trim{flex:none;padding:12px 14px calc(14px + env(safe-area-inset-bottom));background:#080d17;border-top:1px solid #ffffff18}
+#smMusicExperience .smme-trim-head{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#dbe2ee;margin-bottom:10px}
+#smMusicExperience .smme-wave{width:100%;height:72px;display:block;border-radius:10px;background:#151e2d;touch-action:pan-y}
+#smMusicExperience .smme-range{width:100%;accent-color:#6ba5ff;margin:10px 0 4px}
+#smMusicExperience .smme-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#smMusicExperience .smme-bottom button{border:1px solid #ffffff2a;background:#ffffff12;color:#fff;border-radius:20px;padding:9px 13px}
+#smMusicExperience .smme-bottom button.active{background:#fff;color:#172033}
+#smMusicExperience .smml-empty{padding:28px 12px;text-align:center;color:#7b8495}
+@media(min-width:700px){#smMusicExperience .smme-stage{max-width:520px;width:100%;margin:auto}#smMusicExperience .smme-top,#smMusicExperience .smme-tools,#smMusicExperience .smme-trim{padding-left:max(14px,calc((100vw - 520px)/2));padding-right:max(14px,calc((100vw - 520px)/2))}}
+</style>
+<div id="smMusicExperience" aria-hidden="true">
+ <section id="smMusicLibraryScreen" style="display:flex;flex-direction:column;flex:1;min-height:0">
+  <header class="smml-head"><div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><button type="button" id="smmlClose" style="border:0;background:transparent;font-size:24px">‹</button><b style="font-size:18px">Music</b></div><div class="smml-search"><span>⌕</span><input id="smmlSearch" type="search" placeholder="Search..." autocomplete="off"></div><nav class="smml-tabs"><button class="active" data-tab="for-you">For you</button><button data-tab="trending">Trending</button><button data-tab="saved">Saved</button><button data-tab="original">Original audio</button></nav></header>
+  <div id="smmlList" class="smml-list"></div>
+  <div id="smmlPlayer" class="smml-player"><img id="smmlPlayerArt" class="smml-player-art" alt=""><div class="smml-player-info"><b id="smmlPlayerTitle"></b><small id="smmlPlayerArtist"></small></div><button type="button" class="smml-play" id="smmlPlay">▶</button><button type="button" class="smml-next" id="smmlNext" aria-label="Open music editor">➔</button></div>
+ </section>
+ <section id="smMusicEditor" class="smme">
+  <header class="smme-top"><button type="button" id="smmeCancel">Cancel</button><div style="display:flex;align-items:center;gap:8px"><span style="font-size:21px">♫</span><span>Music style</span><span>◉</span></div><button type="button" class="smme-done" id="smmeDone">Done</button></header>
+  <div class="smme-stage"><div class="smme-sticker" id="smmeSticker"><span style="font-size:26px">♫</span><span><b id="smmeStickerTitle">Song title</b><small id="smmeStickerArtist">Artist</small></span></div></div>
+  <div class="smme-tools"><b style="font-size:12px">Color</b><div class="smme-colors"><button data-color="#ffffff" style="background:#fff"></button><button data-color="#ffd76a" style="background:#ffd76a"></button><button data-color="#ff8a8a" style="background:#ff8a8a"></button><button data-color="#8de3c2" style="background:#8de3c2"></button><button data-color="#9dbdff" style="background:#9dbdff"></button></div><button type="button" id="smmeMute">🔊 Sound on</button></div>
+  <div class="smme-trim"><div class="smme-trim-head"><b>Trim your story audio</b><span id="smmeTimeLabel">0:00 – 0:20</span></div><canvas id="smmeWave" class="smme-wave" height="72"></canvas><input id="smmeStart" class="smme-range" type="range" min="0" max="0" step="0.1" value="0"><div class="smme-bottom"><button type="button" id="smmeDuration" class="active">20 sec</button><button type="button" id="smmePreview">▶ Preview</button><button type="button" id="smmeStyle">▣ Sticker</button></div></div>
+ </section>
+ <audio id="smMusicAudio" preload="metadata" controlsList="nodownload noplaybackrate" disablePictureInPicture></audio>
+</div>
+<script>
+(function(){
+ const $m=id=>document.getElementById(id);
+ let activeTab='for-you',selected=null,playing=false,muted=false,clipSeconds=20,trimStart=0,trimEnd=20,waveData=null,editorColor='#ffffff';
+ const overlay=$m('smMusicExperience'),library=$m('smMusicLibraryScreen'),editor=$m('smMusicEditor'),audio=$m('smMusicAudio');
+ function clock(v){v=Math.max(0,Math.floor(Number(v)||0));return Math.floor(v/60)+':'+String(v%60).padStart(2,'0')}
+ function open(){overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');library.style.display='flex';editor.classList.remove('open');activeTab='for-you';document.querySelectorAll('#smMusicExperience [data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===activeTab));$m('smmlSearch').value='';if(typeof loadStoryMusicLibrary==='function')loadStoryMusicLibrary();render()}
+ function close(){audio.pause();playing=false;overlay.classList.remove('open');overlay.setAttribute('aria-hidden','true');editor.classList.remove('open');library.style.display='flex';if(typeof closeStoryPanel==='function')closeStoryPanel()}
+ function getHooks(track){const hs=Array.isArray(track.music_hooks)&&track.music_hooks.length?track.music_hooks:[{start:Number(track.music_start_seconds)||0,end:Number(track.music_end_seconds)||Math.min(Number(track.duration_seconds)||20,20)}];return hs}
+ function getStart(track){const h=getHooks(track)[0]||{};return Math.max(0,Number(h.start)||0)}
+ function render(){
+  const host=$m('smmlList');if(!host)return;let rows=[...(storyMusicCatalog||[])];const q=($m('smmlSearch').value||'').trim().toLowerCase();const saved=(()=>{try{return new Set(JSON.parse(localStorage.getItem('smStorySavedMusic')||'[]').map(String))}catch(e){return new Set()}})();
+  if(activeTab==='saved')rows=rows.filter(x=>saved.has(String(x.id)));
+  if(activeTab==='trending')rows.sort((a,b)=>(Number(!!b.is_trending_hook)-Number(!!a.is_trending_hook))||new Date(b.created_at||0)-new Date(a.created_at||0));
+  if(activeTab==='original'){host.innerHTML='<div class="smml-empty"><b>Original audio</b><p>Your uploaded video keeps its own original sound.</p></div>';return}
+  if(q)rows=rows.filter(x=>(x.title+' '+(x.artist||'')).toLowerCase().includes(q));
+  if(!rows.length){host.innerHTML='<div class="smml-empty">No songs found in this category.</div>';return}
+  host.innerHTML=rows.map(x=>'<div class="smml-row '+(selected?.id===x.id?'selected':'')+'" data-id="'+safe(x.id)+'"><img class="smml-art" src="'+safe(x.artworkUrl||'')+'" alt="" onerror="this.style.display=\'none\'"><div class="smml-meta"><b>'+safe(x.title)+'</b><small>'+safe(x.artist||'Original audio')+' · '+clock(x.duration_seconds)+'</small>'+(x.is_trending_hook?'<small>🔥 Trending Hook</small>':'')+'</div><button type="button" class="smml-save" aria-label="Save song">'+(saved.has(String(x.id))?'★':'☆')+'</button><button type="button" class="smml-select" aria-label="Select song">›</button></div>').join('');
+  host.querySelectorAll('.smml-row').forEach(row=>{const id=row.dataset.id;row.querySelector('.smml-select').addEventListener('click',()=>choose(id));row.querySelector('.smml-meta').addEventListener('click',()=>choose(id));row.querySelector('.smml-save').addEventListener('click',e=>{e.stopPropagation();const list=[...saved];const key=String(id),set=new Set(list);set.has(key)?set.delete(key):set.add(key);localStorage.setItem('smStorySavedMusic',JSON.stringify([...set]));render()})});
+ }
+ function choose(id){
+  selected=(storyMusicCatalog||[]).find(x=>String(x.id)===String(id));if(!selected||!selected.url){showToast('This music track is not available right now.');return}
+  const duration=Number(selected.duration_seconds)||20;const hooks=getHooks(selected);const first=hooks[0]||{};trimStart=Math.max(0,Number(first.start)||0);clipSeconds=Math.min(20,Math.max(1,duration));if(Number(first.end)>trimStart)clipSeconds=Math.min(20,Number(first.end)-trimStart);trimStart=Math.min(trimStart,Math.max(0,duration-clipSeconds));trimEnd=trimStart+clipSeconds;
+  audio.pause();audio.src=selected.url;audio.currentTime=trimStart;audio.muted=false;muted=false;playing=false;
+  $m('smmlPlayer').classList.add('show');$m('smmlPlayerArt').src=selected.artworkUrl||'';$m('smmlPlayerTitle').textContent=selected.title;$m('smmlPlayerArtist').textContent=(selected.artist||'Original audio')+' · '+clock(duration);$m('smmlPlay').textContent='▶';render();
+  audio.onloadedmetadata=()=>{if(Number.isFinite(audio.duration)){const d=audio.duration;trimStart=Math.min(trimStart,Math.max(0,d-clipSeconds));trimEnd=Math.min(d,trimStart+clipSeconds)}};
+  audio.ontimeupdate=()=>{if(audio.currentTime>=trimEnd){audio.pause();playing=false;$m('smmlPlay').textContent='▶';audio.currentTime=trimStart}};
+ }
+ async function togglePlay(){if(!selected)return;if(playing){audio.pause();playing=false;$m('smmlPlay').textContent='▶'}else{if(audio.currentTime<trimStart||audio.currentTime>=trimEnd)audio.currentTime=trimStart;try{await audio.play();playing=true;$m('smmlPlay').textContent='Ⅱ'}catch(e){showToast('Tap play again to preview this track.')}}}
+ async function enterEditor(){if(!selected)return;library.style.display='none';editor.classList.add('open');clipSeconds=20;const d=Number(selected.duration_seconds)||20;clipSeconds=Math.min(20,d);trimStart=Math.min(getStart(selected),Math.max(0,d-clipSeconds));trimEnd=trimStart+clipSeconds;audio.pause();audio.currentTime=trimStart;playing=false;
+  $m('smmeStickerTitle').textContent=selected.title;$m('smmeStickerArtist').textContent=selected.artist||'Original audio';$m('smmeSticker').style.background=editorColor;$m('smmeSticker').style.color='#182033';$m('smmeStart').max=String(Math.max(0,d-clipSeconds));$m('smmeStart').value=String(trimStart);$m('smmeDuration').textContent=clipSeconds+' sec';$m('smmeTimeLabel').textContent=clock(trimStart)+' – '+clock(trimEnd);$m('smmeMute').textContent='🔊 Sound on';muted=false;
+  drawWave();try{const resp=await fetch(selected.url);if(!resp.ok)throw Error('Waveform request failed');const buf=await resp.arrayBuffer();const C=window.AudioContext||window.webkitAudioContext;if(C){const ac=new C();waveData=await ac.decodeAudioData(buf);await ac.close();drawWave()}}catch(e){waveData=null;drawWave()}
+ }
+ function drawWave(){const c=$m('smmeWave');if(!c)return;const w=Math.max(280,c.clientWidth||320),h=72,dpr=window.devicePixelRatio||1;c.width=w*dpr;c.height=h*dpr;const x=c.getContext('2d');x.scale(dpr,dpr);x.clearRect(0,0,w,h);const count=100;for(let n=0;n<count;n++){let amp=.15+Math.abs(Math.sin(n*1.73)*Math.cos(n*.37))*.65;if(waveData){const data=waveData.getChannelData(0),from=Math.floor(n/count*data.length),to=Math.max(from+1,Math.floor((n+1)/count*data.length));amp=0;for(let j=from;j<to;j+=Math.max(1,Math.floor((to-from)/20)))amp=Math.max(amp,Math.abs(data[j]||0))}const bh=Math.max(3,amp*48);x.fillStyle='#81aaff';x.fillRect(n*(w/count), (h-bh)/2,Math.max(1,w/count-2),bh)}const left=trimStart/(Number(selected.duration_seconds)||20)*w,right=trimEnd/(Number(selected.duration_seconds)||20)*w;x.fillStyle='#ffffff25';x.fillRect(0,0,left,h);x.fillRect(right,0,w-right,h);x.strokeStyle='#fff';x.lineWidth=2;x.strokeRect(left+1,2,Math.max(5,right-left-2),h-4)}
+ function updateTrim(value){const d=Number(selected?.duration_seconds)||20;trimStart=Math.max(0,Math.min(Number(value)||0,d-clipSeconds));trimEnd=Math.min(d,trimStart+clipSeconds);$m('smmeTimeLabel').textContent=clock(trimStart)+' – '+clock(trimEnd);audio.pause();playing=false;audio.currentTime=trimStart;drawWave()}
+ function previewTrim(){if(!selected)return;audio.pause();audio.currentTime=trimStart;audio.muted=muted;audio.play().then(()=>{playing=true}).catch(()=>showToast('Tap preview again to play.'));audio.ontimeupdate=()=>{if(audio.currentTime>=trimEnd){audio.pause();playing=false;audio.currentTime=trimStart}}}
+ function done(){if(!selected)return;window.storyMusicStart=trimStart;window.storyMusicEnd=trimEnd;window.storyMusicClipLength=trimEnd-trimStart;storyMusicDuration=Number(selected.duration_seconds)||trimEnd;storyMusicReady=true;storySelectedMusic=selected;const p=$m('storyEditorPreview');if(p){p.querySelector('#storyMusicSticker')?.remove();const sticker=document.createElement('div');sticker.id='storyMusicSticker';sticker.style.cssText='position:absolute;left:50%;top:72%;transform:translate(-50%,-50%);z-index:30;display:flex;align-items:center;gap:9px;max-width:82%;padding:9px 12px;border-radius:12px;background:'+editorColor+';color:#182033;box-shadow:0 5px 18px #0005;pointer-events:none';const art=document.createElement('img');art.src=selected.artworkUrl||'';art.style.cssText='width:42px;height:42px;object-fit:cover;border-radius:7px';const meta=document.createElement('span');meta.innerHTML='<b style="display:block;font-size:12px">'+safe(selected.title)+'</b><small style="font-size:10px">'+safe(selected.artist||'Original audio')+'</small>';sticker.append(art,meta);p.append(sticker)}audio.pause();editor.classList.remove('open');library.style.display='none';overlay.classList.remove('open');overlay.setAttribute('aria-hidden','true');if(typeof closeStoryPanel==='function')closeStoryPanel();showToast('Music sticker added to your story.')}
+ window.toggleStoryPanel=function(name){if(name==='music'){open();return}if(typeof window.__smOldToggleStoryPanel==='function')window.__smOldToggleStoryPanel(name)};
+ window.__smOldToggleStoryPanel=window.toggleStoryPanel;
+ window.renderStoryMusicRows=render;
+ window.setStoryMusicTab=function(tab){activeTab=tab;document.querySelectorAll('#smMusicExperience [data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));render()};
+ window.filterStoryMusicLibrary=render;
+ $m('smmlSearch').addEventListener('input',render);
+ document.querySelectorAll('#smMusicExperience [data-tab]').forEach(b=>b.addEventListener('click',()=>window.setStoryMusicTab(b.dataset.tab)));
+ $m('smmlClose').addEventListener('click',close);$m('smmlPlay').addEventListener('click',togglePlay);$m('smmlNext').addEventListener('click',enterEditor);
+ $m('smmeCancel').addEventListener('click',()=>{editor.classList.remove('open');library.style.display='flex';audio.pause()});
+ $m('smmeDone').addEventListener('click',done);
+ $m('smmeStart').addEventListener('input',e=>updateTrim(e.target.value));
+ $m('smmePreview').addEventListener('click',previewTrim);
+ $m('smmeMute').addEventListener('click',()=>{muted=!muted;audio.muted=muted;$m('smmeMute').textContent=muted?'🔇 Muted':'🔊 Sound on'});
+ $m('smmeDuration').addEventListener('click',()=>{clipSeconds=20;const d=Number(selected?.duration_seconds)||20;trimStart=Math.min(trimStart,Math.max(0,d-clipSeconds));trimEnd=Math.min(d,trimStart+clipSeconds);$m('smmeStart').max=String(Math.max(0,d-clipSeconds));$m('smmeStart').value=String(trimStart);$m('smmeDuration').textContent='20 sec';updateTrim(trimStart)});
+ $m('smmeStyle').addEventListener('click',()=>{const card=$m('smmeSticker');card.style.display=card.style.display==='none'?'flex':'none'});
+ document.querySelectorAll('#smMusicExperience [data-color]').forEach(b=>b.addEventListener('click',()=>{editorColor=b.dataset.color;$m('smmeSticker').style.background=editorColor}));
+ audio.addEventListener('play',()=>{playing=true;if($m('smmlPlay'))$m('smmlPlay').textContent='Ⅱ'});
+ audio.addEventListener('pause',()=>{playing=false;if($m('smmlPlay'))$m('smmlPlay').textContent='▶'});
+})();
+</script>
 </body>
 </html>
