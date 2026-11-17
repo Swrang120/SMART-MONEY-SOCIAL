@@ -4313,9 +4313,10 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
 <script id="sm-sticker-sheet-behavior-v34">
 (function(){
  const $=id=>document.getElementById(id);
+ const stickerCount=()=>typeof storyEditorEmojis!=='undefined'?storyEditorEmojis.length:0;
  function closeAfterSuccessfulAdd(before){
    setTimeout(()=>{
-     const after=window.storyEditorEmojis?.length||0;
+     const after=stickerCount();
      if(after>before && $('smStoryPanel')?.dataset.activeTool==='stickers'){
        window.storyPanelDraftSnapshot=null;
        window.closeStoryPanel?.();
@@ -4325,16 +4326,16 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
  document.addEventListener('click',function(e){
    const target=e.target.closest('#smStickerActionGridV30 button,#smStickerQuickRowV30 button,.sm-sticker-quick-row button');
    if(!target)return;
-   const before=window.storyEditorEmojis?.length||0;
+   const before=stickerCount();
    closeAfterSuccessfulAdd(before);
  },true);
  const oldUpload=window.addUploadedStorySticker;
  if(typeof oldUpload==='function'&&!window.__smStickerUploadAutoCloseV34){
    window.__smStickerUploadAutoCloseV34=true;
    window.addUploadedStorySticker=async function(input){
-     const before=window.storyEditorEmojis?.length||0;
+     const before=stickerCount();
      await oldUpload(input);
-     if((window.storyEditorEmojis?.length||0)>before){
+     if((stickerCount())>before){
        window.storyPanelDraftSnapshot=null;
        window.closeStoryPanel?.();
      }
