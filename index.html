@@ -4672,18 +4672,24 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
  function onDown(e){
   if(e.pointerType==='mouse'&&e.button!==0)return;
   const box=preview();if(!box||!box.contains(e.target))return;
-  let node=e.target.closest('[data-sticker-index]'),kind='sticker',index=node?Number(node.dataset.stickerIndex):-1;
-  if(!node&&e.target.closest('#storyEditorCaption')){node=document.getElementById('storyEditorCaption');kind='caption';}
-  if(!node&&e.target.closest('#storyEditorMedia')){node=document.querySelector('#storyEditorMedia>*');kind='media';}
-  if(!node)return;
-  if(kind==='media'&&!node)return;
+  let node,kind,index;
+  if(state.pointers.size===1&&state.target){
+   // Second finger may land anywhere inside the editor canvas, including empty space.
+   node=state.target;kind=state.kind;index=state.index;
+  }else{
+   node=e.target.closest('[data-sticker-index]');kind='sticker';index=node?Number(node.dataset.stickerIndex):-1;
+   if(!node&&e.target.closest('#storyEditorCaption')){node=document.getElementById('storyEditorCaption');kind='caption';}
+   if(!node&&e.target.closest('#storyEditorMedia')){node=document.querySelector('#storyEditorMedia>*');kind='media';}
+   if(!node)return;
+   if(kind==='media'&&!node)return;
+  }
   if(state.pointers.size===0){state.target=node;state.kind=kind;state.index=index;state.startScale=scaleOf(kind,index,node);state.startDistance=0;state.moved=false;}
   if(state.target!==node)return;
-  try{node.setPointerCapture?.(e.pointerId);}catch(_){}
+  try{state.target.setPointerCapture?.(e.pointerId);}catch(_){}
   state.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
   e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
-  if(state.pointers.size===2){state.startDistance=distance(state.pointers)||1;state.startScale=scaleOf(kind,index,node);state.moved=true;}
-  else if(state.pointers.size===1&&kind!=='media'){state.startX=e.clientX;state.startY=e.clientY;state.startLeft=parseFloat(node.style.left)||50;state.startTop=parseFloat(node.style.top)||50;}
+  if(state.pointers.size===2){state.startDistance=distance(state.pointers)||1;state.startScale=scaleOf(state.kind,state.index,state.target);state.moved=true;}
+  else if(state.pointers.size===1&&state.kind!=='media'){state.startX=e.clientX;state.startY=e.clientY;state.startLeft=parseFloat(node.style.left)||50;state.startTop=parseFloat(node.style.top)||50;}
   if(state.pointers.size>2){state.pointers.delete(e.pointerId);}
  }
  function onMove(e){
