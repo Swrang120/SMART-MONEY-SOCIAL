@@ -2990,4 +2990,52 @@ body.story-modal-open .mobile-nav{display:none!important}
 window.toggleStoryAudienceSettings=function(){const b=document.querySelector('#modalBack.story-mode .sm-story-bottom');if(!b)return;b.classList.toggle('show-audience');};
 document.addEventListener('click',function(e){const b=document.querySelector('#modalBack.story-mode .sm-story-bottom');if(!b||!b.classList.contains('show-audience'))return;if(!e.target.closest('.sm-story-bottom'))b.classList.remove('show-audience');});
 </script>
+<style id="story-editor-color-palette-fix-v11">
+/* Correct selector: the actual composer uses .sm-native-text-composer, not #smStoryNativeTextComposer */
+#modalBack.story-mode .sm-native-text-composer{position:fixed!important;inset:0!important;z-index:10050!important;display:flex!important;flex-direction:column!important;width:100%!important;height:100dvh!important;max-height:100dvh!important;background:#080b10!important;color:#fff!important;overflow:hidden!important}
+#modalBack.story-mode .sm-native-text-composer header{flex:0 0 52px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;padding:0 12px!important}
+#modalBack.story-mode .sm-native-text-composer main{position:relative!important;flex:1 1 auto!important;min-height:0!important;display:flex!important;align-items:center!important;justify-content:center!important}
+#modalBack.story-mode .sm-native-text-composer textarea{width:min(82%,520px)!important;min-height:100px!important;max-height:60%!important;padding:16px!important;font-size:28px!important;text-align:center!important;color:var(--sm-story-text-color,#fff)!important;touch-action:pan-y!important}
+#modalBack.story-mode .sm-native-text-composer #smNativeTextColorRail{display:none!important}
+#modalBack.story-mode .sm-native-text-composer #smNativeTextSizeSlider{left:9px!important;top:22%!important;height:42%!important;width:24px!important;accent-color:#28a8ff!important}
+#modalBack.story-mode .sm-native-text-composer nav{flex:0 0 auto!important;min-height:48px!important;max-height:54px!important;display:flex!important;align-items:center!important;gap:7px!important;overflow-x:auto!important;padding:5px 10px!important;background:#0d1420!important}
+#modalBack.story-mode .sm-native-text-composer nav button{flex:0 0 auto!important;min-width:54px!important;height:36px!important;border:1px solid #ffffff35!important;border-radius:18px!important;background:#ffffff12!important;color:#fff!important}
+#modalBack.story-mode .sm-story-color-palette{display:flex!important;align-items:center!important;gap:10px!important;overflow-x:auto!important;min-height:58px!important;padding:9px 12px!important;background:#101722!important;border-top:1px solid #ffffff18!important}
+#modalBack.story-mode .sm-story-color-palette button{flex:0 0 30px!important;width:30px!important;height:30px!important;min-width:30px!important;padding:0!important;border:2px solid #ffffff55!important;border-radius:50%!important;box-shadow:0 1px 5px #0009!important}
+#modalBack.story-mode .sm-story-color-palette button[aria-pressed="true"]{outline:2px solid #fff!important;outline-offset:3px!important;transform:scale(1.08)}
+#modalBack.story-mode .sm-story-native-extra{display:flex!important;flex:0 0 auto!important;gap:7px!important;align-items:center!important;flex-wrap:nowrap!important;overflow-x:auto!important;padding:8px 10px!important;background:#101722!important}
+#modalBack.story-mode .sm-story-native-extra button{flex:0 0 auto!important}
+</style>
+<script id="story-editor-color-palette-fix-v11">
+(function(){
+ const colors=['#FFFFFF','#111111','#FF3B30','#FF9500','#FFCC00','#34C759','#00C7BE','#32ADE6','#007AFF','#5856D6','#AF52DE','#FF2D55','#A2845E','#8E8E93'];
+ const apply=(color)=>{
+  window.storyTextColor=color;
+  const input=document.getElementById('smNativeStoryTextInput');
+  if(input){input.style.color=color;input.style.setProperty('--sm-story-text-color',color);}
+  const preview=document.getElementById('storyEditorCaption');
+  if(preview)preview.style.color=color;
+  window.updateStoryEditorPreview?.();
+  document.querySelectorAll('.sm-story-color-palette button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.color===color)));
+ };
+ const install=()=>{
+  const layer=document.querySelector('#modalBack .sm-native-text-composer');
+  if(!layer||layer.querySelector('.sm-story-color-palette'))return;
+  const nav=layer.querySelector('nav');
+  const palette=document.createElement('div');
+  palette.className='sm-story-color-palette';
+  palette.setAttribute('aria-label','Text colour choices');
+  palette.innerHTML=colors.map(c=>'<button type="button" data-color="'+c+'" style="background:'+c+'" aria-label="Text color '+c+'" aria-pressed="'+(c===(window.storyTextColor||'#FFFFFF'))+'"></button>').join('');
+  palette.addEventListener('click',e=>{const b=e.target.closest('button[data-color]');if(b)apply(b.dataset.color);});
+  if(nav)nav.insertAdjacentElement('beforebegin',palette);else layer.appendChild(palette);
+  apply(window.storyTextColor||'#FFFFFF');
+ };
+ const original=window.openStoryTextComposer;
+ if(typeof original==='function'&&!original.__v11wrapped){
+  const wrapped=function(){const result=original.apply(this,arguments);install();requestAnimationFrame(install);return result;};
+  wrapped.__v11wrapped=true;window.openStoryTextComposer=wrapped;
+ }
+ document.addEventListener('click',e=>{if(e.target.closest('.sm-story-tool[aria-label="Add text"]')){install();requestAnimationFrame(install);}});
+})();
+</script>
 </body></html>
