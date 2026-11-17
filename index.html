@@ -3123,5 +3123,59 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
  window.cycleStoryTextAlign=function(){window.storyTextAlign=window.storyTextAlign==='left'?'center':window.storyTextAlign==='center'?'right':'left';const i=$('smNativeStoryTextInput');if(i)i.style.textAlign=window.storyTextAlign;apply();};
 })();
 </script>
+
+<style id="story-text-layout-v21">
+/* Override the obsolete vertical controls from the earlier editor. */
+#modalBack.story-mode #smStoryNativeTextComposer #smNativeTextSizeSlider{
+ position:relative!important;inset:auto!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;
+ display:block!important;visibility:visible!important;opacity:1!important;
+ width:100%!important;min-width:0!important;max-width:none!important;height:28px!important;
+ writing-mode:horizontal-tb!important;direction:ltr!important;transform:none!important;
+ flex:1 1 auto!important;touch-action:pan-x!important;accent-color:#1688f5!important;
+}
+#modalBack.story-mode #smStoryNativeTextComposer .sm-native-controls{
+ position:relative!important;inset:auto!important;display:flex!important;flex:0 0 auto!important;
+ flex-direction:column!important;gap:12px!important;width:100%!important;min-height:112px!important;
+ padding:10px 14px 12px!important;background:#101722!important;z-index:20!important;
+}
+#modalBack.story-mode #smStoryNativeTextComposer .sm-native-size-row{
+ position:relative!important;display:flex!important;flex-direction:row!important;align-items:center!important;
+ gap:9px!important;width:100%!important;min-height:30px!important;color:#fff!important;
+}
+#modalBack.story-mode #smStoryNativeTextComposer #smNativeTextSizeValue{
+ display:inline-block!important;min-width:42px!important;color:#fff!important;font-size:12px!important;text-align:right!important;
+}
+#modalBack.story-mode #smStoryNativeTextComposer #smNativeTextColorRail{
+ position:static!important;inset:auto!important;display:block!important;visibility:visible!important;opacity:1!important;
+ flex:0 0 40px!important;width:40px!important;min-width:40px!important;max-width:40px!important;
+ height:38px!important;min-height:38px!important;max-height:38px!important;padding:3px!important;
+ border:2px solid #fff!important;border-radius:10px!important;background:transparent!important;
+ appearance:auto!important;-webkit-appearance:color!important;overflow:hidden!important;z-index:30!important;
+}
+#modalBack.story-mode #smStoryNativeTextComposer #smNativeTextColorRail::-webkit-color-swatch-wrapper{padding:0!important}
+#modalBack.story-mode #smStoryNativeTextComposer #smNativeTextColorRail::-webkit-color-swatch{border:0!important;border-radius:6px!important}
+#modalBack.story-mode #smStoryNativeTextComposer header>div{display:flex!important;position:static!important;align-items:center!important;gap:8px!important}
+#modalBack.story-mode #smStoryNativeTextComposer .sm-native-style-row{
+ display:flex!important;position:relative!important;flex-direction:row!important;align-items:center!important;
+ gap:8px!important;width:100%!important;min-height:44px!important;overflow-x:auto!important;
+ overflow-y:hidden!important;white-space:nowrap!important;touch-action:pan-x!important;padding:2px 0!important;
+}
+#modalBack.story-mode #smStoryNativeTextComposer .sm-native-style-row button{
+ position:relative!important;display:inline-flex!important;flex:0 0 auto!important;align-items:center!important;
+ justify-content:center!important;min-width:70px!important;height:40px!important;padding:0 13px!important;
+ border:1px solid #ffffff40!important;border-radius:22px!important;background:#ffffff12!important;
+ color:#fff!important;pointer-events:auto!important;z-index:25!important;font-size:13px!important;
+}
+#modalBack.story-mode #smStoryNativeTextComposer .sm-native-style-row button.active{
+ background:#1688f5!important;border-color:#1688f5!important;color:#fff!important;
+}
+#modalBack.story-mode #smStoryNativeTextComposer textarea{
+ position:relative!important;z-index:10!important;pointer-events:auto!important;
+}
+@media(max-width:480px){
+ #modalBack.story-mode #smStoryNativeTextComposer .sm-native-controls{min-height:112px!important;padding-left:12px!important;padding-right:12px!important}
+ #modalBack.story-mode #smStoryNativeTextComposer .sm-native-style-row button{min-width:66px!important}
+}
+</style>
 </body>
 </html>
