@@ -4001,5 +4001,73 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
 })();
 </script>
 
+
+<style id="story-font-color-final-v29">
+#smStoryTextEditorV23 textarea{font-family:var(--sm-story-font,system-ui)!important;color:var(--sm-story-color,#fff)!important;font-size:var(--sm-story-size,28px)!important;font-weight:var(--sm-story-weight,700)!important;font-style:var(--sm-story-style,normal)!important}
+#storyEditorCaption{font-family:var(--sm-story-font,system-ui)!important;color:var(--sm-story-color,#fff)!important;font-weight:var(--sm-story-weight,700)!important;font-style:var(--sm-story-style,normal)!important}
+#smStoryTextEditorV23 .v23-fonts button.active{background:#1688f5!important;border-color:#fff!important;box-shadow:0 0 0 2px #1688f566}
+#smStoryTextEditorV23 .v23-colors button.active{outline:3px solid #fff!important;outline-offset:3px!important;transform:scale(1.12)}
+</style>
+<script id="story-font-color-final-v29">
+(function(){
+ const $=id=>document.getElementById(id);
+ const fonts={
+  signature:{family:'"Segoe Script","Brush Script MT",cursive',weight:'500',style:'italic'},
+  editor:{family:'Arial,Helvetica,sans-serif',weight:'600',style:'normal'},
+  poster:{family:'Impact,"Arial Black",sans-serif',weight:'900',style:'normal'},
+  bubble:{family:'"Trebuchet MS",Arial,sans-serif',weight:'700',style:'normal'},
+  deco:{family:'Georgia,"Times New Roman",serif',weight:'700',style:'italic'},
+  classic:{family:'Georgia,"Times New Roman",serif',weight:'500',style:'normal'},
+  bold:{family:'Arial,Helvetica,sans-serif',weight:'900',style:'normal'},
+  neon:{family:'Arial,sans-serif',weight:'900',style:'normal'},
+  type:{family:'"Courier New",monospace',weight:'700',style:'normal'}
+ };
+ function paint(){
+  const input=$('smStoryTextInputV23'),caption=$('storyEditorCaption');
+  const f=fonts[window.storyTextStyle]||fonts.editor;
+  const color=window.storyTextColor||'#ffffff';
+  const size=Math.max(12,Math.min(88,Number(window.storyTextSize)||28))+'px';
+  [input,caption].filter(Boolean).forEach(node=>{
+   node.style.setProperty('--sm-story-font',f.family);
+   node.style.setProperty('--sm-story-color',color);
+   node.style.setProperty('--sm-story-size',size);
+   node.style.setProperty('--sm-story-weight',f.weight);
+   node.style.setProperty('--sm-story-style',f.style);
+   node.style.setProperty('font-family',f.family,'important');
+   node.style.setProperty('color',color,'important');
+   node.style.setProperty('font-weight',f.weight,'important');
+   node.style.setProperty('font-style',f.style,'important');
+   if(node===caption)node.style.setProperty('font-size',size,'important');
+  });
+  $('smStoryTextEditorV23')?.querySelectorAll('[data-v23-font]').forEach(b=>b.classList.toggle('active',b.dataset.v23Font===(window.storyTextStyle||'editor')));
+  $('smStoryTextEditorV23')?.querySelectorAll('[data-v23-color]').forEach(b=>b.classList.toggle('active',b.dataset.v23Color.toLowerCase()===color.toLowerCase()));
+ }
+ window.setStoryTextStyle=function(style){if(!fonts[style])return;window.storyTextStyle=style;paint();};
+ window.setStoryTextColor=function(color){if(!/^#[0-9a-f]{6}$/i.test(String(color)))return;window.storyTextColor=color;paint();};
+ document.addEventListener('click',function(e){
+  const font=e.target.closest('#smStoryTextEditorV23 [data-v23-font]');
+  if(font){window.setStoryTextStyle(font.dataset.v23Font);return;}
+  const color=e.target.closest('#smStoryTextEditorV23 [data-v23-color]');
+  if(color){e.preventDefault();e.stopImmediatePropagation();window.setStoryTextColor(color.dataset.v23Color);const palette=$('smStoryTextColorsV23');if(palette)palette.hidden=true;return;}
+ },true);
+ document.addEventListener('input',e=>{
+  if(e.target?.id==='smStoryTextSizeV23'){window.storyTextSize=Number(e.target.value)||28;paint();}
+  if(e.target?.id==='smStoryTextInputV23'){
+   const caption=$('storyEditorCaption');if(caption)caption.textContent=e.target.value;
+   if($('storyCaption'))$('storyCaption').value=e.target.value;
+   paint();
+  }
+ },true);
+ document.addEventListener('click',e=>{
+  if(e.target.closest('#smStoryColorWheelV23')){const p=$('smStoryTextColorsV23');if(p)p.hidden=!p.hidden;}
+ },true);
+ const open=window.openStoryTextComposer;
+ if(typeof open==='function'&&!window.__storyFontColorV29){
+  window.__storyFontColorV29=true;
+  window.openStoryTextComposer=function(){open();setTimeout(paint,0);};
+ }
+})();
+</script>
+
 </body>
 </html>
