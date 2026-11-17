@@ -3032,5 +3032,96 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
  arrange();
 })();
 </script>
+
+<style id="story-text-controls-v20">
+#smStoryNativeTextComposer .sm-native-controls{display:flex!important;flex-direction:column!important;gap:9px!important;flex:0 0 auto!important;padding:9px 12px calc(10px + env(safe-area-inset-bottom,0px))!important;background:#101722!important}
+#smStoryNativeTextComposer .sm-native-size-row{display:flex!important;align-items:center!important;gap:10px!important;color:#fff!important;font-size:12px!important}
+#smStoryNativeTextComposer .sm-native-size-row input{display:block!important;flex:1 1 auto!important;width:100%!important;height:28px!important;min-width:0!important;accent-color:#1688ff!important;touch-action:pan-y!important}
+#smStoryNativeTextComposer .sm-native-style-row{display:flex!important;gap:7px!important;overflow-x:auto!important;padding:2px 0!important}
+#smStoryNativeTextComposer .sm-native-style-row button{flex:0 0 auto!important;min-width:62px!important;height:36px!important;padding:0 10px!important;border:1px solid #ffffff35!important;border-radius:18px!important;background:#ffffff12!important;color:#fff!important}
+#smStoryNativeTextComposer .sm-native-style-row button.active{background:#1688f5!important;border-color:#1688f5!important}
+#smStoryNativeTextComposer #smNativeTextColorRail{width:42px!important;height:38px!important;min-width:42px!important;padding:3px!important;border:2px solid #fff!important;border-radius:12px!important;background:transparent!important;appearance:none!important;-webkit-appearance:none!important;overflow:hidden!important}
+#smStoryNativeTextComposer #smNativeTextColorRail::-webkit-color-swatch-wrapper{padding:0!important}
+#smStoryNativeTextComposer #smNativeTextColorRail::-webkit-color-swatch{border:0!important;border-radius:7px!important}
+#smStoryNativeTextComposer header{gap:8px!important}
+#smStoryNativeTextComposer header>button{margin-right:auto!important}
+#smStoryNativeTextComposer header div{display:flex!important;align-items:center!important;gap:7px!important}
+#smStoryNativeTextComposer main{touch-action:pan-y!important}
+#smStoryNativeTextComposer textarea{pointer-events:auto!important;z-index:8!important}
+#modalBack.story-mode #storyEditorCaption{white-space:pre-wrap!important;overflow-wrap:anywhere!important;max-width:100%!important;pointer-events:auto!important}
+</style>
+<script id="story-text-controls-v20">
+(function(){
+ const $=id=>document.getElementById(id);
+ const styles=['classic','bold','poster','bubble','neon','typewriter'];
+ const fontFor=s=>s==='classic'?'Georgia,serif':s==='poster'?'Impact,system-ui':s==='typewriter'?'monospace':'system-ui,sans-serif';
+ function apply(){
+  const input=$('smNativeStoryTextInput'),caption=$('storyEditorCaption');
+  const text=input?.value??$('storyCaptionFallback')?.value??'';
+  if($('storyCaption'))$('storyCaption').value=text;
+  if($('storyCaptionFallback'))$('storyCaptionFallback').value=text;
+  if(caption){
+   caption.textContent=[text,$('storyMention')?.value?.trim()||''].filter(Boolean).join(' ');
+   caption.style.fontFamily=fontFor(window.storyTextStyle||'classic');
+   caption.style.fontWeight=window.storyTextStyle==='classic'?'600':'900';
+   caption.style.fontStyle=window.storyTextStyle==='bubble'?'italic':'normal';
+   caption.style.fontSize=(window.storyTextSize||26)+'px';
+   caption.style.color=window.storyTextColor||'#ffffff';
+   caption.style.textAlign=window.storyTextAlign||'center';
+   caption.style.textShadow=window.storyTextStyle==='neon'?'0 0 9px currentColor,0 0 16px currentColor':'0 2px 5px #0008';
+   caption.style.background=window.storyTextBackground?'#0009':'transparent';
+   caption.style.padding=window.storyTextBackground?'8px 12px':'0';
+   caption.style.borderRadius=window.storyTextBackground?'12px':'0';
+  }
+ }
+ window.openStoryTextComposer=function(){
+  if(typeof closeStoryPanel==='function')closeStoryPanel();
+  let layer=$('smStoryNativeTextComposer');
+  if(!layer){
+   layer=document.createElement('div');layer.id='smStoryNativeTextComposer';layer.className='sm-native-text-composer';
+   layer.innerHTML="<header><button type='button' onclick='closeStoryTextComposer()'>Done ✓</button><div><button type='button' onclick='cycleStoryTextAlign()' aria-label='Text alignment'>☰</button><input id='smNativeTextColorRail' type='color' value='#ffffff' aria-label='Text colour'><button type='button' id='smNativeTextHighlight' onclick='setStoryTextBackground(!window.storyTextBackground)'>▰</button></div></header><main><div id='smNativeTextPhoto'></div><textarea id='smNativeStoryTextInput' maxlength='120' placeholder='Type your story text'></textarea></main><section class='sm-native-controls'><div class='sm-native-size-row'><span> A− </span><input id='smNativeTextSizeSlider' type='range' min='12' max='76' step='1' value='26' aria-label='Text size'><span> A+ </span><output id='smNativeTextSizeValue'>26px</output></div><div class='sm-native-style-row'><button type='button' data-story-font='classic'>Classic</button><button type='button' data-story-font='bold'>Bold</button><button type='button' data-story-font='poster'>Poster</button><button type='button' data-story-font='bubble'>Bubble</button><button type='button' data-story-font='neon'>Neon</button><button type='button' data-story-font='typewriter'>Typewriter</button></div></section>";
+   $('modalBack').appendChild(layer);
+   const input=$('smNativeStoryTextInput'),slider=$('smNativeTextSizeSlider'),color=$('smNativeTextColorRail');
+   input.addEventListener('input',apply);
+   slider.addEventListener('input',()=>{window.storyTextSize=Number(slider.value);const o=$('smNativeTextSizeValue');if(o)o.value=slider.value+'px';apply();});
+   color.addEventListener('input',()=>{window.storyTextColor=color.value;apply();});
+   layer.querySelectorAll('[data-story-font]').forEach(b=>b.addEventListener('click',()=>window.setStoryTextStyle(b.dataset.storyFont)));
+   let pinchStart=0,pinchSize=26;
+   input.addEventListener('touchstart',e=>{if(e.touches.length===2){pinchStart=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);pinchSize=window.storyTextSize||26;}},{passive:true});
+   input.addEventListener('touchmove',e=>{if(e.touches.length===2&&pinchStart){e.preventDefault();const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);window.setStoryTextSize(pinchSize*d/pinchStart);slider.value=window.storyTextSize;}},{passive:false});
+   input.addEventListener('touchend',()=>{pinchStart=0;},{passive:true});
+  }
+  const media=$('storyEditorMedia')?.firstElementChild,photo=$('smNativeTextPhoto');
+  if(media&&photo){photo.innerHTML='';const clone=media.cloneNode(true);clone.style.cssText='width:100%;height:100%;object-fit:contain;filter:'+media.style.filter;photo.appendChild(clone);}
+  const input=$('smNativeStoryTextInput'),slider=$('smNativeTextSizeSlider'),color=$('smNativeTextColorRail');
+  input.value=$('storyCaptionFallback')?.value||$('storyCaption')?.value||'';
+  window.storyTextSize=Number(window.storyTextSize)||26;window.storyTextColor=window.storyTextColor||'#ffffff';
+  slider.value=window.storyTextSize;color.value=window.storyTextColor;
+  input.style.fontSize=window.storyTextSize+'px';input.style.color=window.storyTextColor;input.style.textAlign=window.storyTextAlign||'center';
+  const out=$('smNativeTextSizeValue');if(out)out.value=window.storyTextSize+'px';
+  window.setStoryTextStyle(window.storyTextStyle||'classic');apply();layer.classList.add('open');setTimeout(()=>input.focus(),100);
+ };
+ window.closeStoryTextComposer=function(){
+  const layer=$('smStoryNativeTextComposer'),input=$('smNativeStoryTextInput');if(!layer)return;
+  const value=input?.value||'';
+  if($('storyCaption'))$('storyCaption').value=value;
+  if($('storyCaptionFallback'))$('storyCaptionFallback').value=value;
+  apply();layer.classList.remove('open');input?.blur();
+ };
+ window.setStoryTextSize=function(value){
+  window.storyTextSize=Math.max(12,Math.min(76,Number(value)||26));
+  const slider=$('smNativeTextSizeSlider'),input=$('smNativeStoryTextInput'),out=$('smNativeTextSizeValue');
+  if(slider)slider.value=String(window.storyTextSize);if(input)input.style.fontSize=window.storyTextSize+'px';if(out)out.value=window.storyTextSize+'px';apply();
+ };
+ window.setStoryTextStyle=function(style){
+  if(!styles.includes(style))return;window.storyTextStyle=style;
+  const input=$('smNativeStoryTextInput');if(input){input.style.fontFamily=fontFor(style);input.style.fontWeight=style==='classic'?'600':'900';input.style.fontStyle=style==='bubble'?'italic':'normal';input.style.textShadow=style==='neon'?'0 0 8px currentColor,0 0 16px currentColor':'0 2px 6px #0009';}
+  document.querySelectorAll('#smStoryNativeTextComposer [data-story-font]').forEach(b=>b.classList.toggle('active',b.dataset.storyFont===style));
+  apply();
+ };
+ window.setStoryTextBackground=function(enabled){window.storyTextBackground=!!enabled;const b=$('smNativeTextHighlight');if(b)b.style.background=enabled?'#1688e8':'#202936';apply();};
+ window.cycleStoryTextAlign=function(){window.storyTextAlign=window.storyTextAlign==='left'?'center':window.storyTextAlign==='center'?'right':'left';const i=$('smNativeStoryTextInput');if(i)i.style.textAlign=window.storyTextAlign;apply();};
+})();
+</script>
 </body>
 </html>
