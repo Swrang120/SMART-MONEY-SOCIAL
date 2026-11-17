@@ -2033,7 +2033,7 @@ function beginStoryCaptionDrag(event){
 }
 function renderStoryEffectThumbnails(){const media=$('storyEditorMedia')?.firstElementChild,gallery=document.querySelector('#smStoryEffectsPanel .sm-pdf-effect-grid');if(!media||!gallery)return;const src=media.currentSrc||media.src||'';if(!src)return;const effects={glow:'brightness(1.16) saturate(1.25)',cinema:'contrast(1.22) saturate(1.18)',soft:'brightness(1.08) saturate(.9)',mono:'grayscale(1) contrast(1.12)',vintage:'sepia(.42) contrast(1.08) saturate(.85)',none:'none'};gallery.querySelectorAll('button').forEach(button=>{const name=(button.querySelector('b')?.textContent||'').trim().toLowerCase().replace(/\s+/g,'');const key=name==='softfocus'?'soft':name;const filter=effects[key]||'none';let thumb=button.querySelector('.sm-effect-photo-thumb');if(!thumb){thumb=document.createElement('span');thumb.className='sm-effect-photo-thumb';button.insertBefore(thumb,button.firstChild);}thumb.innerHTML='<img src="'+safe(src)+'" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:cover;border-radius:50%;filter:'+filter+';display:block">';});}
 function selectStoryEffect(name,button){
- const effects={none:'none',glow:'brightness(1.16) saturate(1.25) drop-shadow(0 0 5px #ffffff55)',cinema:'contrast(1.22) saturate(1.18)',soft:'blur(.25px) brightness(1.08) saturate(.9)',mono:'grayscale(1) contrast(1.12)',vintage:'sepia(.42) contrast(1.08) saturate(.85)'};
+ const effects={none:'none',glow:'brightness(1.16) saturate(1.25) drop-shadow(0 0 5px #ffffff55)',cinema:'contrast(1.22) saturate(1.18)',soft:'brightness(1.08) saturate(.9)',mono:'grayscale(1) contrast(1.12)',vintage:'sepia(.42) contrast(1.08) saturate(.85)'};
  window.storyEffectFilter=effects[name]||'none';
  document.querySelectorAll('.sm-pdf-effect-grid button').forEach(b=>b.classList.toggle('active',b===button));
  updateStoryEditorPreview();
@@ -4552,5 +4552,30 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
  audio.addEventListener('pause',()=>{playing=false;if($m('smmlPlay'))$m('smmlPlay').textContent='▶'});
 })();
 </script>
+
+<style id="story-no-blur-final-override">
+/* Story editor: remove every frosted-glass/backdrop blur and all blur-based effects. */
+#modalBack.story-mode,
+#modalBack.story-mode *,
+#modalBack.story-mode *::before,
+#modalBack.story-mode *::after{
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+#modalBack.story-mode .sm-story-panel,
+#modalBack.story-mode .sm-story-tools,
+#modalBack.story-mode .sm-story-tools i,
+#modalBack.story-mode .sm-story-stage>.sm-story-tools,
+#modalBack.story-mode .sm-story-stage>.sm-story-tools .sm-story-tool i{
+ background-color:#111923!important;
+}
+#modalBack.story-mode .sm-story-media,
+#modalBack.story-mode .sm-story-media img,
+#modalBack.story-mode .sm-story-media video,
+#modalBack.story-mode .sm-effect-thumb img,
+#modalBack.story-mode .story-filter-thumb img{
+ filter:none!important;
+}
+</style>
 </body>
 </html>
