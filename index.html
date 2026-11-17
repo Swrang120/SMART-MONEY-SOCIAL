@@ -3238,7 +3238,7 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
  position:fixed!important;left:0!important;right:0!important;bottom:0!important;top:auto!important;
  width:100%!important;max-height:42dvh!important;height:auto!important;min-height:0!important;
  overflow:hidden!important;border-radius:20px 20px 0 0!important;background:#111923f5!important;
- z-index:100020!important;box-shadow:0 -12px 40px #0008!important;backdrop-filter:blur(18px)!important;
+ z-index:100020!important;box-shadow:0 -12px 40px #0008!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
  display:flex!important;flex-direction:column!important;padding-bottom:env(safe-area-inset-bottom,0px)!important;
 }
 #modalBack.story-mode .sm-story-panel[hidden]{display:none!important}
@@ -3435,7 +3435,7 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
 #modalBack.story-mode .sm-story-tools button{width:54px!important;min-height:42px!important;height:calc((100% - 10px)/9)!important;color:#fff!important;background:transparent!important}
 #modalBack.story-mode .sm-story-tools i{width:36px!important;height:36px!important;background:#1017229c!important;border:1px solid #ffffff30!important;backdrop-filter:blur(10px)!important}
 #modalBack.story-mode .sm-story-tools span{font-size:9px!important}
-#modalBack.story-mode .sm-story-panel{position:fixed!important;left:0!important;right:0!important;bottom:0!important;top:auto!important;width:100%!important;max-height:43dvh!important;height:auto!important;overflow:hidden!important;z-index:100020!important;padding:0 12px env(safe-area-inset-bottom)!important;border:1px solid #ffffff20!important;border-radius:20px 20px 0 0!important;background:#111a27ed!important;backdrop-filter:blur(18px)!important;box-shadow:0 -12px 35px #0007!important;display:flex!important;flex-direction:column!important}
+#modalBack.story-mode .sm-story-panel{position:fixed!important;left:0!important;right:0!important;bottom:0!important;top:auto!important;width:100%!important;max-height:43dvh!important;height:auto!important;overflow:hidden!important;z-index:100020!important;padding:0 12px env(safe-area-inset-bottom)!important;border:1px solid #ffffff20!important;border-radius:20px 20px 0 0!important;background:#111923!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:0 -12px 35px #0007!important;display:flex!important;flex-direction:column!important}
 #modalBack.story-mode .sm-story-panel[hidden]{display:none!important}
 #modalBack.story-mode .sm-story-panel-head{min-height:44px!important;flex:0 0 44px!important;background:transparent!important}
 #modalBack.story-mode #smStoryMentionPanel,#modalBack.story-mode #smStoryStickersPanel,#modalBack.story-mode #smStoryFiltersPanel,#modalBack.story-mode #smStoryEffectsPanel{min-height:0!important;overflow-y:auto!important;max-height:calc(43dvh - 48px)!important;padding:6px 2px 12px!important}
@@ -4570,6 +4570,37 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
  background-color:#111923!important;
 }
 /* Keep chosen color/contrast filters intact; only backdrop blur is disabled. */
+</style>
+
+<style id="story-blur-hard-fix">
+/* Hard override for Story editor overlay, tool chips and filter/effect sheets. */
+#modalBack.modal-back.story-mode,
+#modalBack.modal-back.story-mode::before,
+#modalBack.modal-back.story-mode::after,
+#modalBack.modal-back.story-mode .sm-story-shell,
+#modalBack.modal-back.story-mode .sm-story-editor,
+#modalBack.modal-back.story-mode .sm-story-stage,
+#modalBack.modal-back.story-mode .sm-story-tools,
+#modalBack.modal-back.story-mode .sm-story-tools *,
+#modalBack.modal-back.story-mode .sm-story-panel,
+#modalBack.modal-back.story-mode #smStoryFiltersPanel,
+#modalBack.modal-back.story-mode #smStoryEffectsPanel,
+#modalBack.modal-back.story-mode #storyFilterGallery button,
+#modalBack.modal-back.story-mode .sm-pdf-effect-grid button {
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+#modalBack.modal-back.story-mode .sm-story-panel,
+#modalBack.modal-back.story-mode #smStoryFiltersPanel,
+#modalBack.modal-back.story-mode #smStoryEffectsPanel {
+ background:#111923!important;
+ background-image:none!important;
+}
+#modalBack.modal-back.story-mode .sm-story-tools i {
+ background:#101722!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
 </style>
 </body>
 </html>
