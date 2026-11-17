@@ -4681,7 +4681,8 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
   if(state.target!==node)return;
   try{node.setPointerCapture?.(e.pointerId);}catch(_){}
   state.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
-  if(state.pointers.size===2){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();state.startDistance=distance(state.pointers)||1;state.startScale=scaleOf(kind,index,node);state.moved=true;}
+  e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
+  if(state.pointers.size===2){state.startDistance=distance(state.pointers)||1;state.startScale=scaleOf(kind,index,node);state.moved=true;}
   else if(state.pointers.size===1&&kind!=='media'){state.startX=e.clientX;state.startY=e.clientY;state.startLeft=parseFloat(node.style.left)||50;state.startTop=parseFloat(node.style.top)||50;}
   if(state.pointers.size>2){state.pointers.delete(e.pointerId);}
  }
