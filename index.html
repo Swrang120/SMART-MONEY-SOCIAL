@@ -3378,7 +3378,7 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
 #modalBack.story-mode .sm-story-stage{padding:8px 66px 8px 8px!important}
 #modalBack.story-mode .sm-story-preview{border-radius:12px!important}
 #modalBack.story-mode .sm-story-tools{right:5px!important;top:8px!important;bottom:8px!important;display:flex!important;flex-direction:column!important;justify-content:space-evenly!important;gap:2px!important;width:58px!important}
-#modalBack.story-mode .sm-story-tools button{width:54px!important;min-height:42px!important;height:calc((100% - 10px)/8)!important;color:#fff!important;background:transparent!important}
+#modalBack.story-mode .sm-story-tools button{width:54px!important;min-height:42px!important;height:calc((100% - 10px)/9)!important;color:#fff!important;background:transparent!important}
 #modalBack.story-mode .sm-story-tools i{width:36px!important;height:36px!important;background:#1017229c!important;border:1px solid #ffffff30!important;backdrop-filter:blur(10px)!important}
 #modalBack.story-mode .sm-story-tools span{font-size:9px!important}
 #modalBack.story-mode .sm-story-panel{position:fixed!important;left:0!important;right:0!important;bottom:0!important;top:auto!important;width:100%!important;max-height:43dvh!important;height:auto!important;overflow:hidden!important;z-index:100020!important;padding:0 12px env(safe-area-inset-bottom)!important;border:1px solid #ffffff20!important;border-radius:20px 20px 0 0!important;background:#111a27ed!important;backdrop-filter:blur(18px)!important;box-shadow:0 -12px 35px #0007!important;display:flex!important;flex-direction:column!important}
@@ -3499,7 +3499,7 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
   el('smStoryMusicBackV23').addEventListener('click',closeMusicPage);
   el('smStoryMusicSearchV22').addEventListener('input',()=>window.renderStoryMusicRows?.());
   musicPage.querySelectorAll('[data-music-tab]').forEach(b=>b.addEventListener('click',()=>{window.storyMusicTab=b.dataset.musicTab;musicPage.querySelectorAll('[data-music-tab]').forEach(x=>x.classList.toggle('active',x===b));window.renderStoryMusicRows?.();}));
-  el('smStoryMusicApplyV23').addEventListener('click',()=>{if(!window.storySelectedMusic){showToast('Select a song first.');return;}closeMusicPage();showToast('Music added to your story.');});
+  el('smStoryMusicApplyV23').addEventListener('click',()=>{if(!storySelectedMusic){showToast('Select a song first.');return;}closeMusicPage();showToast('Music added to your story.');});
   return musicPage;
  }
  function openMusicPage(){
@@ -3515,6 +3515,16 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
   if(musicPage)musicPage.hidden=true;
  }
  window.closeStoryMusicPage=closeMusicPage;
+
+ window.applyStoryMentions=function(){
+  const ids=[...(window.storyMentionSelection||[])];
+  if(!ids.length){showToast('Select at least one person.');return;}
+  const hidden=ids.map(user_id=>({type:'hidden_mention',user_id}));
+  window.storyHiddenMentions=hidden;
+  window.closeStoryPanel?.();
+  showToast(ids.length+' hidden mention(s) added.');
+ };
+
  window.toggleStoryPanel=function(name){
   if(name==='music'){openMusicPage();return;}
   const panel=el('smStoryPanel'),ids={mention:'smStoryMentionPanel',stickers:'smStoryStickersPanel',filters:'smStoryFiltersPanel',effects:'smStoryEffectsPanel'};
@@ -3561,7 +3571,7 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
  const originalPreview=window.previewStoryMedia;
  window.previewStoryMedia=function(input){if(typeof originalPreview==='function')originalPreview(input);installEditorChrome();};
  const originalOpen=window.openStoryComposer;
- window.openStoryComposer=function(){if(typeof originalOpen==='function')originalOpen();const picker=el('storyFile');if(picker){picker.value='';picker.click();}};
+ window.openStoryComposer=function(){if(typeof originalOpen==='function')originalOpen();};
  document.addEventListener('animationend',e=>{if(e.target?.id==='storyEditorCaption')e.target.style.animation='none';});
  const style=document.createElement('style');style.textContent='@keyframes smStoryTextPulseV23{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.06)}}';document.head.appendChild(style);
 })();
