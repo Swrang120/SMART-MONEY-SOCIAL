@@ -1909,7 +1909,6 @@ function openStoryComposer(){
  <button type="button" class="sm-story-tool" onclick="toggleStoryPanel('mention')" title="Mention someone" aria-label="Mention someone"><i><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M16 16v-5a4 4 0 1 0-1.2 2.8c.5 1.2 2.5 1.2 3.2-.1"/></svg></i><span>Mention</span></button></div></div>
  <div id="smStoryPanel" class="sm-story-panel" hidden>
  <div class="sm-story-panel-head"><b id="smStoryPanelTitle">Story tools</b><div class="sm-story-panel-actions"><button type="button" class="sm-story-panel-min" onclick="minimizeStoryPanel()" aria-label="Minimize tools" title="Minimize">−</button><button type="button" class="sm-story-panel-close" onclick="closeStoryPanel()" aria-label="Close tools" title="Close">✕</button></div></div>
- <div id="smStoryTextPanel" hidden><div class="sm-pdf-text-top"><b>Text editor</b><button type="button" onclick="finishStoryPanel()">Done</button></div><label>Write text on your story</label><textarea id="storyCaption" maxlength="120" placeholder="Type something…" oninput="updateStoryEditorPreview()"></textarea><div class="sm-pdf-text-styles"><button type="button" onclick="setStoryTextStyle('classic')">Aa Classic</button><button type="button" onclick="setStoryTextStyle('bold')">𝗔𝗮 Bold</button><button type="button" onclick="setStoryTextStyle('poster')">Poster</button><button type="button" onclick="setStoryTextStyle('bubble')">Bubble</button></div><button type="button" class="primary" onclick="addStoryTextSticker()">＋ Add text to canvas</button><p class="tiny muted">After adding, drag the text anywhere on your photo or video.</p></div>
  <div id="smStoryMentionPanel" hidden><input id="storyMention" type="hidden" value=""><div class="sm-pdf-sheet-search"><span>⌕</span><input id="storyMentionSearch" type="search" placeholder="Search people" oninput="filterStoryMentionPeople()"></div><p class="sm-pdf-mention-help">यहाँ जोड़े गए लोग आपकी स्टोरी में मेंशन होंगे, लेकिन उनका यूज़रनेम स्क्रीन पर दिखाई नहीं देगा</p><div id="storyMentionPeopleList" class="sm-pdf-mention-list"></div><div class="sm-pdf-sheet-footer"><span id="storyMentionSelectedCount">0 selected</span><button type="button" id="storyMentionAddButton" onclick="applyStoryMentions()" disabled>Add</button></div></div>
  <div id="smStoryStickersPanel" hidden><div class="sm-pdf-sheet-search"><span>⌕</span><input id="storyStickerSearch" type="search" placeholder="Search stickers" oninput="filterStoryStickerOptions()"></div><div class="sm-sticker-tabs"><button type="button" class="active" onclick="showStickerTab('brand')">Smart Money Stickers</button><button type="button" onclick="showStickerTab('emoji')">Emoji</button><button type="button" onclick="showStickerTab('custom')">My Stickers</button></div>
  <div id="smStickerBrandTab"><label>Smart Money Sticker Collection · 24 designs</label><div class="sm-brand-sticker-grid">${STORY_BRAND_STICKERS.map((x,i)=>'<button type="button" onclick="addBrandStorySticker('+i+')"><span>'+x.icon+'</span><b>'+x.label+'</b></button>').join('')}</div></div>
@@ -1966,13 +1965,23 @@ function closeStoryTextComposer(){const layer=$('smStoryNativeTextComposer');if(
 function cycleStoryTextAlign(){window.storyTextAlign=window.storyTextAlign==='left'?'center':window.storyTextAlign==='center'?'right':'left';const i=$('smNativeStoryTextInput');if(i)i.style.textAlign=window.storyTextAlign;updateStoryEditorPreview();}
 function cycleStoryTextStyle(){const a=['classic','bold','poster','bubble','neon','typewriter'];setStoryTextStyle(a[(a.indexOf(window.storyTextStyle||'classic')+1)%a.length]);}
 function beginStoryCaptionDrag(event){
- const c=event.currentTarget;if(!c||!c.textContent.trim())return;event.preventDefault();event.stopPropagation();
- const stage=$('storyEditorPreview'),trash=$('smStoryDeleteTarget');if(!stage)return;
- const r=stage.getBoundingClientRect(),pid=event.pointerId;let moved=false,lx=event.clientX,ly=event.clientY;c.classList.add('is-dragging');showStoryDeleteZones(true);
- const mv=e=>{if(e.pointerId!==pid)return;const dx=e.clientX-r.left,dy=e.clientY-r.top;if(Math.abs(e.clientX-lx)+Math.abs(e.clientY-ly)>1)moved=true;lx=e.clientX;ly=e.clientY;c.style.setProperty('--story-text-x',Math.max(3,Math.min(97,dx/r.width*100))+'%');c.style.setProperty('--story-text-y',Math.max(3,Math.min(97,dy/r.height*100))+'%');if(trash){const q=trash.getBoundingClientRect();trash.classList.toggle('active',e.clientX>=q.left&&e.clientX<=q.right&&e.clientY>=q.top&&e.clientY<=q.bottom);}};
- const up=e=>{if(e.pointerId!==pid)return;const x=e.clientX||lx,y=e.clientY||ly;let del=false;if(trash){const q=trash.getBoundingClientRect();del=moved&&x>=q.left&&x<=q.right&&y>=q.top&&y<=q.bottom;}document.removeEventListener('pointermove',mv,true);document.removeEventListener('pointerup',up,true);document.removeEventListener('pointercancel',up,true);c.classList.remove('is-dragging');showStoryDeleteZones(false);if(del){if($('storyCaption'))$('storyCaption').value='';if($('storyCaptionFallback'))$('storyCaptionFallback').value='';if($('storyMention'))$('storyMention').value='';c.style.setProperty('--story-text-x','50%');c.style.setProperty('--story-text-y','50%');updateStoryEditorPreview();showToast('Text removed.');}};
- document.addEventListener('pointermove',mv,true);document.addEventListener('pointerup',up,true);document.addEventListener('pointercancel',up,true);
-}function selectStoryEffect(name,button){
+ const node=event.currentTarget,stage=$('storyEditorPreview'),trash=$('smStoryDeleteTarget');
+ if(!node||!node.textContent.trim()||!stage)return;
+ event.preventDefault();event.stopPropagation();
+ const pid=event.pointerId,rect=stage.getBoundingClientRect();let moved=false,sx=event.clientX,sy=event.clientY,lx=sx,ly=sy;
+ try{node.setPointerCapture(pid);}catch(_){}
+ node.classList.add('is-dragging');showStoryDeleteZones(true);
+ const move=e=>{if(e.pointerId!==pid)return;if(Math.abs(e.clientX-sx)+Math.abs(e.clientY-sy)>5)moved=true;lx=e.clientX;ly=e.clientY;if(!moved)return;
+ node.style.setProperty('--story-text-x',Math.max(3,Math.min(97,(e.clientX-rect.left)/rect.width*100))+'%');
+ node.style.setProperty('--story-text-y',Math.max(3,Math.min(97,(e.clientY-rect.top)/rect.height*100))+'%');
+ if(trash){const q=trash.getBoundingClientRect();trash.classList.toggle('active',e.clientX>=q.left&&e.clientX<=q.right&&e.clientY>=q.top&&e.clientY<=q.bottom);}};
+ const finish=e=>{if(e.pointerId!==pid)return;const xx=e.clientX??lx,yy=e.clientY??ly,q=trash?.getBoundingClientRect();const del=!!(moved&&q&&xx>=q.left&&xx<=q.right&&yy>=q.top&&yy<=q.bottom);
+ node.removeEventListener('pointermove',move);node.removeEventListener('pointerup',finish);node.removeEventListener('pointercancel',finish);node.classList.remove('is-dragging');showStoryDeleteZones(false);
+ if(del){if($('storyCaption'))$('storyCaption').value='';if($('storyCaptionFallback'))$('storyCaptionFallback').value='';if($('storyMention'))$('storyMention').value='';node.style.setProperty('--story-text-x','50%');node.style.setProperty('--story-text-y','50%');updateStoryEditorPreview();showToast('Text removed.');}
+ else if(!moved)window.openStoryTextComposer?.();};
+ node.addEventListener('pointermove',move);node.addEventListener('pointerup',finish);node.addEventListener('pointercancel',finish);
+}
+function selectStoryEffect(name,button){
  const effects={none:'none',glow:'brightness(1.16) saturate(1.25) drop-shadow(0 0 5px #ffffff55)',cinema:'contrast(1.22) saturate(1.18)',soft:'blur(.25px) brightness(1.08) saturate(.9)',mono:'grayscale(1) contrast(1.12)',vintage:'sepia(.42) contrast(1.08) saturate(.85)'};
  window.storyEffectFilter=effects[name]||'none';
  document.querySelectorAll('.sm-pdf-effect-grid button').forEach(b=>b.classList.toggle('active',b===button));
@@ -2925,22 +2934,7 @@ body.story-modal-open .mobile-nav{display:none!important}
    if(x[1]==='TEMPERATURE'){window.addStorySticker?.({type:'text',e:'🌡 Temperature',style:'bubble',x:50,y:50,scale:1});return;}
    window.addStorySticker?.({type:'text',e:x[0]+' '+x[1],style:'bubble',x:50,y:50,scale:1});
  };
- const oldOpen=window.openStoryTextComposer;
- window.openStoryTextComposer=function(){
-   oldOpen?.();
-   const nav=$('#smStoryNativeTextComposer nav');if(nav&&!$('#smStoryTextExtras')){
-     const extra=document.createElement('div');extra.id='smStoryTextExtras';extra.className='sm-story-native-extra';
-     extra.innerHTML='<button type="button" onclick="setStoryTextMotion()">Motion Text</button><button type="button" onclick="cycleStoryTextAlign()">Alignment</button><button type="button" onclick="setStoryTextBackground(!window.storyTextBackground)">Highlight</button><button type="button" onclick="setStoryTextGlow()">✦ Glow</button><label>Color <input id="smStoryTextColorPicker" type="color" value="#ffffff" aria-label="Text color"></label><button type="button" onclick="insertStoryTextShortcut(\'@\')">@ Mention</button><button type="button" onclick="insertStoryTextShortcut(\'📍 \')">Location</button>';
-     nav.insertAdjacentElement('afterend',extra);
-     $('#smStoryTextColorPicker').addEventListener('input',e=>{window.storyTextColor=e.target.value;const i=$('smNativeStoryTextInput');if(i)i.style.color=e.target.value;window.updateStoryEditorPreview?.();});
-   }
-   const i=$('smNativeStoryTextInput');if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length);}
- };
- window.insertStoryTextShortcut=function(prefix){const i=$('smNativeStoryTextInput');if(!i)return;i.value+=prefix;i.dispatchEvent(new Event('input',{bubbles:true}));i.focus();};
- window.setStoryTextMotion=function(){window.storyTextMotion=!window.storyTextMotion;const c=$('storyEditorCaption');if(c)c.style.animation=window.storyTextMotion?'smStoryTextPulse 1.2s ease-in-out infinite alternate':'none';window.showToast?.(window.storyTextMotion?'Motion text enabled':'Motion text disabled');};
- window.setStoryTextGlow=function(){window.storyTextGlow=!window.storyTextGlow;const c=$('storyEditorCaption');if(c)c.style.textShadow=window.storyTextGlow?'0 0 8px #fff,0 0 18px #8bd5ff':'0 2px 6px #0009';};
 })();
-</script>
 <style>
 @keyframes smStoryTextPulse{from{transform:translate(-50%,-50%) scale(.98)}to{transform:translate(-50%,-50%) scale(1.06)}}
 </style>
@@ -2990,405 +2984,58 @@ body.story-modal-open .mobile-nav{display:none!important}
 window.toggleStoryAudienceSettings=function(){const b=document.querySelector('#modalBack.story-mode .sm-story-bottom');if(!b)return;b.classList.toggle('show-audience');};
 document.addEventListener('click',function(e){const b=document.querySelector('#modalBack.story-mode .sm-story-bottom');if(!b||!b.classList.contains('show-audience'))return;if(!e.target.closest('.sm-story-bottom'))b.classList.remove('show-audience');});
 </script>
-<style id="story-editor-color-palette-fix-v11">
-/* Correct selector: the actual composer uses .sm-native-text-composer, not #smStoryNativeTextComposer */
-#modalBack.story-mode .sm-native-text-composer{position:fixed!important;inset:0!important;z-index:10050!important;display:flex!important;flex-direction:column!important;width:100%!important;height:100dvh!important;max-height:100dvh!important;background:#080b10!important;color:#fff!important;overflow:hidden!important}
-#modalBack.story-mode .sm-native-text-composer header{flex:0 0 52px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;padding:0 12px!important}
-#modalBack.story-mode .sm-native-text-composer main{position:relative!important;flex:1 1 auto!important;min-height:0!important;display:flex!important;align-items:center!important;justify-content:center!important}
-#modalBack.story-mode .sm-native-text-composer textarea{width:min(82%,520px)!important;min-height:100px!important;max-height:60%!important;padding:16px!important;font-size:28px!important;text-align:center!important;color:var(--sm-story-text-color,#fff)!important;touch-action:pan-y!important}
-#modalBack.story-mode .sm-native-text-composer #smNativeTextColorRail{display:none!important}
-#modalBack.story-mode .sm-native-text-composer #smNativeTextSizeSlider{left:9px!important;top:22%!important;height:42%!important;width:24px!important;accent-color:#28a8ff!important}
-#modalBack.story-mode .sm-native-text-composer nav{flex:0 0 auto!important;min-height:48px!important;max-height:54px!important;display:flex!important;align-items:center!important;gap:7px!important;overflow-x:auto!important;padding:5px 10px!important;background:#0d1420!important}
-#modalBack.story-mode .sm-native-text-composer nav button{flex:0 0 auto!important;min-width:54px!important;height:36px!important;border:1px solid #ffffff35!important;border-radius:18px!important;background:#ffffff12!important;color:#fff!important}
-#modalBack.story-mode .sm-story-color-palette{display:flex!important;align-items:center!important;gap:10px!important;overflow-x:auto!important;min-height:58px!important;padding:9px 12px!important;background:#101722!important;border-top:1px solid #ffffff18!important}
-#modalBack.story-mode .sm-story-color-palette button{flex:0 0 30px!important;width:30px!important;height:30px!important;min-width:30px!important;padding:0!important;border:2px solid #ffffff55!important;border-radius:50%!important;box-shadow:0 1px 5px #0009!important}
-#modalBack.story-mode .sm-story-color-palette button[aria-pressed="true"]{outline:2px solid #fff!important;outline-offset:3px!important;transform:scale(1.08)}
-#modalBack.story-mode .sm-story-native-extra{display:flex!important;flex:0 0 auto!important;gap:7px!important;align-items:center!important;flex-wrap:nowrap!important;overflow-x:auto!important;padding:8px 10px!important;background:#101722!important}
-#modalBack.story-mode .sm-story-native-extra button{flex:0 0 auto!important}
-</style>
-<script id="story-editor-color-palette-fix-v11">
-(function(){
- const colors=['#FFFFFF','#111111','#FF3B30','#FF9500','#FFCC00','#34C759','#00C7BE','#32ADE6','#007AFF','#5856D6','#AF52DE','#FF2D55','#A2845E','#8E8E93'];
- const apply=(color)=>{
-  window.storyTextColor=color;
-  const input=document.getElementById('smNativeStoryTextInput');
-  if(input){input.style.color=color;input.style.setProperty('--sm-story-text-color',color);}
-  const preview=document.getElementById('storyEditorCaption');
-  if(preview)preview.style.color=color;
-  window.updateStoryEditorPreview?.();
-  document.querySelectorAll('.sm-story-color-palette button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.color===color)));
- };
- const install=()=>{
-  const layer=document.querySelector('#modalBack .sm-native-text-composer');
-  if(!layer||layer.querySelector('.sm-story-color-palette'))return;
-  const nav=layer.querySelector('nav');
-  const palette=document.createElement('div');
-  palette.className='sm-story-color-palette';
-  palette.setAttribute('aria-label','Text colour choices');
-  palette.innerHTML=colors.map(c=>'<button type="button" data-color="'+c+'" style="background:'+c+'" aria-label="Text color '+c+'" aria-pressed="'+(c===(window.storyTextColor||'#FFFFFF'))+'"></button>').join('');
-  palette.addEventListener('click',e=>{const b=e.target.closest('button[data-color]');if(b)apply(b.dataset.color);});
-  if(nav)nav.insertAdjacentElement('beforebegin',palette);else layer.appendChild(palette);
-  apply(window.storyTextColor||'#FFFFFF');
- };
- const original=window.openStoryTextComposer;
- if(typeof original==='function'&&!original.__v11wrapped){
-  const wrapped=function(){const result=original.apply(this,arguments);install();requestAnimationFrame(install);return result;};
-  wrapped.__v11wrapped=true;window.openStoryTextComposer=wrapped;
- }
- document.addEventListener('click',e=>{if(e.target.closest('.sm-story-tool[aria-label="Add text"]')){install();requestAnimationFrame(install);}});
-})();
-</script>
-<style id="story-text-transparent-default-v12">
-/* Text entry should sit directly on the photo. A background is opt-in only. */
-#smStoryNativeTextComposer{background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-#smStoryNativeTextComposer main{background:transparent!important}
-#smStoryNativeTextComposer #smNativeTextPhoto{background:transparent!important;opacity:1!important}
-#smStoryNativeTextComposer textarea,
-#smStoryNativeTextComposer textarea:focus,
-#modalBack.story-mode .sm-native-text-composer textarea{
- background:transparent!important;
- background-color:transparent!important;
- border:0!important;
- border-radius:0!important;
- box-shadow:none!important;
- outline:0!important;
- color:var(--sm-story-text-color,#fff)!important;
- -webkit-appearance:none!important;
- appearance:none!important;
-}
-#smStoryNativeTextComposer textarea::placeholder{color:#ffffffb8!important;text-shadow:0 2px 6px #0009!important}
-#smStoryNativeTextComposer #smNativeTextHighlight{background:transparent!important;border-color:#ffffff55!important}
-#smStoryNativeTextComposer #smNativeTextHighlight[aria-pressed="true"]{background:#ffffff26!important;border-color:#fff!important}
-</style>
-<script id="story-text-transparent-default-v12">
-(function(){
- const layer=document.getElementById('smStoryNativeTextComposer');
- const input=document.getElementById('smNativeStoryTextInput');
- if(input){
-  input.style.setProperty('background','transparent','important');
-  input.style.setProperty('background-color','transparent','important');
-  input.style.setProperty('border','0','important');
-  input.style.setProperty('box-shadow','none','important');
-  input.style.setProperty('border-radius','0','important');
- }
- const highlight=document.getElementById('smNativeTextHighlight');
- if(highlight){
-  highlight.setAttribute('aria-pressed',String(!!window.storyTextBackground));
-  highlight.title='Optional text background';
- }
- const baseOpen=window.openStoryTextComposer;
- if(typeof baseOpen==='function'&&!baseOpen.__v12transparent){
-  const wrapped=function(){
-   const result=baseOpen.apply(this,arguments);
-   const el=document.getElementById('smStoryNativeTextComposer');
-   const field=document.getElementById('smNativeStoryTextInput');
-   const toggle=document.getElementById('smNativeTextHighlight');
-   if(el){el.style.setProperty('background','transparent','important');el.style.setProperty('backdrop-filter','none','important');}
-   if(field){['background','background-color','border','box-shadow','border-radius','outline'].forEach(k=>field.style.setProperty(k,k==='background'||k==='background-color'?'transparent':k==='border'?'0':'none','important'));}
-   if(toggle){toggle.setAttribute('aria-pressed',String(!!window.storyTextBackground));toggle.title='Optional text background';}
-   return result;
-  };
-  wrapped.__v12transparent=true;
-  window.openStoryTextComposer=wrapped;
- }
- const oldSet=window.setStoryTextBackground;
- window.setStoryTextBackground=function(enabled){
-  window.storyTextBackground=!!enabled;
-  const field=document.getElementById('smNativeStoryTextInput');
-  const toggle=document.getElementById('smNativeTextHighlight');
-  if(toggle){toggle.setAttribute('aria-pressed',String(!!enabled));toggle.title=enabled?'Text background on':'Text background off';}
-  if(field){field.style.setProperty('background','transparent','important');field.style.setProperty('background-color','transparent','important');}
-  const caption=document.getElementById('storyEditorCaption');
-  if(caption){caption.style.background=enabled?'rgba(0,0,0,.58)':'transparent';caption.style.padding=enabled?'8px 13px':'4px 8px';caption.style.borderRadius=enabled?'12px':'0';}
-  if(typeof oldSet==='function')oldSet(!!enabled);
- };
-})();
-</script>
-<style id="story-editor-functional-overhaul-v13">
-/* Story tool sheets: keep the media visible and prevent the bottom composer from covering them. */
-#modalBack.story-mode .sm-story-panel{position:fixed!important;z-index:10040!important;left:0!important;right:0!important;bottom:0!important;top:auto!important;width:100%!important;max-height:44dvh!important;height:auto!important;overflow:hidden!important;display:flex!important;flex-direction:column!important;padding:12px 14px calc(12px + env(safe-area-inset-bottom,0px))!important;border:1px solid #ffffff22!important;border-bottom:0!important;border-radius:22px 22px 0 0!important;background:rgba(16,21,31,.97)!important;box-shadow:0 -12px 36px #0008!important;backdrop-filter:blur(18px)!important;transform:translateY(0);transition:transform .22s ease}
-#modalBack.story-mode .sm-story-panel[hidden]{display:none!important}
-#modalBack.story-mode .sm-story-panel-head{flex:0 0 auto!important;background:transparent!important;padding:2px 0 10px!important}
-#modalBack.story-mode .sm-story-panel>div[id$="Panel"]{min-height:0!important;overflow:auto!important;overscroll-behavior:contain!important}
-#modalBack.story-mode .sm-story-panel-footer{flex:0 0 auto!important;background:#10151f!important}
-#modalBack.story-mode .sm-story-shell:has(.sm-story-panel:not([hidden])) .sm-story-bottom{display:none!important}
-#modalBack.story-mode .sm-story-shell:has(.sm-story-panel:not([hidden])) .sm-story-stage{min-height:0!important}
-#modalBack.story-mode .sm-story-panel[data-active-tool="music"]{inset:0!important;top:0!important;bottom:0!important;left:0!important;right:0!important;width:100vw!important;height:100dvh!important;max-height:100dvh!important;padding:calc(12px + env(safe-area-inset-top,0px)) 16px calc(16px + env(safe-area-inset-bottom,0px))!important;border:0!important;border-radius:0!important;background:#0b111b!important;overflow:hidden!important;z-index:10060!important}
-#modalBack.story-mode .sm-story-panel[data-active-tool="music"] .sm-story-panel-head{min-height:48px!important;border-bottom:1px solid #ffffff20!important}
-#modalBack.story-mode .sm-story-panel[data-active-tool="music"] #smStoryMusicPanel{display:flex!important;flex:1 1 auto!important;min-height:0!important;flex-direction:column!important;gap:12px!important;overflow:hidden!important}
-#modalBack.story-mode .sm-story-panel[data-active-tool="music"] .sm-pdf-sheet-search{flex:0 0 auto!important;width:100%!important}
-#modalBack.story-mode .sm-story-panel[data-active-tool="music"] #storyMusicSearch{width:100%!important;height:54px!important;font-size:17px!important;border-radius:16px!important}
-#modalBack.story-mode .sm-story-panel[data-active-tool="music"] .sm-pdf-music-tabs{display:flex!important;flex:0 0 auto!important;gap:8px!important;overflow-x:auto!important;padding:2px 0 10px!important}
-#modalBack.story-mode .sm-story-panel[data-active-tool="music"] .sm-pdf-music-tabs button{flex:0 0 auto!important;min-height:42px!important;padding:0 18px!important;border-radius:22px!important;background:#1b2635!important;color:#fff!important;border:1px solid #ffffff22!important}
-#modalBack.story-mode .sm-story-panel[data-active-tool="music"] .sm-pdf-music-tabs button.active{background:#1677e8!important;border-color:#58a7ff!important}
-#modalBack.story-mode .sm-story-panel[data-active-tool="music"] #storyMusicCatalog{flex:1 1 auto!important;min-height:100px!important;overflow-y:auto!important;overscroll-behavior:contain!important}
-#modalBack.story-mode .sm-story-panel[data-active-tool="music"] .sm-pdf-track{min-height:68px!important;border-bottom:1px solid #ffffff18!important}
-#modalBack.story-mode .sm-story-panel[data-active-tool="music"] .sm-pdf-track-main{min-height:66px!important}
-#modalBack.story-mode .sm-story-panel[data-active-tool="music"] #storyMusicPreview{flex:0 0 auto!important;max-height:30dvh!important;overflow:auto!important;padding:12px!important;border:1px solid #ffffff25!important;border-radius:16px!important;background:#151f2d!important}
-#modalBack.story-mode .sm-story-panel[data-active-tool="music"] .sm-story-panel-footer{flex:0 0 auto!important}
-#modalBack.story-mode .sm-story-panel:not([data-active-tool="music"]) .sm-story-panel-head{min-height:38px!important}
-#modalBack.story-mode .sm-story-panel:not([data-active-tool="music"]) .sm-story-panel-head:before{content:"";position:absolute;top:5px;left:calc(50% - 22px);width:44px;height:4px;border-radius:4px;background:#aab2bf}
-#modalBack.story-mode .sm-story-panel:not([data-active-tool="music"]) .sm-story-panel-head b{padding-top:10px!important}
-#modalBack.story-mode .sm-story-panel:not([data-active-tool="music"]) .sm-pdf-sheet-search input{min-height:46px!important}
-#modalBack.story-mode .sm-story-panel:not([data-active-tool="music"]) .sm-story-panel-footer{padding-top:8px!important}
-#modalBack.story-mode .sm-story-tools{position:absolute!important;top:12px!important;right:10px!important;left:auto!important;bottom:auto!important;z-index:30!important;display:flex!important;flex-direction:column!important;gap:9px!important}
-#modalBack.story-mode .sm-story-tools .sm-story-tool{width:42px!important;height:42px!important;border:0!important;border-radius:50%!important;background:#111a!important;backdrop-filter:blur(8px)!important;box-shadow:none!important}
-#modalBack.story-mode .sm-story-tools .sm-story-tool span{display:none!important}
-#modalBack.story-mode .sm-story-tools .sm-story-tool svg{width:21px!important;height:21px!important}
-#modalBack.story-mode .sm-story-panel[data-active-tool="music"] #storyMusicPreview button{min-height:42px!important;border-radius:22px!important}
-@media(max-height:700px){#modalBack.story-mode .sm-story-panel:not([data-active-tool="music"]){max-height:40dvh!important}}
-</style>
-<script id="story-editor-functional-overhaul-v13">
-/* Keep panel state in sync with the active tool. */
-window.toggleStoryPanel=function(name){
- const panel=document.getElementById('smStoryPanel');
- const ids={text:'smStoryTextPanel',mention:'smStoryMentionPanel',stickers:'smStoryStickersPanel',filters:'smStoryFiltersPanel',effects:'smStoryEffectsPanel',music:'smStoryMusicPanel'};
- const target=document.getElementById(ids[name]);
- if(!panel||!target){showToast('This story tool is unavailable.');return;}
- const wasOpen=!panel.hidden&&panel.dataset.activeTool===name;
- Object.values(ids).forEach(id=>{const el=document.getElementById(id);if(el)el.hidden=true;});
- if(wasOpen){panel.hidden=true;delete panel.dataset.activeTool;document.querySelectorAll('.sm-story-tool').forEach(b=>b.classList.remove('active'));return;}
- target.hidden=false;panel.hidden=false;panel.dataset.activeTool=name;
- document.querySelectorAll('.sm-story-tool').forEach(b=>b.classList.toggle('active',b.getAttribute('onclick')==="toggleStoryPanel('"+name+"')"));
- const title=document.getElementById('smStoryPanelTitle');if(title)title.textContent=({text:'Text',mention:'Mention',stickers:'Stickers',filters:'Restyle',effects:'Effects',music:'Music'})[name]||'Story tools';
- if(name==='music'){window.storyMusicTab=window.storyMusicTab||'for-you';const search=document.getElementById('storyMusicSearch');if(search)search.value='';document.querySelectorAll('.sm-pdf-music-tabs button').forEach(b=>b.classList.toggle('active',b.textContent.trim().toLowerCase()==='for you'));loadStoryMusicLibrary();}
- if(name==='mention'){window.storyMentionSelection=[];const search=document.getElementById('storyMentionSearch');if(search)search.value='';renderStoryMentionPeople();}
- if(name==='stickers'){showStickerTab('brand');const search=document.getElementById('storyStickerSearch');if(search)search.value='';filterStoryStickerOptions();}
-};
-window.closeStoryPanel=function(){
- const panel=document.getElementById('smStoryPanel');if(panel){panel.hidden=true;delete panel.dataset.activeTool;}
- ['smStoryTextPanel','smStoryMentionPanel','smStoryStickersPanel','smStoryFiltersPanel','smStoryEffectsPanel','smStoryMusicPanel'].forEach(id=>{const el=document.getElementById(id);if(el)el.hidden=true;});
- document.querySelectorAll('.sm-story-tool').forEach(b=>b.classList.remove('active'));
-};
-window.setStoryTextStyle=function(style){
- window.storyTextStyle=style;
- const input=document.getElementById('smNativeStoryTextInput');
- const caption=document.getElementById('storyEditorCaption');
- const families={classic:'Georgia,serif',bold:'system-ui,sans-serif',poster:'Impact,system-ui,sans-serif',bubble:'system-ui,sans-serif',neon:'system-ui,sans-serif',typewriter:'monospace'};
- const weight=['bold','poster','bubble','neon'].includes(style)?'900':'600';
- [input,caption].forEach(el=>{if(!el)return;el.style.fontFamily=families[style]||families.classic;el.style.fontWeight=weight;el.style.fontStyle=style==='bubble'?'italic':'normal';el.style.textShadow=style==='neon'?'0 0 8px currentColor,0 0 16px currentColor':'0 2px 6px #0009';});
- document.querySelectorAll('#smStoryNativeTextComposer nav button').forEach(b=>b.classList.toggle('active',b.textContent.trim().toLowerCase().includes(style)));
- updateStoryEditorPreview();
-};
-window.confirmStoryMusicSelection=function(){
- if(!storySelectedMusic){showToast('पहले कोई गाना चुनें।');return;}
- const audio=document.getElementById('storyMusicAudioPreview');if(audio)audio.pause();
- closeStoryPanel();showToast('Music story में जोड़ दिया गया है।');
-};
-(function(){
- const preview=document.getElementById('storyMusicPreview');
- if(preview&&!preview.querySelector('[data-confirm-story-music]')){
-  const btn=document.createElement('button');btn.type='button';btn.dataset.confirmStoryMusic='1';btn.textContent='✓ Add this song to story';btn.style.cssText='display:block;width:100%;margin-top:10px;padding:12px 16px;border:0;background:#1688f5;color:#fff;font-weight:800;border-radius:24px';
-  btn.addEventListener('click',window.confirmStoryMusicSelection);preview.appendChild(btn);
- }
-})();
-</script>
-<style id="story-text-size-done-top-actions-v14">
-/* Reliable Done target and draggable vertical font-size control */
-#smStoryNativeTextComposer{pointer-events:none!important}
-#smStoryNativeTextComposer.open{pointer-events:auto!important}
-#smStoryNativeTextComposer header{position:relative!important;z-index:100!important;pointer-events:auto!important}
-#smStoryNativeTextComposer header>button{position:relative!important;z-index:101!important;pointer-events:auto!important;touch-action:manipulation!important;min-width:76px!important;min-height:42px!important}
-#smStoryNativeTextComposer #smNativeTextSizeSlider{pointer-events:auto!important;touch-action:none!important;z-index:120!important;cursor:ns-resize!important;user-select:none!important;-webkit-user-select:none!important}
-#smStoryNativeTextComposer main{touch-action:pan-y!important}
-#modalBack.story-mode .sm-story-top{position:relative!important;z-index:120!important;display:flex!important;align-items:center!important;gap:8px!important}
-#modalBack.story-mode .sm-story-top .sm-story-audience-settings{display:grid!important;place-items:center!important;flex:0 0 38px!important;width:38px!important;height:38px!important;margin-left:auto!important;border:1px solid #ffffff45!important;border-radius:50%!important;background:#ffffff18!important;color:#fff!important;font-size:18px!important}
-#modalBack.story-mode .sm-story-top .sm-story-share{display:flex!important;flex:0 0 44px!important;width:44px!important;height:44px!important}
-#modalBack.story-mode .sm-story-top #storyPublishButton{display:grid!important;place-items:center!important;width:44px!important;height:44px!important;border:0!important;border-radius:50%!important;background:#1688f5!important;color:#fff!important;font-size:23px!important}
-#modalBack.story-mode .sm-story-bottom{display:flex!important}
-#modalBack.story-mode .sm-story-bottom .sm-story-audience-settings,
-#modalBack.story-mode .sm-story-bottom .sm-story-share{display:none!important}
-</style>
-
-<script id="story-top-audience-capture-v14">
-document.addEventListener('click',function(e){
- const gear=e.target.closest('#modalBack.story-mode .sm-story-top .sm-story-audience-settings');
- if(!gear)return;
- e.preventDefault();e.stopImmediatePropagation();
- const bottom=document.querySelector('#modalBack.story-mode .sm-story-bottom');
- if(bottom)bottom.classList.toggle('show-audience');
-},true);
-</script>
-<style id="story-text-controls-hard-reset-v15">
-/* Use a native, touch-safe vertical range control and keep the top actions clear. */
-#smStoryNativeTextComposer{pointer-events:none!important}
-#smStoryNativeTextComposer.open{pointer-events:auto!important}
-#smStoryNativeTextComposer header{position:relative!important;z-index:300!important;pointer-events:auto!important}
-#smStoryNativeTextComposer header>button{z-index:301!important;pointer-events:auto!important;touch-action:manipulation!important}
-#smStoryNativeTextComposer #smNativeTextSizeSlider{position:absolute!important;display:block!important;pointer-events:auto!important;touch-action:pan-x!important;z-index:500!important;width:30px!important;height:42%!important;left:8px!important;top:29%!important;writing-mode:vertical-lr!important;direction:rtl!important;accent-color:#1688ff!important;opacity:1!important}
-#smStoryNativeTextComposer textarea{pointer-events:auto!important;touch-action:pan-y!important}
-#modalBack.story-mode .sm-story-top{position:absolute!important;top:env(safe-area-inset-top,0px)!important;left:0!important;right:0!important;z-index:250!important;pointer-events:none!important}
-#modalBack.story-mode .sm-story-top>*{pointer-events:auto!important}
-#modalBack.story-mode .sm-story-top b{position:absolute!important;left:50%!important;transform:translateX(-50%)!important;max-width:42%!important;white-space:nowrap!important;overflow:hidden!important}
-#modalBack.story-mode .sm-story-top .sm-story-audience-settings{position:absolute!important;right:104px!important;top:4px!important;margin:0!important}
-#modalBack.story-mode .sm-story-top .sm-story-share{position:absolute!important;right:54px!important;top:2px!important;width:42px!important;height:42px!important;padding:0!important;background:transparent!important}
-#modalBack.story-mode .sm-story-top #storyPublishButton{width:42px!important;height:42px!important}
-</style>
-
-<style id="story-controls-layout-and-native-text-v16">
-/* Actual composer class is .sm-native-text-composer (not #smStoryNativeTextComposer). */
-#modalBack.story-mode .sm-native-text-composer{pointer-events:none!important;z-index:10050!important}
-#modalBack.story-mode .sm-native-text-composer.open{pointer-events:auto!important}
-#modalBack.story-mode .sm-native-text-composer.open header{position:relative!important;z-index:10070!important;pointer-events:auto!important}
-#modalBack.story-mode .sm-native-text-composer.open header>button{position:relative!important;z-index:10071!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;min-width:86px!important;min-height:44px!important;padding:0 16px!important;border:0!important;border-radius:24px!important;background:#1688f5!important;color:#fff!important;font-weight:800!important;pointer-events:auto!important;touch-action:manipulation!important}
-#modalBack.story-mode .sm-native-text-composer.open main{position:relative!important;overflow:visible!important}
-#modalBack.story-mode .sm-native-text-composer.open #smNativeTextSizeSlider{position:absolute!important;display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;z-index:10080!important;left:8px!important;top:22%!important;width:34px!important;height:52%!important;min-height:170px!important;writing-mode:vertical-lr!important;direction:rtl!important;touch-action:pan-x!important;accent-color:#1688ff!important}
-#modalBack.story-mode .sm-native-text-composer.open textarea{position:relative!important;z-index:10060!important;pointer-events:auto!important;touch-action:pan-y!important}
-#modalBack.story-mode .sm-story-top{position:relative!important;z-index:150!important}
-#modalBack.story-mode .sm-story-top .sm-story-audience-settings{position:relative!important;display:grid!important;place-items:center!important;margin-left:auto!important;width:42px!important;height:42px!important;flex:0 0 42px!important;border-radius:50%!important;background:#ffffff1c!important;color:#fff!important;border:1px solid #ffffff44!important}
-#modalBack.story-mode .sm-story-bottom{position:relative!important;z-index:140!important;display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto auto!important;gap:9px!important;max-height:32dvh!important;padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px))!important;overflow:visible!important;background:#080d16!important}
-#modalBack.story-mode .sm-story-bottom>#storyCaptionFallback{grid-row:1!important;width:100%!important;min-width:0!important;height:42px!important;box-sizing:border-box!important}
-#modalBack.story-mode .sm-story-bottom .sm-story-bottom-scroll{grid-row:2!important;display:flex!important;align-items:center!important;gap:0!important;min-width:0!important;max-height:none!important;overflow:visible!important}
-#modalBack.story-mode .sm-story-bottom .sm-story-bottom-scroll>#storyCaptionFallback{display:none!important}
-#modalBack.story-mode .sm-story-bottom .sm-story-bottom-scroll .sm-story-actions-row{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;width:100%!important;min-width:0!important}
-#modalBack.story-mode .sm-story-bottom .sm-story-audience{display:block!important;flex:1 1 auto!important;min-width:0!important}
+<style id="story-editor-single-clean-v19">
+#modalBack.story-mode #smStoryTextPanel{display:none!important}
+#modalBack.story-mode .sm-native-text-composer{position:fixed!important;inset:0!important;z-index:10050!important;display:none!important;flex-direction:column!important;width:100%!important;height:100dvh!important;max-height:100dvh!important;overflow:hidden!important;background:#080b10!important;color:#fff!important}
+#modalBack.story-mode .sm-native-text-composer.open{display:flex!important}
+#modalBack.story-mode .sm-native-text-composer header{display:flex!important;flex:0 0 54px!important;align-items:center!important;justify-content:space-between!important;padding:0 14px!important;z-index:5!important}
+#modalBack.story-mode .sm-native-text-composer header>button{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-width:84px!important;min-height:42px!important;border:0!important;border-radius:24px!important;background:#1688f5!important;color:#fff!important;font-weight:800!important}
+#modalBack.story-mode .sm-native-text-composer main{position:relative!important;display:flex!important;flex:1 1 auto!important;min-height:0!important;align-items:center!important;justify-content:center!important;overflow:hidden!important;background:transparent!important}
+#modalBack.story-mode .sm-native-text-composer main>div{position:absolute!important;inset:0!important;pointer-events:none!important}
+#modalBack.story-mode .sm-native-text-composer main img,#modalBack.story-mode .sm-native-text-composer main video{width:100%!important;height:100%!important;object-fit:contain!important}
+#modalBack.story-mode .sm-native-text-composer textarea{position:relative!important;z-index:3!important;width:min(82%,520px)!important;min-height:100px!important;max-height:60%!important;padding:12px!important;border:0!important;outline:0!important;background:transparent!important;color:var(--sm-story-text-color,#fff)!important;text-align:center!important;font:800 28px/1.25 system-ui!important;resize:none!important;touch-action:pan-y!important}
+#modalBack.story-mode .sm-native-text-composer #smNativeTextSizeSlider{position:absolute!important;display:block!important;visibility:visible!important;opacity:1!important;z-index:6!important;left:8px!important;top:24%!important;width:26px!important;height:48%!important;writing-mode:vertical-lr!important;direction:rtl!important;accent-color:#1688ff!important;touch-action:pan-x!important}
+#modalBack.story-mode .sm-native-text-composer #smNativeTextColorRail{display:block!important;position:absolute!important;z-index:6!important;right:12px!important;top:22%!important;width:18px!important;height:42%!important;padding:0!important;border:2px solid #fff!important;border-radius:12px!important;background:linear-gradient(#fff,#ffcf33,#ff4d4d,#a855f7,#1688ff,#34c759)!important}
+#modalBack.story-mode .sm-native-text-composer nav{display:flex!important;flex:0 0 54px!important;align-items:center!important;gap:8px!important;overflow-x:auto!important;padding:7px 12px!important;background:#101722!important}
+#modalBack.story-mode .sm-native-text-composer nav button{flex:0 0 auto!important;min-width:62px!important;height:38px!important;border:1px solid #ffffff35!important;border-radius:20px!important;background:#ffffff12!important;color:#fff!important}
+#modalBack.story-mode .sm-native-text-composer .sm-story-color-palette,#modalBack.story-mode .sm-native-text-composer #smStoryTextExtras{display:none!important}
+#modalBack.story-mode .sm-story-bottom{position:relative!important;z-index:140!important;display:flex!important;flex:0 0 auto!important;flex-direction:column!important;gap:9px!important;width:100%!important;max-height:32dvh!important;padding:9px 12px calc(9px + env(safe-area-inset-bottom,0px))!important;overflow:visible!important;background:#080d16!important}
+#modalBack.story-mode .sm-story-bottom>#storyCaptionFallback{display:block!important;width:100%!important;min-width:0!important;height:40px!important;box-sizing:border-box!important}
+#modalBack.story-mode .sm-story-bottom .sm-story-bottom-scroll{display:block!important;width:100%!important;min-width:0!important;overflow:visible!important}
+#modalBack.story-mode .sm-story-bottom .sm-story-actions-row{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;width:100%!important}
+#modalBack.story-mode .sm-story-bottom .sm-story-audience{display:block!important;flex:1 1 0!important;min-width:0!important}
 #modalBack.story-mode .sm-story-bottom .sm-story-audience label{display:none!important}
-#modalBack.story-mode .sm-story-bottom #storyAudience{display:block!important;width:100%!important;min-height:48px!important;padding:0 16px!important;border:1px solid #ffffff35!important;border-radius:26px!important;background:#202a38!important;color:#fff!important;font-weight:700!important}
-#modalBack.story-mode .sm-story-bottom .sm-story-share{display:flex!important;position:static!important;flex:0 0 48%!important;max-width:48%!important;min-width:120px!important;padding:0!important;margin:0!important}
-#modalBack.story-mode .sm-story-bottom #storyPublishButton{display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;min-height:48px!important;border:0!important;border-radius:26px!important;background:#1688f5!important;color:#fff!important;font-size:17px!important;font-weight:800!important}
+#modalBack.story-mode .sm-story-bottom #storyAudience{display:block!important;width:100%!important;min-height:48px!important;padding:0 14px!important;border:1px solid #ffffff35!important;border-radius:25px!important;background:#202a38!important;color:#fff!important;font-weight:700!important}
+#modalBack.story-mode .sm-story-bottom .sm-story-share{display:flex!important;position:static!important;flex:1 1 0!important;min-width:0!important;max-width:none!important;margin:0!important;padding:0!important}
+#modalBack.story-mode .sm-story-bottom #storyPublishButton{display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;min-height:48px!important;border:0!important;border-radius:25px!important;background:#1688f5!important;color:#fff!important;font-size:16px!important;font-weight:800!important}
+#modalBack.story-mode .sm-story-top .sm-story-audience-settings{display:grid!important;place-items:center!important;margin-left:auto!important;width:40px!important;height:40px!important;border:1px solid #ffffff40!important;border-radius:50%!important;background:#ffffff18!important;color:#fff!important}
 #modalBack.story-mode .sm-story-bottom .sm-story-audience-settings{display:none!important}
 #modalBack.story-mode .sm-story-top .sm-story-share{display:none!important}
-#modalBack.story-mode .sm-story-tools{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;gap:7px!important;right:10px!important;top:12px!important;left:auto!important;bottom:auto!important;max-width:calc(100% - 70px)!important;overflow-x:auto!important}
-#modalBack.story-mode .sm-story-tools .sm-story-tool{flex:0 0 38px!important;width:38px!important;height:38px!important}
-@media(max-width:380px){#modalBack.story-mode .sm-story-tools{gap:3px!important;right:6px!important}#modalBack.story-mode .sm-story-tools .sm-story-tool{flex-basis:34px!important;width:34px!important;height:34px!important}#modalBack.story-mode .sm-story-bottom .sm-story-share{flex-basis:44%!important;max-width:44%!important}}
+#modalBack.story-mode .sm-story-tools{display:flex!important;flex-flow:row nowrap!important;align-items:center!important;gap:5px!important;right:8px!important;top:58px!important;left:auto!important;bottom:auto!important;max-width:calc(100% - 64px)!important;overflow-x:auto!important}
+#modalBack.story-mode .sm-story-tools .sm-story-tool{flex:0 0 36px!important;width:36px!important;height:36px!important}
+@media(max-width:380px){#modalBack.story-mode .sm-story-tools{gap:2px!important;right:5px!important}#modalBack.story-mode .sm-story-tools .sm-story-tool{flex-basis:32px!important;width:32px!important;height:32px!important}}
 </style>
-
-</body></html>
-<style id="story-text-final-controller-v17">
-#smStoryNativeTextComposer #smNativeTextSizeSlider{display:none!important}
-#smStoryNativeTextComposer .sm-text-size-track{position:absolute;left:12px;top:24%;height:52%;width:34px;z-index:10090;display:flex;align-items:center;justify-content:center;touch-action:none;pointer-events:auto}
-#smStoryNativeTextComposer .sm-text-size-track:before{content:"";position:absolute;width:5px;height:100%;border-radius:8px;background:#ffffff55}
-#smStoryNativeTextComposer .sm-text-size-thumb{position:absolute;width:28px;height:28px;border-radius:50%;background:#1688ff;border:3px solid #fff;box-shadow:0 2px 8px #0008;left:50%;transform:translate(-50%,50%);bottom:var(--thumb-y,22%)}
-#smStoryNativeTextComposer.open header{z-index:10100!important;pointer-events:auto!important}
-#smStoryNativeTextComposer.open header>button{position:relative;z-index:10110;min-width:84px;min-height:44px;pointer-events:auto;touch-action:manipulation}
-#smStoryNativeTextComposer.open main{position:relative;overflow:visible}
-#smStoryNativeTextComposer.open textarea{position:relative;z-index:10060;touch-action:pan-y}
-#modalBack.story-mode .sm-story-caption{touch-action:none!important;pointer-events:auto!important;user-select:none!important}
-</style>
-<script id="story-text-final-controller-v17">
-(function(){
- const byId=id=>document.getElementById(id);
- function closeComposer(){
-  const layer=byId('smStoryNativeTextComposer'),input=byId('smNativeStoryTextInput');
-  if(!layer)return;
-  if(input&&byId('storyCaption'))byId('storyCaption').value=input.value;
-  input?.blur();window.updateStoryEditorPreview?.();layer.classList.remove('open');
- }
- function bindComposer(){
-  const layer=byId('smStoryNativeTextComposer');
-  if(!layer||layer.dataset.finalV17)return;
-  layer.dataset.finalV17='1';
-  const input=byId('smNativeStoryTextInput'),range=byId('smNativeTextSizeSlider');
-  if(input)input.addEventListener('input',()=>{if(byId('storyCaption'))byId('storyCaption').value=input.value;window.updateStoryEditorPreview?.();});
-  if(range){
-   range.style.display='none';
-   const track=document.createElement('div');track.className='sm-text-size-track';track.setAttribute('role','slider');track.setAttribute('aria-label','Text size');track.setAttribute('aria-valuemin','12');track.setAttribute('aria-valuemax','76');
-   const thumb=document.createElement('span');thumb.className='sm-text-size-thumb';track.appendChild(thumb);
-   const apply=clientY=>{const rect=track.getBoundingClientRect();const ratio=Math.max(0,Math.min(1,(rect.bottom-clientY)/Math.max(1,rect.height)));const value=Math.round(12+ratio*64);range.value=String(value);track.setAttribute('aria-valuenow',String(value));thumb.style.bottom=(ratio*100)+'%';window.setStoryTextSize?.(value);};
-   let active=false;
-   track.addEventListener('pointerdown',e=>{active=true;track.setPointerCapture(e.pointerId);apply(e.clientY);e.preventDefault();e.stopPropagation();});
-   track.addEventListener('pointermove',e=>{if(active)apply(e.clientY);});
-   const stop=()=>{active=false;};track.addEventListener('pointerup',stop);track.addEventListener('pointercancel',stop);
-   range.insertAdjacentElement('afterend',track);
-  }
- }
- document.addEventListener('click',e=>{
-  if(e.target.closest('#smStoryNativeTextComposer header>button')){e.preventDefault();e.stopImmediatePropagation();closeComposer();return;}
-  const caption=e.target.closest('#storyEditorCaption');
-  if(caption&&caption.textContent.trim()){e.preventDefault();window.openStoryTextComposer?.();}
- },true);
- const observer=new MutationObserver(bindComposer);observer.observe(document.documentElement,{childList:true,subtree:true});bindComposer();
- window.closeStoryTextComposer=closeComposer;
-})();
-</script>
-
-<style id="story-text-audience-final-v18">
-#modalBack.story-mode #storyEditorCaption{pointer-events:auto!important;touch-action:none!important;user-select:none!important;-webkit-user-select:none!important;cursor:move}
-#modalBack.story-mode .sm-story-bottom{display:flex!important;flex-direction:column!important;gap:9px!important;padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px))!important;max-height:32dvh!important;background:#080d16!important}
-#modalBack.story-mode .sm-story-bottom>#storyCaptionFallback{width:100%!important;min-height:40px!important;box-sizing:border-box!important}
-#modalBack.story-mode .sm-story-bottom .sm-story-bottom-scroll{width:100%!important;display:block!important;overflow:visible!important}
-#modalBack.story-mode .sm-story-actions-row{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;width:100%!important}
-#modalBack.story-mode .sm-story-actions-row .sm-story-audience{display:block!important;flex:1 1 50%!important;min-width:0!important}
-#modalBack.story-mode .sm-story-actions-row #storyAudience{width:100%!important;min-height:48px!important;border-radius:26px!important;padding:0 14px!important;background:#263345!important;color:#fff!important;border:1px solid #ffffff40!important;font-weight:700!important}
-#modalBack.story-mode .sm-story-actions-row .sm-story-share{display:flex!important;flex:1 1 50%!important;max-width:50%!important;min-width:0!important}
-#modalBack.story-mode .sm-story-actions-row #storyPublishButton{width:100%!important;min-height:48px!important;border:0!important;border-radius:26px!important;background:#1688f5!important;color:#fff!important;font-size:17px!important;font-weight:800!important}
-#modalBack.story-mode .sm-story-top .sm-story-audience-settings{display:grid!important;place-items:center!important;margin-left:auto!important;width:40px!important;height:40px!important;border-radius:50%!important;background:#ffffff1c!important;color:#fff!important}
-#modalBack.story-mode .sm-story-top .sm-story-share{display:none!important}
-#modalBack.story-mode #smStoryPanel #smStoryTextPanel{display:none!important}
-</style>
-<script id="story-text-audience-final-v18">
+<script id="story-editor-single-clean-v19">
 (function(){
  const $=id=>document.getElementById(id);
- function arrangeBottom(){
-  const shell=document.querySelector('#modalBack.story-mode .sm-story-shell');
-  const bottom=shell?.querySelector('.sm-story-bottom');
-  if(!bottom)return;
-  const top=shell.querySelector('.sm-story-top');
-  const gear=bottom.querySelector('.sm-story-audience-settings');
-  if(top&&gear&&gear.parentElement!==top)top.appendChild(gear);
-  const scroll=bottom.querySelector('.sm-story-bottom-scroll');
-  const audience=bottom.querySelector('.sm-story-audience');
-  const share=bottom.querySelector('.sm-story-share');
-  if(scroll&&audience&&share){
-   let row=scroll.querySelector('.sm-story-actions-row');
-   if(!row){row=document.createElement('div');row.className='sm-story-actions-row';scroll.appendChild(row);}
-   if(audience.parentElement!==row)row.appendChild(audience);
-   if(share.parentElement!==row)row.appendChild(share);
-  }
-  const select=$('storyAudience');
-  if(select&&!select.querySelector('option[value="closefriends"]')){
-   const opt=document.createElement('option');opt.value='closefriends';opt.textContent='💚 Close Friends';select.insertBefore(opt,select.querySelector('option[value="private"]'));
-  }
-  const caption=$('storyCaptionFallback');
+ function arrange(){
+  const shell=$('modalBack')?.querySelector('.sm-story-shell');if(!shell)return;
+  const top=shell.querySelector('.sm-story-top'),bottom=shell.querySelector('.sm-story-bottom');if(!top||!bottom)return;
+  const scroll=bottom.querySelector('.sm-story-bottom-scroll'),caption=$('storyCaptionFallback'),gear=bottom.querySelector('.sm-story-audience-settings'),audience=bottom.querySelector('.sm-story-audience'),share=bottom.querySelector('.sm-story-share');
+  if(gear&&gear.parentElement!==top)top.appendChild(gear);
   if(caption&&caption.parentElement!==bottom)bottom.insertBefore(caption,bottom.firstChild);
+  if(scroll){let row=bottom.querySelector('.sm-story-actions-row');if(!row){row=document.createElement('div');row.className='sm-story-actions-row';}if(audience)row.appendChild(audience);if(share)row.appendChild(share);if(row.parentElement!==bottom)bottom.appendChild(row);scroll.remove();}
+  const composer=$('smStoryNativeTextComposer');composer?.querySelector('.sm-story-color-palette')?.remove();composer?.querySelector('#smStoryTextExtras')?.remove();
  }
- function closeText(){
-  const layer=$('smStoryNativeTextComposer'),input=$('smNativeStoryTextInput');
-  if(!layer)return;
-  if($('storyCaption')&&input)$('storyCaption').value=input.value;
-  if($('storyCaptionFallback')&&input)$('storyCaptionFallback').value=input.value;
-  input?.blur();window.updateStoryEditorPreview?.();layer.classList.remove('open');
- }
- window.closeStoryTextComposer=closeText;
- window.beginStoryCaptionDrag=function(event){
-  const node=event.currentTarget,stage=$('storyEditorPreview'),trash=$('smStoryDeleteTarget');
-  if(!node||!stage||!node.textContent.trim())return;
-  event.preventDefault();event.stopPropagation();
-  const pointerId=event.pointerId;let moved=false,lastX=event.clientX,lastY=event.clientY;
-  const move=e=>{
-   if(e.pointerId!==pointerId)return;
-   const rect=stage.getBoundingClientRect();
-   const dx=e.clientX-rect.left,dy=e.clientY-rect.top;
-   if(Math.abs(e.clientX-lastX)+Math.abs(e.clientY-lastY)>2)moved=true;
-   lastX=e.clientX;lastY=e.clientY;
-   node.style.setProperty('--story-text-x',Math.max(2,Math.min(98,dx/rect.width*100))+'%');
-   node.style.setProperty('--story-text-y',Math.max(2,Math.min(98,dy/rect.height*100))+'%');
-   node.style.animation='none';
-   if(trash){const z=trash.getBoundingClientRect();trash.classList.toggle('active',e.clientX>=z.left&&e.clientX<=z.right&&e.clientY>=z.top&&e.clientY<=z.bottom);}
-  };
-  const finish=e=>{
-   if(e.pointerId!==pointerId)return;
-   document.removeEventListener('pointermove',move,true);document.removeEventListener('pointerup',finish,true);document.removeEventListener('pointercancel',finish,true);
-   node.classList.remove('is-dragging');
-   if(trash){const z=trash.getBoundingClientRect();const del=moved&&e.clientX>=z.left&&e.clientX<=z.right&&e.clientY>=z.top&&e.clientY<=z.bottom;trash.classList.remove('active');if(del){if($('storyCaption'))$('storyCaption').value='';if($('storyCaptionFallback'))$('storyCaptionFallback').value='';window.updateStoryEditorPreview?.();}}
-   node.dataset.lastDrag=moved?'1':'0';if(!moved)setTimeout(()=>window.openStoryTextComposer?.(),0);
-  };
-  node.classList.add('is-dragging');
-  try{node.setPointerCapture(pointerId);}catch(_){}
-  document.addEventListener('pointermove',move,true);document.addEventListener('pointerup',finish,true);document.addEventListener('pointercancel',finish,true);
- };
- function bindComposer(){
-  const layer=$('smStoryNativeTextComposer');if(!layer||layer.dataset.v18)return;layer.dataset.v18='1';
-  const done=layer.querySelector('header>button');
-  if(done){done.removeAttribute('onclick');done.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();closeText();},true);}
-  const input=$('smNativeStoryTextInput');
+ function bind(){
+  const layer=$('smStoryNativeTextComposer');if(!layer||layer.dataset.cleanV19)return;layer.dataset.cleanV19='1';
+  const input=$('smNativeStoryTextInput'),range=$('smNativeTextSizeSlider');
   if(input)input.addEventListener('input',()=>{if($('storyCaption'))$('storyCaption').value=input.value;if($('storyCaptionFallback'))$('storyCaptionFallback').value=input.value;window.updateStoryEditorPreview?.();});
+  if(range)range.addEventListener('input',()=>window.setStoryTextSize?.(range.value));
  }
- document.addEventListener('click',e=>{
-  if(e.target.closest('#smStoryNativeTextComposer header>button')){e.preventDefault();e.stopImmediatePropagation();closeText();return;}
- },true);
- const modal=$('modalBack');
- if(modal){const mo=new MutationObserver(()=>{arrangeBottom();bindComposer();});mo.observe(modal,{childList:true,subtree:true});}
- arrangeBottom();bindComposer();
+ const modal=$('modalBack');if(modal){const mo=new MutationObserver(()=>{arrange();bind();});mo.observe(modal,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});}
+ arrange();bind();
 })();
 </script>
+</body>
+</html>
