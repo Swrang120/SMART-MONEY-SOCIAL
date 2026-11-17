@@ -11,7 +11,7 @@
 <div class="field"><label for="adminPassword">Password</label><input id="adminPassword" type="password" autocomplete="current-password" required placeholder="Enter your password"></div>
 <button class="primary" id="loginBtn" type="submit" style="width:100%">Sign In with Email & Password</button>
 <div style="display:flex;align-items:center;gap:10px;margin:13px 0;color:#87948d;font-size:11px"><span style="height:1px;background:#e5ebe7;flex:1"></span>OR<span style="height:1px;background:#e5ebe7;flex:1"></span></div>
-<button id="googleLogin" type="button" style="width:100%;background:#fff;color:#26332c;border:1px solid #dbe5df;padding:11px;border-radius:9px;font-size:12px;font-weight:900">🌐 Continue with Google</button>
+<button id="googleLogin" type="button" onclick="window.smartSocialGoogleLogin()" style="width:100%;background:#fff;color:#26332c;border:1px solid #dbe5df;padding:11px;border-radius:9px;font-size:12px;font-weight:900;position:relative;z-index:2;pointer-events:auto">🌐 Continue with Google</button>
 <div id="loginError" class="desc" role="alert"></div>
 </form>
 <div id="loading" class="hidden">Connecting securely…</div><div id="dashboard" class="locked">
@@ -21,6 +21,27 @@
 <article class="panel full"><div class="panel-head"><h2>🎵 Original Story Music Library</h2><span class="badge">ADMIN PUBLISHED</span></div><p class="desc">Upload original audio with title, artist and square artwork. Recommended cover size: 3000 × 3000 px.</p>
 <form id="musicForm"><div class="fields"><div class="field"><label>Music Title</label><input id="title" maxlength="100" required placeholder="Music title"></div><div class="field"><label>Artist Name</label><input id="artist" maxlength="100" required placeholder="Artist name"></div><div class="field"><label>Audio · MP3, M4A, WAV, OGG, AAC, WEBM · max 8 MB</label><input id="audio" type="file" accept="audio/*" required></div><div class="field"><label>Square Cover Artwork · max 5 MB</label><input id="artwork" type="file" accept="image/jpeg,image/png,image/webp,image/avif" required><img id="artPreview" class="art" alt="Cover preview"></div></div><button class="primary" id="uploadBtn" type="submit">＋ Publish Music</button></form><h3>Published & hidden tracks</h3><div id="trackList" class="list"><div class="empty">No tracks loaded.</div></div></article></section></div>
 <div style="text-align:center;color:#87948d;font-size:11px;margin-top:20px">Smart Money Social · Admin Console</div></main><div id="toast"></div>
+<script>
+window.smartSocialGoogleLogin = async function(){
+ const btn=document.getElementById('googleLogin'), err=document.getElementById('loginError');
+ if(!btn)return;
+ btn.disabled=true;btn.textContent='Connecting to Google…';if(err)err.textContent='';
+ try{
+  if(!window.supabase?.createClient){
+   await new Promise((resolve,reject)=>{
+    const s=document.createElement('script');s.src='https://unpkg.com/@supabase/supabase-js@2';s.onload=resolve;s.onerror=()=>reject(new Error('Supabase login library could not load. Check your internet connection or browser content blocker.'));document.head.appendChild(s);
+   });
+  }
+  if(!window.supabase?.createClient)throw new Error('Google sign-in library is unavailable. Reload the page and try again.');
+  const client=window.supabase.createClient('https://cdvsjjexshalhudmmsei.supabase.co','sb_publishable_dvEFqQdzmjIwLObWMAMzGQ_hJyn0T_m',{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:'smart-money-social-auth-v1'}});
+  const redirectTo=window.location.origin+window.location.pathname;
+  const {data,error}=await client.auth.signInWithOAuth({provider:'google',options:{redirectTo,queryParams:{prompt:'select_account'}}});
+  if(error)throw error;
+  if(!data?.url)throw new Error('Google sign-in did not return an authorization URL.');
+  window.location.assign(data.url);
+ }catch(e){if(err)err.textContent=e.message||'Google sign-in could not start.';btn.disabled=false;btn.textContent='🌐 Continue with Google';}
+};
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>
 const URL='https://cdvsjjexshalhudmmsei.supabase.co',KEY='sb_publishable_dvEFqQdzmjIwLObWMAMzGQ_hJyn0T_m';
 const client=supabase.createClient(URL,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:localStorage,storageKey:'smart-money-social-auth-v1'}});
