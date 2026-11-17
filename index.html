@@ -3576,5 +3576,80 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
  const style=document.createElement('style');style.textContent='@keyframes smStoryTextPulseV23{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.06)}}';document.head.appendChild(style);
 })();
 </script>
+
+<style id="story-editor-touch-layout-fix-v24">
+/* Keep story sheets inside the editor viewport and remove the duplicate share controls underneath. */
+#modalBack.story-mode .sm-story-panel{
+ position:absolute!important;left:0!important;right:0!important;bottom:0!important;top:auto!important;
+ width:100%!important;max-height:42dvh!important;height:auto!important;min-height:0!important;
+ overflow:hidden!important;border-radius:22px 22px 0 0!important;
+}
+#modalBack.story-mode .sm-story-panel-min{display:none!important}
+#modalBack.story-mode:has(#smStoryPanel:not([hidden])) .sm-story-bottom{display:none!important}
+#smStoryTextEditorV23 .v23-colors[hidden],
+#smStoryTextEditorV23 [hidden]{display:none!important}
+#smStoryTextEditorV23 .v23-preview{touch-action:pan-y;overscroll-behavior:contain}
+#smStoryTextEditorV23 .v23-size input{min-height:100px;touch-action:pan-y;pointer-events:auto}
+#smStoryTextEditorV23 .v23-fonts button,
+#smStoryTextEditorV23 .v23-toolbar button,
+#smStoryTextEditorV23 .v23-colors button{touch-action:manipulation;user-select:none;-webkit-user-select:none}
+#smStoryTextEditorV23 .v23-colors{min-height:38px;padding:5px 3px}
+#smStoryTextEditorV23 .v23-colors button{flex:0 0 30px;width:30px;height:30px;cursor:pointer}
+#smStoryTextEditorV23 .v23-shortcuts{display:flex;gap:8px}
+#smStoryTextEditorV23 .v23-shortcuts button{border:1px solid #ffffff30;border-radius:18px;background:#263247;color:#fff;padding:8px 13px}
+@media(max-height:720px){
+ #smStoryTextEditorV23 .v23-controls{max-height:42dvh;overflow-y:auto}
+ #smStoryTextEditorV23 .v23-preview{min-height:100px}
+}
+</style>
+<script id="story-editor-touch-layout-fix-v24">
+(function(){
+ const $=id=>document.getElementById(id);
+ const back=$('modalBack');
+ if(!back)return;
+ /* Escape transformed .modal containers so the editor really covers the viewport. */
+ const originalOpen=window.openStoryTextComposer;
+ if(typeof originalOpen==='function'&&!window.__storyTextOpenV24){
+  window.__storyTextOpenV24=true;
+  window.openStoryTextComposer=function(){
+   originalOpen();
+   const editor=$('smStoryTextEditorV23');
+   if(editor&&editor.parentElement!==back)back.appendChild(editor);
+   if(editor){
+    const preview=$('smStoryTextPreviewV23');
+    if(preview&&!preview.dataset.pinchV24){
+     preview.dataset.pinchV24='1';
+     let baseDistance=0,baseSize=28;
+     const distance=e=>Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+     preview.addEventListener('touchstart',e=>{
+      if(e.touches.length===2){baseDistance=distance(e);baseSize=Number(window.storyTextSize)||28;}
+     },{passive:true});
+     preview.addEventListener('touchmove',e=>{
+      if(e.touches.length===2&&baseDistance){
+       e.preventDefault();
+       const next=Math.max(12,Math.min(88,baseSize*distance(e)/baseDistance));
+       window.setStoryTextSize?.(next);
+       const slider=$('smStoryTextSizeV23');if(slider)slider.value=String(Math.round(next));
+      }
+     },{passive:false});
+     preview.addEventListener('touchend',e=>{if(e.touches.length<2)baseDistance=0;},{passive:true});
+    }
+   }
+  };
+ }
+ /* Keep one visible action area: while a tool sheet is open, hide caption/audience/share below it. */
+ const panel=$('smStoryPanel');
+ if(panel&&!panel.dataset.v24Observer){
+  panel.dataset.v24Observer='1';
+  const sync=()=>back.classList.toggle('story-tool-sheet-open',!panel.hidden&&panel.style.display!=='none');
+  new MutationObserver(sync).observe(panel,{attributes:true,attributeFilter:['hidden','style']});
+  sync();
+ }
+})();
+</script>
+<style id="story-editor-tool-sheet-open-v24">
+#modalBack.story-mode.story-tool-sheet-open .sm-story-bottom{display:none!important}
+</style>
+
 </body>
 </html>
