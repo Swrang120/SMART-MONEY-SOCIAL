@@ -2934,7 +2934,7 @@ body.story-modal-open .mobile-nav{display:none!important}
    if(x[1]==='TEMPERATURE'){window.addStorySticker?.({type:'text',e:'🌡 Temperature',style:'bubble',x:50,y:50,scale:1});return;}
    window.addStorySticker?.({type:'text',e:x[0]+' '+x[1],style:'bubble',x:50,y:50,scale:1});
  };
-})();
+})();</script>
 <style>
 @keyframes smStoryTextPulse{from{transform:translate(-50%,-50%) scale(.98)}to{transform:translate(-50%,-50%) scale(1.06)}}
 </style>
@@ -3027,14 +3027,8 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
   if(scroll){let row=bottom.querySelector('.sm-story-actions-row');if(!row){row=document.createElement('div');row.className='sm-story-actions-row';}if(audience)row.appendChild(audience);if(share)row.appendChild(share);if(row.parentElement!==bottom)bottom.appendChild(row);scroll.remove();}
   const composer=$('smStoryNativeTextComposer');composer?.querySelector('.sm-story-color-palette')?.remove();composer?.querySelector('#smStoryTextExtras')?.remove();
  }
- function bind(){
-  const layer=$('smStoryNativeTextComposer');if(!layer||layer.dataset.cleanV19)return;layer.dataset.cleanV19='1';
-  const input=$('smNativeStoryTextInput'),range=$('smNativeTextSizeSlider');
-  if(input)input.addEventListener('input',()=>{if($('storyCaption'))$('storyCaption').value=input.value;if($('storyCaptionFallback'))$('storyCaptionFallback').value=input.value;window.updateStoryEditorPreview?.();});
-  if(range)range.addEventListener('input',()=>window.setStoryTextSize?.(range.value));
- }
- const modal=$('modalBack');if(modal){const mo=new MutationObserver(()=>{arrange();bind();});mo.observe(modal,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});}
- arrange();bind();
+ const modal=$('modalBack');if(modal){const mo=new MutationObserver(arrange);mo.observe(modal,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});}
+ arrange();
 })();
 </script>
 </body>
