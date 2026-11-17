@@ -4,12 +4,14 @@
 </style><link rel="preconnect" href="https://cdvsjjexshalhudmmsei.supabase.co" crossorigin><link rel="dns-prefetch" href="//cdvsjjexshalhudmmsei.supabase.co"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin></head><body>
 <header><div class="brand">SMART MONEY SOCIAL<small>ADMINISTRATION CONSOLE</small></div><div style="display:flex;align-items:center;gap:10px"><div class="tag">CONTROL CENTER</div><button id="adminLogout" class="hidden" type="button">Sign Out</button></div></header>
 <main class="wrap"><div class="intro"><div><h1>Admin Dashboard</h1><p>Member safety, report review and original Story Music.</p></div><span class="pill" id="sessionBadge">Checking session…</span></div>
-<div class="notice" id="notice">Sign in with your admin Gmail and password. The server verifies the account's Admin role before enabling controls. Your password is sent only to Supabase Auth, never stored in this page or source code.</div>
+<div class="notice" id="notice">Sign in with the Google account authorized for Smart Money Social Admin. The server verifies the account's Admin role before enabling controls.</div>
 <form id="adminLogin" class="panel" style="max-width:440px;margin:0 auto 18px">
 <h2 style="margin:0 0 8px">Admin Sign In</h2>
 <div class="field"><label for="adminEmail">Admin Gmail</label><input id="adminEmail" type="email" autocomplete="username" required value="sboro3235@gmail.com" readonly aria-label="Authorized Admin Gmail"></div>
 <div class="field"><label for="adminPassword">Password</label><input id="adminPassword" type="password" autocomplete="current-password" required placeholder="Enter your password"></div>
-<button class="primary" id="loginBtn" type="submit" style="width:100%">Sign In Securely</button>
+<button class="primary" id="loginBtn" type="submit" style="width:100%">Sign In with Email & Password</button>
+<div style="display:flex;align-items:center;gap:10px;margin:13px 0;color:#87948d;font-size:11px"><span style="height:1px;background:#e5ebe7;flex:1"></span>OR<span style="height:1px;background:#e5ebe7;flex:1"></span></div>
+<button id="googleLogin" type="button" style="width:100%;background:#fff;color:#26332c;border:1px solid #dbe5df;padding:11px;border-radius:9px;font-size:12px;font-weight:900">🌐 Continue with Google</button>
 <div id="loginError" class="desc" role="alert"></div>
 </form>
 <div id="loading" class="hidden">Connecting securely…</div><div id="dashboard" class="locked">
@@ -68,7 +70,22 @@ $('adminLogin').addEventListener('submit',async e=>{
    $('adminPassword').value='';
    await showAdminSession(data.session);
  }catch(err){$('loginError').textContent=err.message||'Sign-in failed.';toast(err.message||'Sign-in failed');}
- finally{btn.disabled=false;btn.textContent='Sign In Securely'}
+ finally{btn.disabled=false;btn.textContent='Sign In with Email & Password'}
+});
+$('googleLogin').addEventListener('click',async()=>{
+ const btn=$('googleLogin');btn.disabled=true;btn.textContent='Redirecting to Google…';$('loginError').textContent='';
+ try{
+   const redirectTo=window.location.origin+window.location.pathname;
+   const {data,error}=await client.auth.signInWithOAuth({
+     provider:'google',
+     options:{redirectTo,queryParams:{prompt:'select_account'}}
+   });
+   if(error)throw error;
+   if(!data?.url)throw new Error('Google sign-in did not return an authorization URL.');
+ }catch(err){
+   $('loginError').textContent=err.message||'Google sign-in could not start.';
+   btn.disabled=false;btn.textContent='🌐 Continue with Google';
+ }
 });
 $('adminLogout').addEventListener('click',async()=>{
  await client.auth.signOut();token='';$('dashboard').classList.add('locked');$('adminLogin').classList.remove('hidden');$('adminLogout').classList.add('hidden');$('sessionBadge').textContent='SIGNED OUT';$('accessState').className='statebar';$('accessState').textContent='Sign in with an authorized Admin Gmail to unlock controls.';$('loading').classList.add('hidden');
