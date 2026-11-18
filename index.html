@@ -4695,6 +4695,8 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
    if(!m.contains(e.target)||S.pointers.size>=2)return;
   }
   S.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  // Capture first pointer on selected object for continuous one-finger drag.
+  if(S.pointers.size===1){try{S.node?.setPointerCapture?.(e.pointerId);}catch(_){}}
   e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
   if(S.pointers.size===2){S.startD=distance()||1;S.startScale=scaleNow();S.pinching=true;S.moved=true;}
  }
@@ -4705,8 +4707,9 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
   if(S.pointers.size===1&&!S.pinching&&(S.kind==='sticker'||S.kind==='caption')){
    const dx=e.clientX-S.startX,dy=e.clientY-S.startY;if(Math.abs(dx)+Math.abs(dy)>5)S.moved=true;if(!S.moved)return;
    if(S.kind==='sticker'){
-    const item=window.storyEditorEmojis?.[S.index],r=preview()?.getBoundingClientRect();if(!item||!r?.width||!r?.height)return;
-    item.x=clamp(S.startLeft+dx/r.width*100,2,98);item.y=clamp(S.startTop+dy/r.height*100,2,98);
+    const item=window.storyEditorEmojis?.[S.index],layer=$('storyEditorEmoji'),r=layer?.getBoundingClientRect();if(!item||!r?.width||!r?.height)return;
+    const box=S.node?.getBoundingClientRect(),halfX=Math.min(48,(box?.width||0)/(2*r.width)*100),halfY=Math.min(48,(box?.height||0)/(2*r.height)*100);
+    item.x=clamp(S.startLeft+dx/r.width*100,halfX,100-halfX);item.y=clamp(S.startTop+dy/r.height*100,halfY,100-halfY);
     if(S.node?.isConnected){S.node.style.left=item.x+'%';S.node.style.top=item.y+'%';}
    }else if(S.node?.isConnected){S.node.style.translate=dx+'px '+dy+'px';}
   }
