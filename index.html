@@ -4766,5 +4766,33 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
  window.resetStoryCaptionZoom=function(){window.storyCaptionScale=1;const n=$('storyEditorCaption');if(n)n.style.transform='scale(1)';n?.style.removeProperty('translate');};
 })();
 </script>
+<style id="story-single-finger-drag-fix">
+/* Android/iOS: prevent browser pan/scroll from cancelling one-finger editor drags. */
+#modalBack.story-mode #storyEditorPreview,
+#modalBack.story-mode #storyEditorEmoji,
+#modalBack.story-mode #storyEditorEmoji [data-sticker-index],
+#modalBack.story-mode #storyEditorEmoji [data-sticker-index] *,
+#modalBack.story-mode #storyEditorCaption,
+#modalBack.story-mode #storyEditorCaption *,
+#modalBack.story-mode .sm-story-caption,
+#modalBack.story-mode .sm-story-caption *,
+#modalBack.story-mode .sm-story-music-sticker,
+#modalBack.story-mode .sm-story-music-sticker * {
+  touch-action:none!important;
+  -webkit-user-select:none!important;
+  user-select:none!important;
+}
+#modalBack.story-mode #storyEditorEmoji [data-sticker-index],
+#modalBack.story-mode #storyEditorCaption,
+#modalBack.story-mode .sm-story-caption {
+  pointer-events:auto!important;
+  cursor:move!important;
+}
+#modalBack.story-mode #storyEditorEmoji [data-sticker-index] img,
+#modalBack.story-mode .sm-story-music-sticker img {
+  pointer-events:none!important;
+  -webkit-user-drag:none!important;
+}
+</style>
 </body>
 </html>
