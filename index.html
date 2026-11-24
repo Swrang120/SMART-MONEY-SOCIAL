@@ -1447,6 +1447,8 @@ body .profile-story-dot{display:none!important}
 <section id="view-home" class="view active">
 
 <div class="card sm-stories-card" style="margin-bottom:14px"><div class="section-head"><h2>Stories</h2></div><div class="stories" id="stories"></div></div>
+<div id="smTeamNoticeMount"></div>
+
 <div class="card" style="margin-bottom:14px"><div class="composer"><div class="avatar" id="composerAvatar">S</div><input readonly onclick="openComposer()" placeholder="Share something with the community..."><button class="primary" onclick="openComposer()">＋ Post</button></div><div class="composer-actions"><button class="soft" onclick="openComposer('photo')">▧ Photo</button><button class="soft" onclick="openComposer('text')">✎ Write</button></div></div>
 <div class="feedbar"><button class="filter active" data-filter="for-you" onclick="setFilter('for-you',this)">For You</button><button class="filter" data-filter="following" onclick="setFilter('following',this)">Following</button><button class="filter" data-filter="trending" onclick="setFilter('trending',this)">🔥 Trending</button><button class="filter" data-filter="latest" onclick="setFilter('latest',this)">Latest</button></div><div id="feed"></div>
 </section>
@@ -1655,7 +1657,7 @@ async function ensureSocialProfile(user){
   if(insertError)throw insertError;
  }
 }
-async function activateSocialUser(user){authUser=user;isAdmin=['admin','super_admin'].includes(user?.app_metadata?.role);try{const [roleResult]=await Promise.all([supabaseClient.from('profiles').select('role').eq('id',user.id).maybeSingle(),ensureSocialProfile(user)]);if(!roleResult.error&&roleResult.data?.role==='admin')isAdmin=true;$('authGate')?.remove();document.body.classList.remove('preview-mode');const app=document.querySelector('.app');if(app)app.style.display='';const nav=document.querySelector('.mobile-nav');if(nav)nav.style.display='';await loadSocialData();subscribeSocialRealtime();renderAll();addSocialAdminShortcut();const routeUrl=new URL(window.location.href);const route=routeUrl.searchParams;const adminRequested=route.get('admin')==='1';let initialView='home';if(route.get('settings')==='1')initialView='settings';else if(route.get('notifications')==='1')initialView='notifications';else if(route.get('profile')==='1')initialView='profile';else if(route.get('messages')==='1'){history.replaceState({},'',routeUrl.pathname);location.replace(SOCIAL_BASE+'community.html?messages=1'+(route.get('peer')?'&peer='+encodeURIComponent(route.get('peer')):''));return;}if(routeUrl.search){history.replaceState({},'',routeUrl.pathname);}if(initialView==='profile')openProfile();else showView(initialView);addSocialLogout();if(adminRequested){if(isAdmin)await openAdmin();else showToast('Admin access is restricted to the Smart Money Social team.');}}catch(e){console.error(e);showAuthGate('Account setup could not finish: '+(e.message||'Please retry.'));}}
+async function activateSocialUser(user){authUser=user;isAdmin=['admin','super_admin'].includes(user?.app_metadata?.role);try{const [roleResult]=await Promise.all([supabaseClient.from('profiles').select('role').eq('id',user.id).maybeSingle(),ensureSocialProfile(user)]);if(!roleResult.error&&roleResult.data?.role==='admin')isAdmin=true;$('authGate')?.remove();document.body.classList.remove('preview-mode');const app=document.querySelector('.app');if(app)app.style.display='';const nav=document.querySelector('.mobile-nav');if(nav)nav.style.display='';await loadSocialData();subscribeSocialRealtime();renderAll();await loadSmTeamNotice();subscribeSmTeamNotice();addSocialAdminShortcut();const routeUrl=new URL(window.location.href);const route=routeUrl.searchParams;const adminRequested=route.get('admin')==='1';let initialView='home';if(route.get('settings')==='1')initialView='settings';else if(route.get('notifications')==='1')initialView='notifications';else if(route.get('profile')==='1')initialView='profile';else if(route.get('messages')==='1'){history.replaceState({},'',routeUrl.pathname);location.replace(SOCIAL_BASE+'community.html?messages=1'+(route.get('peer')?'&peer='+encodeURIComponent(route.get('peer')):''));return;}if(routeUrl.search){history.replaceState({},'',routeUrl.pathname);}if(initialView==='profile')openProfile();else showView(initialView);addSocialLogout();if(adminRequested){if(isAdmin)await openAdmin();else showToast('Admin access is restricted to the Smart Money Social team.');}}catch(e){console.error(e);showAuthGate('Account setup could not finish: '+(e.message||'Please retry.'));}}
 async function logoutSocial(){const {error}=await supabaseClient.auth.signOut({scope:'local'});if(error){showToast(error.message);return;}authUser=null;canPublish=false;isAdmin=false;addSocialAdminShortcut();showAuthGate('You have been logged out.');}
 function addSocialAdminShortcut(){
  const side=$('sideNav');
@@ -5296,6 +5298,37 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
 </style>
 <script id="story-restyle-effects-separation-runtime-v24">
 (()=>{const panel=document.getElementById('smStoryPanel');if(!panel||panel.dataset.v24CloseInstalled)return;panel.dataset.v24CloseInstalled='1';const add=()=>{if(!['filters','effects'].includes(panel.dataset.activeTool))return;let b=panel.querySelector('.sm-story-restyle-close');if(!b){b=document.createElement('button');b.type='button';b.className='sm-story-restyle-close';b.textContent='×';b.setAttribute('aria-label','Done and close');b.addEventListener('click',()=>window.closeStoryPanel?.());panel.appendChild(b);}};new MutationObserver(add).observe(panel,{attributes:true,attributeFilter:['data-active-tool','style','hidden']});add();})();
+
+// Permanent, team-only announcement with reaction-only member interaction.
+let smTeamNoticeChannel=null;
+const smTeamReactionChoices=['👍','❤️','👏','🔥','🎉','🙏'];
+function smNoticeEscape(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+async function loadSmTeamNotice(){
+ const host=$('smTeamNoticeMount');if(!host||!myId())return;
+ const [{data:notice,error:nErr},{data:reactions,error:rErr}]=await Promise.all([
+  supabaseClient.from('social_team_announcement').select('id,message,updated_at,updated_by').eq('id',true).maybeSingle(),
+  supabaseClient.from('social_team_announcement_reactions').select('user_id,emoji')
+ ]);
+ if(nErr){console.warn('Team notice load:',nErr.message);return;}
+ if(!notice){host.innerHTML='';return;}
+ if(rErr)console.warn('Team notice reactions:',rErr.message);
+ const rows=reactions||[],mine=rows.find(x=>x.user_id===myId())?.emoji||'';
+ const buttons=smTeamReactionChoices.map(emoji=>{const count=rows.filter(x=>x.emoji===emoji).length;return '<button type="button" class="sm-team-reaction '+(mine===emoji?'active':'')+'" aria-label="React '+emoji+'" onclick="reactToSmTeamNotice(\''+emoji+'\')">'+emoji+' <b>'+count+'</b></button>';}).join('');
+ host.innerHTML='<article class="sm-team-notice" aria-label="Permanent team announcement"><div class="sm-team-notice-head"><span class="sm-team-notice-badge">📢</span><div><div class="sm-team-notice-title">SMART MONEY SOCIAL · TEAM NOTICE</div><div class="sm-team-notice-sub">Official community information</div></div><span class="sm-team-notice-lock" title="Only the team can post. Replies are disabled.">🔒</span></div><div class="sm-team-notice-body">'+smNoticeEscape(notice.message)+'</div><div class="sm-team-notice-foot"><div class="sm-team-reactions">'+buttons+'</div><span class="sm-team-no-reply">🔒 Reactions only · Replies locked</span></div></article>';
+}
+async function reactToSmTeamNotice(emoji){
+ if(!myId())return; if(!smTeamReactionChoices.includes(emoji))return;
+ const {data:current,error:readErr}=await supabaseClient.from('social_team_announcement_reactions').select('emoji').eq('user_id',myId()).maybeSingle();
+ if(readErr){showToast(readErr.message);return;}
+ let result;
+ if(current?.emoji===emoji)result=await supabaseClient.from('social_team_announcement_reactions').delete().eq('user_id',myId());
+ else result=await supabaseClient.from('social_team_announcement_reactions').upsert({user_id:myId(),emoji,updated_at:new Date().toISOString()},{onConflict:'user_id'});
+ if(result.error){showToast(result.error.message);return;}await loadSmTeamNotice();
+}
+function subscribeSmTeamNotice(){
+ if(smTeamNoticeChannel){supabaseClient.removeChannel(smTeamNoticeChannel);smTeamNoticeChannel=null;}
+ smTeamNoticeChannel=supabaseClient.channel('sm-team-notice-live').on('postgres_changes',{event:'*',schema:'public',table:'social_team_announcement'},()=>loadSmTeamNotice()).on('postgres_changes',{event:'*',schema:'public',table:'social_team_announcement_reactions'},()=>loadSmTeamNotice()).subscribe();
+}
 </script>
 
 
@@ -5441,5 +5474,8 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
 .sm-post-report-sheet select option{background:#142238;color:#fff}.sm-post-report-sheet textarea{resize:vertical;min-height:100px}.sm-post-report-sheet select:focus,.sm-post-report-sheet textarea:focus{border-color:#d9b86f;box-shadow:0 0 0 3px #d9b86f25}
 .sm-post-report-actions{display:flex;gap:10px;margin-top:18px}.sm-post-report-actions button{flex:1;min-height:46px;border-radius:13px;font-weight:800}
 @media(min-width:600px){#modalBack:has(.sm-post-menu-sheet),#modalBack:has(.sm-post-report-sheet){align-items:center!important;padding:18px!important}.sm-post-menu-sheet,.sm-post-report-sheet{border-bottom:1px solid #ffffff20;border-radius:26px;max-height:85vh;overflow:auto}}
+
+/* Permanent team announcement */
+.sm-team-notice{margin:0 0 14px;padding:16px;border:1px solid #d8c9f5;border-radius:18px;background:linear-gradient(135deg,#fff 0%,#f5f0ff 58%,#eef5ff 100%);box-shadow:0 10px 28px #503b8c12;position:relative;overflow:hidden}.sm-team-notice:before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:linear-gradient(#8b5cf6,#477be8)}.sm-team-notice-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}.sm-team-notice-badge{width:38px;height:38px;border-radius:12px;background:#eee7ff;color:#6543b8;display:grid;place-items:center;font-size:19px}.sm-team-notice-title{font-weight:850;font-size:14px;letter-spacing:.02em}.sm-team-notice-sub{font-size:11px;color:#77718c}.sm-team-notice-lock{margin-left:auto;font-size:18px}.sm-team-notice-body{white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px;line-height:1.65;color:#29243b}.sm-team-notice-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:13px;padding-top:11px;border-top:1px solid #e8e0f4;font-size:11px;color:#77718c}.sm-team-reactions{display:flex;flex-wrap:wrap;gap:7px}.sm-team-reaction{border:1px solid #e1d9ef;background:#fff;border-radius:999px;padding:5px 10px;font-size:12px;color:#3d3652;cursor:pointer}.sm-team-reaction.active{border-color:#8b5cf6;background:#eee7ff;box-shadow:0 0 0 2px #8b5cf622}.sm-team-reaction:disabled{opacity:.65}.sm-team-no-reply{font-size:11px;color:#71698a;display:flex;align-items:center;gap:5px}
 </style></body>
 </html>
