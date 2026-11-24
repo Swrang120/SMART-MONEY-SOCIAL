@@ -1946,9 +1946,15 @@ async function toggleSave(id){
  finally{socialPendingActions.delete(key);}
 }
 async function sharePost(id){const p=db.posts.find(x=>x.id===id);if(!p)return;const text=(p.text||'Smart Money Social post')+' — Smart Money Social';try{if(navigator.share)await navigator.share({title:'Smart Money Social',text,url:location.href});else{await navigator.clipboard.writeText(text);showToast('Post text copied');}}catch(e){}}
-function postMenu(id){const p=db.posts.find(x=>x.id===id);if(!p)return;const own=p.user===myId();openModal('<h3>Post options</h3><button class="soft" style="width:100%;margin:5px 0" onclick="sharePost(\''+id+'\');closeModal()">↗ Share post</button>'+(own?'<button class="primary" style="width:100%;margin:5px 0" onclick="editPost(\''+id+'\')">✎ Edit post</button><button class="soft" style="width:100%;margin:5px 0;color:var(--red)" onclick="deletePost(\''+id+'\')">Delete post</button>':'<button class="soft" style="width:100%;margin:5px 0;color:var(--red)" onclick="reportPost(\''+id+'\')">⚑ Report post</button>')+ '<div class="modal-actions"><button class="soft" onclick="closeModal()">Close</button></div>');
-  document.querySelectorAll('[data-task-toggle]').forEach(btn=>btn.addEventListener('click',()=>adminToggleRewardTask(btn.dataset.taskToggle,btn.dataset.taskActive==='true')));
-  document.querySelectorAll('[data-task-review]').forEach(btn=>btn.addEventListener('click',()=>adminReviewRewardTask(btn.dataset.taskReview,btn.dataset.taskDecision)));}
+function postMenu(id){
+ const p=db.posts.find(x=>x.id===id);if(!p)return;const own=p.user===myId(),saved=db.saved.includes(id);
+ const row=(icon,title,sub,action,cls='')=>'<button type="button" class="sm-post-menu-row '+cls+'" onclick="'+action+'"><span class="sm-post-menu-icon">'+icon+'</span><span class="sm-post-menu-copy"><b>'+title+'</b><small>'+sub+'</small></span><span class="sm-post-menu-arrow">›</span></button>';
+ openModal('<section class="sm-post-menu-sheet"><div class="sm-post-menu-handle"></div><header><div><small>SMART MONEY SOCIAL</small><h3>Post options</h3></div><button class="sm-post-menu-close" onclick="closeModal()" aria-label="Close">✕</button></header><div class="sm-post-menu-list">'+
+ row('↗','Share post','Share this post with others','sharePost(\''+id+'\');closeModal()')+
+ row(saved?'▣':'▢',saved?'Remove saved post':'Save post',saved?'Remove from your saved collection':'Keep this post for later','toggleSave(\''+id+'\');closeModal()')+
+ (own?row('✎','Edit post','Update your caption or post details','editPost(\''+id+'\');closeModal()')+row('⌫','Delete post','Permanently remove your post','deletePost(\''+id+'\');closeModal()','danger'):row('⚑','Report post','Tell our team about a concern','reportPost(\''+id+'\');closeModal()','danger'))+
+ '</div><p class="sm-post-menu-foot">Choose an action for this post.</p></section>');
+}
 let storyEditorObjectUrl='',storyMusicDuration=0,storyMusicReady=false,storyEditorEmojis=[],storyMusicCatalog=[],storySelectedMusic=null;
 const STORY_BRAND_STICKERS=[
  {icon:'💚',label:'SMART MONEY'},{icon:'🚀',label:'GROW TOGETHER'},{icon:'🏆',label:'TOP ACHIEVER'},{icon:'📚',label:'LEARN & GROW'},
@@ -2357,7 +2363,19 @@ async function savePostEdit(id){
  }catch(e){showToast(e.message||'Could not update post. Check your connection and try again.');}
 }
 async function deletePost(id){try{const p=db.posts.find(x=>x.id===id);if(p?.mediaPath){const {error:mediaError}=await supabaseClient.storage.from(bucket).remove([p.mediaPath]);if(mediaError)throw new Error('Photo delete nahi ho paya: '+mediaError.message+'. Post abhi remove nahi kiya gaya. Please retry.');}const {error}=await supabaseClient.from('social_posts').delete().eq('id',id).eq('user_id',myId());if(error)throw error;closeModal();await loadSocialData();showToast('Post aur uski photo permanently delete ho gayi.');}catch(e){showToast(e.message||'Delete failed');}}
-async function reportPost(id){const reason=prompt('Why are you reporting this post?');if(!reason)return;try{const {error}=await supabaseClient.from('social_reports').insert({reporter_id:myId(),post_id:id,reason,details:''});if(error)throw error;closeModal();showToast('Report sent to Social admin');}catch(e){showToast(e.message||'Report failed');}}
+async function submitPostReport(id){
+ const p=db.posts.find(x=>x.id===id),reason=$('smPostReportReason')?.value,details=$('smPostReportDetails')?.value.trim()||'';
+ if(!myId()){showToast('Please sign in to report a post.');return;}
+ if(!p||p.user===myId()){showToast('This post cannot be reported.');return;}
+ if(!reason){showToast('Please select a report reason.');$('smPostReportReason')?.focus();return;}
+ const btn=$('smPostReportSubmit');if(btn){btn.disabled=true;btn.textContent='Submitting…';}
+ try{const {error}=await supabaseClient.from('social_reports').insert({reporter_id:myId(),post_id:id,reason,details:details.slice(0,1500)});if(error)throw error;closeModal();showToast('Report submitted to Social admin. Thank you.');}
+ catch(e){showToast(e.message||'Report failed');if(btn){btn.disabled=false;btn.textContent='Submit report';}}
+}
+async function reportPost(id){
+ const p=db.posts.find(x=>x.id===id);if(!p||p.user===myId())return;
+ openModal('<section class="sm-post-report-sheet"><div class="sm-post-menu-handle"></div><header><div><small>SMART MONEY SOCIAL · SAFETY</small><h3>Report this post</h3><p>Choose the reason that best describes your concern.</p></div><button class="sm-post-menu-close" onclick="closeModal()" aria-label="Close">✕</button></header><label for="smPostReportReason">Reason for report</label><select id="smPostReportReason" required><option value="">Select a reason</option><option>Spam or misleading content</option><option>Harassment or bullying</option><option>Hate or abusive content</option><option>Violence or dangerous content</option><option>False information</option><option>Inappropriate content</option><option>Scam or fraud</option><option>Other</option></select><label for="smPostReportDetails">Additional details <span>(optional)</span></label><textarea id="smPostReportDetails" maxlength="1500" rows="4" placeholder="Share any details that may help our review team…"></textarea><div class="sm-post-report-actions"><button type="button" class="soft" onclick="closeModal()">Cancel</button><button type="button" class="primary" id="smPostReportSubmit" onclick="submitPostReport(\''+id+'\')">Submit report</button></div><p class="sm-post-report-note">Reports are reviewed by the Smart Money Social team.</p></section>');
+}
 async function toggleFollow(id){
  const uid=myId();if(!id||id===uid)return;const key='follow:'+id;if(socialPendingActions.has(key))return;socialPendingActions.add(key);
  const existed=db.following.includes(id);db.following=existed?db.following.filter(x=>x!==id):[...db.following,id];
@@ -5401,5 +5419,27 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
 #smStoryTextEditorV23 input,
 #smStoryTextEditorV23 select{color:#111!important;background:#fff!important}
 </style>
-</body>
+<style id="sm-premium-post-menu-report-v1">
+#modalBack:has(.sm-post-menu-sheet),#modalBack:has(.sm-post-report-sheet){align-items:flex-end!important;padding:0!important}
+.sm-post-menu-sheet,.sm-post-report-sheet{width:min(100%,560px);margin:0 auto;background:linear-gradient(155deg,#17263b,#0d1728 72%);color:#f7f9fd;border:1px solid #ffffff20;border-bottom:0;border-radius:26px 26px 0 0;padding:12px 20px calc(22px + env(safe-area-inset-bottom));box-shadow:0 -18px 60px #0005;box-sizing:border-box;animation:smPostSheetIn .22s ease-out}
+@keyframes smPostSheetIn{from{transform:translateY(24px);opacity:.6}to{transform:translateY(0);opacity:1}}
+.sm-post-menu-handle{width:42px;height:4px;border-radius:8px;background:#ffffff45;margin:0 auto 17px}
+.sm-post-menu-sheet header,.sm-post-report-sheet header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:17px}
+.sm-post-menu-sheet header small,.sm-post-report-sheet header small{font-size:10px;letter-spacing:1.7px;color:#d9b86f;font-weight:850}
+.sm-post-menu-sheet h3,.sm-post-report-sheet h3{margin:5px 0 0;font-size:23px;color:#fff;font-weight:850}
+.sm-post-menu-close{width:38px;height:38px;border-radius:50%;border:1px solid #ffffff20;background:#ffffff12;color:#fff;font-size:17px}
+.sm-post-menu-list{display:grid;gap:9px}
+.sm-post-menu-row{width:100%;display:flex;align-items:center;gap:13px;text-align:left;padding:13px 14px;border:1px solid #ffffff14;border-radius:16px;background:linear-gradient(110deg,#ffffff12,#ffffff08);color:#fff}
+.sm-post-menu-row:active{transform:scale(.985);background:#ffffff20}
+.sm-post-menu-icon{width:42px;height:42px;flex:none;border-radius:13px;display:grid;place-items:center;background:linear-gradient(145deg,#e6c77d,#a9813c);color:#142033;font-size:20px;font-weight:900;box-shadow:0 5px 15px #0003}
+.sm-post-menu-copy{display:grid;gap:3px;flex:1;min-width:0}.sm-post-menu-copy b{font-size:14px;color:#fff}.sm-post-menu-copy small{font-size:11px;color:#b9c5d5}.sm-post-menu-arrow{font-size:25px;color:#8e9caf}
+.sm-post-menu-row.danger .sm-post-menu-icon{background:linear-gradient(145deg,#ffb2b2,#d94d5c);color:#45131a}
+.sm-post-menu-foot,.sm-post-report-note{margin:14px 0 0;text-align:center;font-size:11px;color:#94a4b9}
+.sm-post-report-sheet header p{margin:7px 0 0;color:#b9c5d5;font-size:12px;line-height:1.5}
+.sm-post-report-sheet label{display:block;margin:14px 0 7px;color:#f1f4f8;font-size:12px;font-weight:750}.sm-post-report-sheet label span{color:#8fa0b4;font-weight:500}
+.sm-post-report-sheet select,.sm-post-report-sheet textarea{display:block;width:100%;box-sizing:border-box;border:1px solid #ffffff25;border-radius:13px;background:#ffffff10;color:#fff;padding:13px;font:inherit;font-size:14px;outline:none}
+.sm-post-report-sheet select option{background:#142238;color:#fff}.sm-post-report-sheet textarea{resize:vertical;min-height:100px}.sm-post-report-sheet select:focus,.sm-post-report-sheet textarea:focus{border-color:#d9b86f;box-shadow:0 0 0 3px #d9b86f25}
+.sm-post-report-actions{display:flex;gap:10px;margin-top:18px}.sm-post-report-actions button{flex:1;min-height:46px;border-radius:13px;font-weight:800}
+@media(min-width:600px){#modalBack:has(.sm-post-menu-sheet),#modalBack:has(.sm-post-report-sheet){align-items:center!important;padding:18px!important}.sm-post-menu-sheet,.sm-post-report-sheet{border-bottom:1px solid #ffffff20;border-radius:26px;max-height:85vh;overflow:auto}}
+</style></body>
 </html>
