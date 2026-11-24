@@ -1515,6 +1515,15 @@ body .profile-story-dot{display:none!important}
 #modalBack .field-help{display:block;font-size:11px;color:#526579!important}
 #modalBack .modal-actions .soft{background:#edf2f7!important;color:#20354a!important;border:1px solid #bdc9d5!important}
 @media(max-width:520px){#modalBack .modal{padding:16px!important}#modalBack .modal-actions{position:sticky;bottom:-16px;background:#fff;padding:12px 0 2px;z-index:2}}
+</style><style id="social-user-name-contrast-fix">
+/* Keep member names readable on every dark/light card and list surface */
+.post-author-link,.post-author strong,.profile-identity h2,.profile-name-with-badge,.person .grow b,.side-profile b,.account-identity b,.like-activity-copy b{color:#f8fafc!important;text-shadow:0 1px 2px rgba(0,0,0,.28)!important}
+.post-author-link{background:transparent!important;-webkit-text-fill-color:#f8fafc!important}
+.post-author-link:hover{color:#c7dcff!important;-webkit-text-fill-color:#c7dcff!important}
+.post-author .tiny,.post-author .handle,.profile-handle,.person .grow small,.side-profile .tiny,.account-identity small{color:#d1d9e6!important}
+#view-profile .profile-identity h2{color:#fff!important;-webkit-text-fill-color:#fff!important}
+#view-profile .profile-handle{color:#e1d5ff!important}
+.post-author-link:focus-visible{outline:2px solid #7db8ff!important;outline-offset:3px!important}
 </style></head>
 <body>
 
@@ -2425,20 +2434,13 @@ async function replyToStory(id){
 async function deleteStory(id){try{const s=db.stories.find(x=>x.id===id);if(s?.mediaPath){const stickerPaths=(s.stickers||[]).filter(o=>o.type==='image'&&o.path).map(o=>o.path);const {error:mediaError}=await supabaseClient.storage.from(bucket).remove([s.mediaPath,...stickerPaths]);if(mediaError)throw new Error('Story media delete nahi hua: '+mediaError.message+'. Story record abhi remove nahi kiya gaya. Please retry.');}const {error}=await supabaseClient.from('social_stories').delete().eq('id',id).eq('user_id',myId());if(error)throw error;closeModal();await loadSocialData();showToast('Story aur uska media permanently delete ho gaya.');}catch(e){showToast(e.message||'Story delete failed');}}
 function openComposer(kind='choose'){
  if(!myId()){showToast('Please sign in to create a post.');return;}
+ if(kind==='choose'){openModal('<h3>Create a post</h3><p class="muted">Choose how you want to share with the community.</p><div class="post-type-choices"><button class="post-type-choice" type="button" onclick="openComposer(\'text\')"><span>✍️</span><b>Write a post</b><small>Text-only post with your selected colourful background.</small></button><button class="post-type-choice" type="button" onclick="openComposer(\'photo\')"><span>📸</span><b>Photo post</b><small>Upload one photo and add an optional caption.</small></button></div>');return;}
+ const isPhoto=kind==='photo';
  const styles=[['sunset','Sunset Glow'],['ocean','Ocean Blue'],['forest','Forest Green'],['aurora','Aurora Lights'],['lavender','Lavender Dream'],['rose','Rose Bloom'],['gold','Golden Hour'],['midnight','Midnight Sky'],['citrus','Citrus Pop'],['mountain','Mountain Mist'],['cosmic','Cosmic Nebula'],['paper','Classic Paper']];
  const opts=styles.map(([v,l])=>'<option value="'+v+'">'+l+'</option>').join('');
- const focusPhoto=kind==='photo';
- openModal('<div class="create-post-head"><div><h3>Create a post</h3><p>Write your message and optionally add a photo.</p></div><button type="button" class="create-post-close" onclick="closeModal()" aria-label="Close">×</button></div>'+
- '<div class="field"><label for="newText">Write something</label><textarea id="newText" maxlength="1500" placeholder="What would you like to share?" oninput="updatePostStylePreview()"></textarea></div>'+
- '<div class="field"><label for="newMedia">Add photo</label><input id="newMedia" type="file" accept="image/jpeg,image/png,image/webp,image/gif" onchange="previewNewPostMedia()"><div id="mediaPreview" class="tiny muted"></div></div>'+
- '<div class="field" id="postBackgroundField"><label for="newBackgroundStyle">Text post background</label><select id="newBackgroundStyle" onchange="updatePostStylePreview()">'+opts+'</select><div id="postStylePreview" class="post-style-preview bg-sunset">Your words will appear here ✨</div><small class="field-help">A photo post will use your uploaded photo instead.</small></div>'+
- '<div class="field"><label for="newCategory">Category</label><select id="newCategory"><option>General</option><option>Photography</option><option>Nature</option><option>Travel</option><option>Food</option><option>Art & Design</option><option>Education</option><option>Technology</option><option>Music</option><option>Sports</option><option>Entertainment</option><option>Other</option></select></div>'+
- '<div class="field"><label for="newTitle">Title (optional)</label><input id="newTitle" maxlength="100" placeholder="Add a title..."></div>'+
- '<div class="field"><label for="newHideLikes">Like count</label><select id="newHideLikes"><option value="false">Show like count</option><option value="true">Hide like count</option></select></div>'+
- '<div class="field"><label for="newCommentsEnabled">Comments</label><select id="newCommentsEnabled"><option value="true">Allow comments</option><option value="false">Turn comments off</option></select></div>'+
- '<div class="modal-actions"><button class="soft" type="button" onclick="closeModal()">Cancel</button><button class="primary" type="button" onclick="createPost(&quot;mixed&quot;)">Publish Post</button></div>');
- if(focusPhoto)setTimeout(()=>document.getElementById('newMedia')?.focus(),50);
- updatePostStylePreview();
+ const body=isPhoto?'<div class="field"><label>Photo (required)</label><input id="newMedia" type="file" accept="image/jpeg,image/png,image/webp,image/gif" onchange="previewNewPostMedia()"><div id="mediaPreview" class="tiny muted"></div></div><div class="field"><label>Caption (optional)</label><textarea id="newText" maxlength="1500" placeholder="Write a caption for your photo..."></textarea></div>':'<div class="field"><label>Write your post</label><textarea id="newText" maxlength="1500" placeholder="What would you like to share?" oninput="updatePostStylePreview()"></textarea></div><div class="field"><label>Choose background style</label><select id="newBackgroundStyle" onchange="updatePostStylePreview()">'+opts+'</select><div id="postStylePreview" class="post-style-preview bg-sunset">Your words will appear here ✨</div></div>';
+ openModal('<h3>'+(isPhoto?'Create photo post':'Write a post')+'</h3><p class="muted">'+(isPhoto?'Share a photo with an optional caption.':'Share text with a colourful background. Video uploads are not supported.')+'</p>'+body+'<div class="field"><label>Category</label><select id="newCategory"><option>General</option><option>Photography</option><option>Nature</option><option>Travel</option><option>Food</option><option>Art & Design</option><option>Education</option><option>Technology</option><option>Music</option><option>Sports</option><option>Entertainment</option><option>Other</option></select></div><div class="field"><label>Title (optional)</label><input id="newTitle" maxlength="100" placeholder="Add a title..."></div><div class="field"><label>Like count</label><select id="newHideLikes"><option value="false">Show like count</option><option value="true">Hide like count</option></select></div><div class="field"><label>Comments</label><select id="newCommentsEnabled"><option value="true">Allow comments</option><option value="false">Turn comments off</option></select></div><div class="modal-actions"><button class="soft" type="button" onclick="openComposer()">Back</button><button class="primary" type="button" onclick="createPost(\''+kind+'\')">Publish Post</button></div>');
+ if(!isPhoto)updatePostStylePreview();
 }
 function updatePostStylePreview(){const el=$('postStylePreview');if(!el)return;const style=$('newBackgroundStyle')?.value||'sunset';el.className='post-style-preview bg-'+style;el.textContent=$('newText')?.value.trim()||'Your text will appear here ✨';}
 let postPreviewObjectUrl=null,postPublishInFlight=false;
