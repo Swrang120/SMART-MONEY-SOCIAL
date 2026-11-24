@@ -4886,6 +4886,8 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
   if(S.pointers.size===0){
    if(!p.contains(e.target))return;
    const found=pick(e.target);if(!found)return;
+   // Stickers and captions already have dedicated drag handlers. Do not swallow their pointerdown events here.
+   if(found.kind==='sticker'||found.kind==='caption')return;
    S.node=found.node;S.kind=found.kind;S.index=found.index;S.startScale=scaleNow();S.moved=false;S.pinching=false;S.startX=e.clientX;S.startY=e.clientY;
    if(S.kind==='sticker'){const o=window.storyEditorEmojis?.[S.index];S.startLeft=Number(o?.x)||50;S.startTop=Number(o?.y)||50;}
   }else{
