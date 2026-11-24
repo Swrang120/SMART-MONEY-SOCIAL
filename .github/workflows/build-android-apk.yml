@@ -25,11 +25,24 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
-      - name: Configure persistent Android signing key (optional until one-time setup)
-        if: ${{ secrets.ANDROID_DEBUG_KEYSTORE_BASE64 != '' }
+      - name: Detect persistent signing key
+        id: signing
         shell: bash
         env:
-          ANDROID_DEBUG_KEYSTORE_BASE64: ${{ secrets.ANDROID_DEBUG_KEYSTORE_BASE64 }
+          ANDROID_DEBUG_KEYSTORE_BASE64: ${{ secrets.ANDROID_DEBUG_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$ANDROID_DEBUG_KEYSTORE_BASE64" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "Persistent signing key not configured; APK remains artifact-only."
+          fi
+
+      - name: Configure persistent Android signing key
+        if: steps.signing.outputs.available == 'true'
+        shell: bash
+        env:
+          ANDROID_DEBUG_KEYSTORE_BASE64: ${{ secrets.ANDROID_DEBUG_KEYSTORE_BASE64 }}
         run: |
           set -euo pipefail
           mkdir -p "$HOME/.android"
@@ -37,6 +50,7 @@ jobs:
           chmod 600 "$HOME/.android/debug.keystore"
           keytool -list -keystore "$HOME/.android/debug.keystore" -storepass android -alias androiddebugkey >/dev/null
           echo "Persistent Android signing key configured."
+
       - name: Prepare website
         shell: bash
         run: |
@@ -202,7 +216,7 @@ jobs:
           if-no-files-found: error
           retention-days: 14
       - name: Publish versioned APK release for in-app updates
-        if: ${{ secrets.ANDROID_DEBUG_KEYSTORE_BASE64 != '' && github.ref == 'refs/heads/main' }
+        if: steps.signing.outputs.available == 'true' && github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: sm-social-${{ github.run_number }
