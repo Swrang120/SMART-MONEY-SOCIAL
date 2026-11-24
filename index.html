@@ -1952,7 +1952,7 @@ function postMenu(id){
  openModal('<section class="sm-post-menu-sheet"><div class="sm-post-menu-handle"></div><header><div><small>SMART MONEY SOCIAL</small><h3>Post options</h3></div><button class="sm-post-menu-close" onclick="closeModal()" aria-label="Close">✕</button></header><div class="sm-post-menu-list">'+
  row('↗','Share post','Share this post with others','sharePost(\''+id+'\');closeModal()')+
  row(saved?'▣':'▢',saved?'Remove saved post':'Save post',saved?'Remove from your saved collection':'Keep this post for later','toggleSave(\''+id+'\');closeModal()')+
- (own?row('✎','Edit post','Update your caption or post details','editPost(\''+id+'\');closeModal()')+row('⌫','Delete post','Permanently remove your post','deletePost(\''+id+'\');closeModal()','danger'):row('⚑','Report post','Tell our team about a concern','reportPost(\''+id+'\');closeModal()','danger'))+
+ (own?row('✎','Edit post','Update your caption or post details','editPost(\''+id+'\');closeModal()')+row('⌫','Delete post','Permanently remove your post','deletePost(\''+id+'\');closeModal()','danger'):row('⚑','Report post','Tell our team about a concern','closeModal();reportPost(\''+id+'\')','danger'))+
  '</div><p class="sm-post-menu-foot">Choose an action for this post.</p></section>');
 }
 let storyEditorObjectUrl='',storyMusicDuration=0,storyMusicReady=false,storyEditorEmojis=[],storyMusicCatalog=[],storySelectedMusic=null;
