@@ -1135,5 +1135,64 @@ h1,h2,h3,h4,p,label,b,strong,small,.muted,.tiny,.chat-peer-identity,.chat-peer-i
  html.social-messages-fullscreen .composer{flex:0 0 auto!important;margin:0!important}
 }
 </style>
+
+<style id="sm-chat-true-fullscreen-v2">
+@media(max-width:760px){
+ html.social-messages-fullscreen,html.social-messages-fullscreen body{height:100%!important;min-height:0!important;overflow:hidden!important}
+ body.chat-open{position:fixed!important;inset:0 0 auto 0!important;width:100%!important;height:var(--sm-chat-vh,100dvh)!important;min-height:0!important;max-height:var(--sm-chat-vh,100dvh)!important;overflow:hidden!important;padding:0!important;margin:0!important}
+ body.chat-open #app.wrap{position:fixed!important;inset:0!important;width:100%!important;height:var(--sm-chat-vh,100dvh)!important;min-height:0!important;max-height:var(--sm-chat-vh,100dvh)!important;overflow:hidden!important;padding:0!important;margin:0!important}
+ body.chat-open #app.wrap>main,body.chat-open #app.wrap>.grid,body.chat-open #app.wrap>.grid>section,body.chat-open #messagesPane{width:100%!important;height:100%!important;min-height:0!important;max-height:100%!important;margin:0!important;padding:0!important;overflow:hidden!important}
+ body.chat-open .messages-layout{display:flex!important;flex-direction:column!important;width:100%!important;height:100%!important;min-height:0!important;max-height:100%!important;overflow:hidden!important;border:0!important;border-radius:0!important}
+ body.chat-open .messages-inbox{flex:1 1 auto!important;width:100%!important;height:100%!important;min-height:0!important;max-height:100%!important;overflow:auto!important;padding:18px 14px calc(18px + env(safe-area-inset-bottom))!important;border:0!important;border-radius:0!important}
+ body.chat-open .message-window,body.chat-open.chat-conversation .message-window{display:flex!important;flex:1 1 auto!important;flex-direction:column!important;width:100%!important;height:100%!important;min-height:0!important;max-height:100%!important;overflow:hidden!important;padding:10px 13px calc(8px + env(safe-area-inset-bottom))!important;border:0!important;border-radius:0!important}
+ body.chat-open.chat-conversation .messages-inbox{display:none!important}
+ body.chat-open:not(.chat-conversation) .message-window{display:none!important}
+ body.chat-open .message-topbar{flex:0 0 auto!important;min-height:66px!important;padding:5px 2px 12px!important}
+ body.chat-open .message-peer{min-width:0!important;flex:1 1 auto!important}
+ body.chat-open .message-head-actions{flex:0 0 auto!important}
+ body.chat-open.chat-conversation .message-exit{display:none!important}
+ body.chat-open .message-back{display:grid!important;place-items:center!important}
+ body.chat-open .message-window .chatbox{display:flex!important;flex:1 1 auto!important;width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;overflow-y:auto!important;overscroll-behavior:contain!important;margin:0!important;padding:12px 4px!important}
+ body.chat-open .message-window .composer{position:relative!important;flex:0 0 auto!important;width:100%!important;min-height:60px!important;margin:8px 0 0!important;padding:7px!important;z-index:3!important}
+ body.chat-open .message-window .composer input{min-width:0!important;min-height:44px!important;height:44px!important;font-size:16px!important}
+ body.chat-open .message-window .composer button{min-width:44px!important;min-height:44px!important}
+ body.chat-open .message-foot{flex:0 0 auto!important;margin:0!important;padding:3px 2px 0!important}
+ body.chat-open>.community-bottom-nav{display:none!important}
+}
+</style>
+<script id="sm-chat-visual-viewport-runtime-v2">
+(()=>{
+ if(window.__smChatViewportV2)return;window.__smChatViewportV2=true;
+ const root=document.documentElement;
+ function sync(){
+  const vv=window.visualViewport;
+  const height=Math.max(240,Math.round(vv?.height||window.innerHeight||document.documentElement.clientHeight));
+  root.style.setProperty('--sm-chat-vh',height+'px');
+  document.body?.style.setProperty('--sm-chat-vh',height+'px');
+  if(document.body?.classList.contains('chat-open')){
+   const app=document.getElementById('app');
+   if(app){app.style.height=height+'px';app.style.maxHeight=height+'px';}
+  }
+ }
+ function bottom(){const box=document.getElementById('chatMessages');if(box)requestAnimationFrame(()=>{box.scrollTop=box.scrollHeight;});}
+ const priorStart=window.startChat;
+ if(typeof priorStart==='function'&&!window.__smChatStartWrappedV2){
+  window.__smChatStartWrappedV2=true;
+  window.startChat=async function(id){
+   sync();const result=await priorStart.apply(this,arguments);sync();bottom();
+   const input=document.getElementById('messageText');
+   if(input)input.addEventListener('focus',()=>{sync();setTimeout(()=>{sync();bottom();},120);setTimeout(sync,320);},{passive:true});
+   return result;
+  };
+ }
+ window.addEventListener('resize',sync,{passive:true});
+ window.addEventListener('orientationchange',()=>setTimeout(sync,180),{passive:true});
+ if(window.visualViewport){window.visualViewport.addEventListener('resize',sync,{passive:true});window.visualViewport.addEventListener('scroll',sync,{passive:true});}
+ document.addEventListener('focusin',e=>{if(e.target?.id==='messageText'||e.target?.id==='chatSearch'){sync();setTimeout(sync,100);setTimeout(sync,300);}},true);
+ document.addEventListener('focusout',e=>{if(e.target?.id==='messageText'||e.target?.id==='chatSearch')setTimeout(sync,180);},true);
+ new MutationObserver(sync).observe(document.body,{attributes:true,attributeFilter:['class']});sync();
+})();
+</script>
+
 </body></html>
 
