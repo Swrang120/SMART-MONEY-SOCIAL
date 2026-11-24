@@ -2035,7 +2035,15 @@ function selectStoryEffect(name,button){
  updateStoryEditorPreview();
 }
 function renderStoryFilterThumbnails(){const media=$('storyEditorMedia')?.firstElementChild,gallery=$('storyFilterGallery');if(!media||!gallery)return;const src=media.currentSrc||media.src||'';if(!src)return;gallery.querySelectorAll('[data-story-filter]').forEach((button)=>{const index=Number(button.dataset.storyFilter),filter=STORY_FILTERS[index]?.[1]||'none',thumb=button.querySelector('.story-filter-thumb');if(!thumb)return;thumb.innerHTML='<img src="'+safe(src)+'" alt="" aria-hidden="true" style="display:block;width:100%;height:100%;min-width:0;min-height:0;object-fit:cover;border-radius:50%;filter:'+safe(filter)+';pointer-events:none">';thumb.style.background='transparent';thumb.style.overflow='hidden';thumb.style.padding='0';});}
-function selectStoryFilter(index){const f=STORY_FILTERS[index];if(!f)return;$('storyFilter').value=f[1];document.querySelectorAll('[data-story-filter]').forEach((b)=>{const active=Number(b.dataset.storyFilter)===index;b.style.borderColor=active?'#e8c66d':'rgba(255,255,255,.58)';b.style.boxShadow=active?'0 0 0 2px rgba(232,198,109,.2)':'none';});updateStoryEditorPreview();}
+function selectStoryFilter(index){
+ const f=STORY_FILTERS[index];if(!f)return;
+ const input=$('storyFilter');if(input)input.value=f[1]||'none';
+ document.querySelectorAll('.v24-filter-choice').forEach((b,i)=>b.classList.toggle('active',i===index));
+ document.querySelectorAll('[data-story-filter]').forEach(b=>b.classList.toggle('active',Number(b.dataset.storyFilter)===index));
+ updateStoryEditorPreview();
+ const media=$('storyEditorMedia')?.firstElementChild;
+ if(media)media.style.filter=[f[1]||'none',window.storyEffectFilter||'none'].filter(x=>x&&x!=='none').join(' ')||'none';
+}
 function addStoryEmoji(emoji){addStorySticker({type:'emoji',e:emoji,x:50,y:50,scale:1});}
 function renderStoryMusicSticker(o,editor=false){const n=Math.max(0,Math.min(3,Number(o.style)||0)),art=o.artworkUrl?'<img class="sm-music-art" src="'+safe(o.artworkUrl)+'" alt="Album art">':'<span class="sm-music-art">♫</span>',wave='<span class="sm-music-art-wave" aria-hidden="true">'+Array.from({length:4},()=>'<i></i>').join('')+'</span>';return '<div class="sm-story-music-sticker sm-music-style-'+n+'" style="color:#000!important"'+(editor?' onpointerdown="beginStoryMusicCardPointer(event,'+Number(o._index||0)+')"':'')+'><span class="sm-music-art-wrap">'+art+wave+'</span><span class="sm-music-meta"><strong style="color:#000!important">'+safe(o.title||'Original audio')+'</strong><small style="color:#000!important">'+safe(o.artist||'Swrang Swargiary')+'</small></span></div>';}
 function renderStoryEditorEmojis(){const layer=$('storyEditorEmoji');if(!layer)return;layer.innerHTML=storyEditorEmojis.map((o,i)=>{const scale=Math.max(.45,Math.min(3,Number(o.scale)||1));if(o.type==='music')return '<div data-sticker-index="'+i+'" style="position:absolute;left:'+Math.max(2,Math.min(98,Number(o.x)||50))+'%;top:'+Math.max(2,Math.min(98,Number(o.y)||52))+'%;transform:translate(-50%,-50%) scale('+scale+');transform-origin:center;cursor:move;touch-action:none;pointer-events:auto;user-select:none;z-index:9">'+renderStoryMusicSticker({...o,_index:i},true)+'</div>';let inner=o.type==='image'?'<img src="'+safe(o.url||'')+'" alt="Sticker" style="width:100%;height:100%;object-fit:contain;pointer-events:none">':o.type==='brand'?'<span class="sm-brand-canvas-sticker"><b>'+safe(o.e||'✨')+'</b><strong>'+safe(o.label||'SMART MONEY')+'</strong></span>':'<span style="font-size:'+(o.type==='text'?24:42)+'px;font-weight:900;color:white;text-shadow:0 2px 7px #000">'+safe(o.e||'')+'</span>';return '<div data-sticker-index="'+i+'" style="position:absolute;left:'+o.x+'%;top:'+o.y+'%;transform:translate(-50%,-50%) scale('+scale+');transform-origin:center;min-width:'+(o.type==='image'?'64px':'auto')+';max-width:82%;cursor:move;touch-action:none;pointer-events:auto;user-select:none;z-index:8" onpointerdown="beginStoryStickerDrag(event,'+i+')">'+inner+'<span class="sm-sticker-resize" title="Drag to resize" onpointerdown="beginStoryStickerResize(event,'+i+')">↘</span></div>';}).join('');}
@@ -4628,12 +4636,30 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
   host.querySelectorAll('.smml-row').forEach(row=>{const id=row.dataset.id;row.querySelector('.smml-select').addEventListener('click',()=>choose(id));row.querySelector('.smml-meta').addEventListener('click',()=>choose(id));row.querySelector('.smml-save').addEventListener('click',e=>{e.stopPropagation();const list=[...saved];const key=String(id),set=new Set(list);set.has(key)?set.delete(key):set.add(key);localStorage.setItem('smStorySavedMusic',JSON.stringify([...set]));render()})});
  }
  function choose(id){
-  selected=(storyMusicCatalog||[]).find(x=>String(x.id)===String(id));if(!selected||!selected.url){showToast('This music track is not available right now.');return}
-  const duration=Number(selected.duration_seconds)||30;const hooks=getHooks(selected);const first=hooks[0]||{};trimStart=Math.max(0,Number(first.start)||0);trimEnd=Number(first.end)>trimStart?Math.min(duration,Number(first.end)):Math.min(duration,trimStart+30);clipSeconds=Math.max(1,trimEnd-trimStart);
-  audio.pause();audio.src=selected.url;audio.muted=false;muted=false;playing=false;audio.load();audio.onerror=async()=>{playing=false;$m('smmlPlay').textContent='▶';try{const fresh=await signedMedia(selected.file_path);if(fresh){selected.url=fresh;audio.src=fresh;audio.load();showToast('Audio link refreshed. Ab Play dabakar sunein.');return;}}catch(err){console.warn('Music preview refresh failed:',err?.message||err);}showToast('Audio play nahi ho paya. File path, bucket aur Storage read policy check karein.');};
-  $m('smmlPlayer').classList.add('show');$m('smmlPlayerArt').src=selected.artworkUrl||'';$m('smmlPlayerTitle').textContent=selected.title;$m('smmlPlayerArtist').textContent=(selected.artist||'Original audio')+' · '+clock(duration);$m('smmlPlay').textContent='▶';render();
-  audio.onloadedmetadata=()=>{if(Number.isFinite(audio.duration)){const d=audio.duration;trimStart=Math.min(trimStart,Math.max(0,d-clipSeconds));trimEnd=Math.min(d,trimStart+clipSeconds);try{audio.currentTime=trimStart;}catch(e){}}};
-  audio.ontimeupdate=()=>{if(audio.currentTime>=trimEnd){audio.pause();playing=false;$m('smmlPlay').textContent='▶';audio.currentTime=trimStart}};
+  selected=(storyMusicCatalog||[]).find(x=>String(x.id)===String(id));
+  if(!selected||!selected.url){showToast('This music track is not available right now.');return;}
+  const duration=Number(selected.duration_seconds)||30,hooks=getHooks(selected),first=hooks[0]||{};
+  trimStart=Math.max(0,Number(first.start)||0);
+  trimEnd=Number(first.end)>trimStart?Math.min(duration,Number(first.end)):Math.min(duration,trimStart+30);
+  clipSeconds=Math.max(1,trimEnd-trimStart);
+  audio.pause();audio.src=selected.url;audio.muted=false;muted=false;playing=false;
+  audio.onloadedmetadata=()=>{if(Number.isFinite(audio.duration)){const d=audio.duration;trimStart=Math.min(trimStart,Math.max(0,d-clipSeconds));trimEnd=Math.min(d,trimStart+clipSeconds);try{audio.currentTime=trimStart;}catch(_){}}};
+  audio.onerror=async()=>{
+   playing=false;$m('smmlPlay').textContent='▶';
+   try{const fresh=await signedMedia(selected.file_path);if(fresh){selected.url=fresh;audio.src=fresh;audio.load();try{await audio.play();playing=true;$m('smmlPlay').textContent='Ⅱ';showToast('Audio link refreshed and preview started.');}catch(_){showToast('Audio link refreshed. Tap Play to preview.');}return;}}
+   catch(err){console.warn('Music preview refresh failed:',err?.message||err);}
+   showToast('Audio play nahi ho paya. File path, bucket aur Storage read policy check karein.');
+  };
+  audio.ontimeupdate=()=>{
+   if(audio.currentTime>=trimEnd){try{audio.currentTime=trimStart;}catch(_){}if(playing)audio.play().catch(()=>{playing=false;$m('smmlPlay').textContent='▶';});}
+  };
+  $m('smmlPlayer').classList.add('show');$m('smmlPlayerArt').src=selected.artworkUrl||'';
+  $m('smmlPlayerTitle').textContent=selected.title;
+  $m('smmlPlayerArtist').textContent=(selected.artist||'Original audio')+' · '+clock(duration);
+  $m('smmlPlay').textContent='…';render();audio.load();
+  // The track row click is a user gesture, so start preview immediately.
+  audio.play().then(()=>{playing=true;$m('smmlPlay').textContent='Ⅱ';})
+   .catch(err=>{playing=false;$m('smmlPlay').textContent='▶';console.warn('Music autoplay blocked:',err?.message||err);showToast('Preview ready. Tap Play if your browser blocks automatic audio.');});
  }
  async function togglePlay(){if(!selected)return;if(playing){audio.pause();playing=false;$m('smmlPlay').textContent='▶';return;}if(audio.currentTime<trimStart||audio.currentTime>=trimEnd)audio.currentTime=trimStart;try{await audio.play();playing=true;$m('smmlPlay').textContent='Ⅱ';}catch(e){try{const fresh=await signedMedia(selected.file_path);if(fresh){selected.url=fresh;audio.src=fresh;audio.load();audio.currentTime=trimStart;await audio.play();playing=true;$m('smmlPlay').textContent='Ⅱ';return;}}catch(refreshError){console.warn('Music playback retry failed:',refreshError?.message||refreshError);}showToast('Music play nahi hui. Network/Storage permission ya audio format check karein.');}}
  async function enterEditor(){if(!selected)return;library.style.display='none';editor.classList.add('open');const d=Number(selected.duration_seconds)||30;durationChoiceIndex=1;const chosenHook=getHooks(selected)[0]||{};trimStart=Math.max(0,Number(chosenHook.start)||0);trimEnd=Number(chosenHook.end)>trimStart?Math.min(d,Number(chosenHook.end)):Math.min(d,trimStart+30);clipSeconds=Math.max(1,trimEnd-trimStart);audio.pause();audio.currentTime=trimStart;playing=false;
@@ -5210,5 +5236,38 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
 (()=>{const panel=document.getElementById('smStoryPanel');if(!panel||panel.dataset.v24CloseInstalled)return;panel.dataset.v24CloseInstalled='1';const add=()=>{if(!['filters','effects'].includes(panel.dataset.activeTool))return;let b=panel.querySelector('.sm-story-restyle-close');if(!b){b=document.createElement('button');b.type='button';b.className='sm-story-restyle-close';b.textContent='×';b.setAttribute('aria-label','Done and close');b.addEventListener('click',()=>window.closeStoryPanel?.());panel.appendChild(b);}};new MutationObserver(add).observe(panel,{attributes:true,attributeFilter:['data-active-tool','style','hidden']});add();})();
 </script>
 
+
+<style id="story-editor-polish-v25">
+/* Equal, raised circular trays with vivid Instagram-like preview colors. */
+#modalBack.story-mode #smStoryPanel[data-active-tool="filters"],
+#modalBack.story-mode #smStoryPanel[data-active-tool="effects"]{bottom:44px!important;height:112px!important;min-height:112px!important;max-height:112px!important}
+#modalBack.story-mode #smStoryPanel[data-active-tool="filters"] #smStoryFiltersPanel,
+#modalBack.story-mode #smStoryPanel[data-active-tool="effects"] #smStoryEffectsPanel{align-items:center!important;justify-content:center!important;padding-top:0!important}
+#modalBack.story-mode .v24-filter-list{align-items:center!important;justify-content:flex-start!important;gap:10px!important}
+#modalBack.story-mode .v24-filter-choice,#modalBack.story-mode #smStoryPanel[data-active-tool="effects"] .sm-pdf-effect-grid button{width:68px!important;min-width:68px!important;flex-basis:68px!important;height:94px!important;align-items:center!important;justify-content:flex-start!important}
+#modalBack.story-mode .v24-filter-thumb,
+#modalBack.story-mode #smStoryPanel[data-active-tool="effects"] .sm-pdf-effect-grid button>span{width:62px!important;height:62px!important;min-width:62px!important;min-height:62px!important;flex-basis:62px!important;border:2px solid #f6d58a!important;background:linear-gradient(145deg,#ff4d8d,#8b5cf6 48%,#22c7d6)!important;box-shadow:0 3px 12px #0008!important}
+#modalBack.story-mode .v24-filter-thumb img{filter:var(--story-thumb-filter,none);border-radius:50%!important}
+#modalBack.story-mode .v24-filter-choice.active .v24-filter-thumb,
+#modalBack.story-mode #smStoryPanel[data-active-tool="effects"] .sm-pdf-effect-grid button.active>span{border:3px solid #fff!important;box-shadow:0 0 0 2px #ff4d8d,0 4px 14px #0009!important}
+#modalBack.story-mode .v24-filter-choice small,
+#modalBack.story-mode #smStoryPanel[data-active-tool="effects"] .sm-pdf-effect-grid button>b{font-size:10px!important;font-weight:800!important;text-shadow:0 1px 4px #000!important}
+#modalBack.story-mode #storyEditorCaption{
+ max-width:88%!important;left:6%!important;right:6%!important;bottom:13%!important;
+ padding:5px 9px!important;background:transparent!important;border:0!important;border-radius:0!important;
+ line-height:1.28!important;letter-spacing:.15px!important;white-space:pre-wrap!important;
+ overflow-wrap:anywhere!important;word-break:normal!important;
+ -webkit-text-stroke:.25px #111!important;
+ text-shadow:0 1px 2px #000,0 2px 7px #000b!important;
+ box-decoration-break:clone!important;-webkit-box-decoration-break:clone!important;
+}
+#modalBack.story-mode #storyEditorEmoji [data-sticker-index]{filter:drop-shadow(0 5px 9px #0008)!important}
+#modalBack.story-mode #storyEditorEmoji [data-sticker-index]>span:not(.sm-sticker-resize){font-size:52px!important;line-height:1.08!important}
+#modalBack.story-mode .sm-brand-canvas-sticker{display:flex!important;align-items:center!important;gap:9px!important;padding:11px 16px!important;border:1px solid #f7d98b!important;border-radius:18px!important;background:linear-gradient(135deg,#101a2b 0%,#263e62 52%,#111827 100%)!important;color:#fff!important;box-shadow:0 8px 22px #0009,inset 0 1px #ffffff55!important}
+#modalBack.story-mode .sm-brand-canvas-sticker b{font-size:34px!important;filter:drop-shadow(0 2px 5px #f4c76a)!important}
+#modalBack.story-mode .sm-brand-canvas-sticker strong{font-size:13px!important;letter-spacing:1px!important;font-weight:900!important;color:#ffe6a6!important}
+#modalBack.story-mode .sm-sticker-resize{width:23px!important;height:23px!important;border:1px solid #fff!important;border-radius:50%!important;background:#17243a!important;color:#fff!important;display:grid!important;place-items:center!important;box-shadow:0 2px 7px #0008!important}
+#modalBack.story-mode .sm-story-sticker-grid button,#modalBack.story-mode .sm-brand-sticker-grid button{border:1px solid #ffffff24!important;border-radius:16px!important;background:linear-gradient(145deg,#253c5c,#111a2b)!important;color:#fff!important;box-shadow:0 4px 12px #0005!important;min-height:58px!important}
+</style>
 </body>
 </html>
