@@ -1432,7 +1432,70 @@ body .profile-story-dot{display:none!important}
 </style>
 <style id="smPolicyVisualStyles">
 .sm-story-panel{line-height:1.75!important;padding:20px!important}.sm-story-kicker{display:inline-flex;padding:6px 11px;border-radius:99px;background:#f7f0e3;color:#94703b;font-size:10px;font-weight:900;letter-spacing:1.3px}.sm-story-panel h3{font-size:23px;margin:13px 0 8px;color:#30213f}.sm-story-panel>p{color:#5e536c}.sm-about-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0}.sm-about-card{display:grid;gap:6px;padding:16px;border:1px solid #e9e1ef;border-radius:17px;background:linear-gradient(145deg,#fff,#faf7fc)}.sm-about-card span{font-size:24px}.sm-about-card b{color:#332442}.sm-about-card small{color:#81768f;line-height:1.55}.sm-story-signoff{font-weight:850!important;color:#8a6735!important}.sm-privacy-summary,.sm-business-identity{border:1px solid #eadfc9;background:linear-gradient(145deg,#fcf8ef,#fff);border-radius:17px;padding:16px;margin:15px 0;color:#46374d}.sm-privacy-summary>b,.sm-business-identity>b{display:block;color:#30213f;font-size:15px}.sm-privacy-points{display:grid;gap:8px;margin-top:10px;font-size:13px}.sm-business-identity{display:grid;gap:5px}.sm-business-identity small{color:#81768f;margin-top:5px}.sm-policy-accordion{border:1px solid #e9e1ef;border-radius:15px;background:#fff;margin:10px 0;overflow:hidden}.sm-policy-accordion summary{list-style:none;cursor:pointer;padding:14px 16px;display:flex;justify-content:space-between;gap:10px;font-weight:800;color:#392b49}.sm-policy-accordion summary::-webkit-details-marker{display:none}.sm-policy-accordion summary:after{content:'+';color:#a77a3e;font-size:20px;line-height:1}.sm-policy-accordion[open] summary:after{content:'−'}.sm-policy-copy{padding:0 16px 14px;color:#665b70;font-size:13px;line-height:1.75}.sm-faq-panel{padding:18px!important}@media(max-width:600px){.sm-about-cards{grid-template-columns:1fr}.sm-story-panel{padding:15px!important}.sm-policy-accordion summary{padding:13px}.sm-policy-copy{padding:0 13px 13px}}
-</style></head>
+</style><style id="social-post-header-readability">
+/* Clear, stable post identity row on feed and profile cards */
+#view-home .post-head,#view-profile .post-head{
+ display:flex!important;align-items:center!important;gap:9px!important;
+ min-width:0!important;padding:2px 0 5px!important;
+}
+#view-home .post-head .post-author-profile,#view-profile .post-head .post-author-profile{
+ flex:0 0 40px!important;width:40px!important;height:40px!important;
+}
+#view-home .post-head .post-author-profile .avatar,#view-profile .post-head .post-author-profile .avatar{
+ width:40px!important;height:40px!important;min-width:40px!important;
+}
+#view-home .post-head .post-author,#view-profile .post-head .post-author{
+ flex:1 1 100px!important;min-width:0!important;display:flex!important;
+ flex-direction:column!important;justify-content:center!important;gap:3px!important;
+}
+#view-home .post-head .post-author strong,#view-profile .post-head .post-author strong{
+ display:block!important;min-width:0!important;line-height:1.3!important;
+ font-size:13px!important;font-weight:800!important;letter-spacing:.2px!important;
+ color:#18251f!important;overflow-wrap:anywhere!important;
+}
+#view-home .post-head .post-author-link,#view-profile .post-head .post-author-link{
+ display:inline!important;padding:0!important;margin:0!important;
+ color:inherit!important;font:inherit!important;text-align:left!important;
+ line-height:inherit!important;white-space:normal!important;overflow-wrap:anywhere!important;
+}
+#view-home .post-head .post-author .tiny,#view-profile .post-head .post-author .tiny{
+ display:block!important;font-size:11px!important;line-height:1.25!important;
+ color:#68756e!important;font-weight:600!important;
+}
+#view-home .post-head .post-follow,#view-profile .post-head .post-follow{
+ flex:0 0 auto!important;min-height:34px!important;padding:7px 10px!important;
+ border-radius:10px!important;font-size:11px!important;font-weight:750!important;
+ line-height:1.1!important;white-space:nowrap!important;
+}
+#view-home .post-head .post-menu,#view-profile .post-head .post-menu{
+ flex:0 0 34px!important;width:34px!important;height:36px!important;
+ display:grid!important;place-items:center!important;border-radius:10px!important;
+ color:#39483f!important;background:#f1f4f1!important;font-size:22px!important;
+ line-height:1!important;cursor:pointer!important;
+}
+#view-home .post-head .post-menu:active,#view-profile .post-head .post-menu:active{
+ background:#e3e9e4!important;
+}
+#view-home .post-text .badge,#view-profile .post-text .badge{
+ display:inline-flex!important;align-items:center!important;min-height:23px!important;
+ padding:4px 9px!important;margin:2px 0 5px!important;border-radius:7px!important;
+ background:#eef3ef!important;border:1px solid #d8e3da!important;
+ color:#315640!important;font-size:10px!important;font-weight:800!important;
+ letter-spacing:.35px!important;line-height:1.2!important;
+}
+#view-home .post-text,#view-profile .post-text{
+ font-size:14px!important;line-height:1.65!important;
+ overflow-wrap:anywhere!important;color:#25352c!important;
+}
+@media(max-width:380px){
+ #view-home .post-head,#view-profile .post-head{gap:6px!important}
+ #view-home .post-head .post-author-profile,#view-profile .post-head .post-author-profile{flex-basis:36px!important;width:36px!important;height:36px!important}
+ #view-home .post-head .post-author-profile .avatar,#view-profile .post-head .post-author-profile .avatar{width:36px!important;height:36px!important;min-width:36px!important}
+ #view-home .post-head .post-author strong,#view-profile .post-head .post-author strong{font-size:12px!important}
+ #view-home .post-head .post-follow,#view-profile .post-head .post-follow{padding:6px 7px!important;font-size:10px!important}
+}
+</style>
+</head>
 <body>
 
 <div class="app">
