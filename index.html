@@ -2115,18 +2115,52 @@ function resizeStorySticker(event,index){event.preventDefault();const o=storyEdi
 function clearStoryEmojis(){storyEditorEmojis=[];renderStoryEditorEmojis();}
 async function loadStoryMusicLibrary(){
  const host=$('storyMusicCatalog');if(!host)return;
- host.innerHTML='<div class="tiny muted">Loading music library…</div>';
+ if(window.__storyMusicLoading){host.innerHTML='<div class="tiny muted">Preparing music…</div>';return;}
+ window.__storyMusicLoading=true;
+ host.innerHTML='<div class="tiny muted">Loading tracks and cover art…</div>';
  try{
-  let result=await supabaseClient.from('social_story_music_library').select('id,title,artist,file_path,artwork_path,duration_seconds,is_active,created_at,music_start_seconds,music_end_seconds,is_trending_hook').eq('is_active',true).order('created_at',{ascending:false});
-  if(result.error&&/artwork_path/.test(result.error.message||'')){result=await supabaseClient.from('social_story_music_library').select('id,title,artist,file_path,duration_seconds,is_active,created_at,music_start_seconds,music_end_seconds,is_trending_hook').eq('is_active',true).order('created_at',{ascending:false});if(!result.error)result.data=(result.data||[]).map(x=>({...x,artwork_path:null}));}
-  const {data,error}=result;if(error)throw error;
-  storyMusicCatalog=data||[];
-  if(!storyMusicCatalog.length){host.innerHTML='<div class="tiny muted">No music is available yet. Admin will publish original tracks here.</div>';return;}
-  const mediaPaths=storyMusicCatalog.flatMap(x=>[x.file_path,x.artwork_path].filter(Boolean));
-  const signed={};for(const path of mediaPaths){try{const {data:one,error:oneError}=await supabaseClient.storage.from(bucket).createSignedUrl(path,300);if(!oneError&&one?.signedUrl)signed[path]=one.signedUrl;}catch(e){}}
-  storyMusicCatalog=storyMusicCatalog.map(x=>({...x,url:signed[x.file_path]||'',artworkUrl:x.artwork_path?signed[x.artwork_path]||'':''})).filter(x=>x.url);
+  let result=await supabaseClient.from('social_story_music_library')
+   .select('id,title,artist,file_path,artwork_path,duration_seconds,is_active,created_at,music_start_seconds,music_end_seconds,is_trending_hook')
+   .eq('is_active',true).order('created_at',{ascending:false});
+  if(result.error&&/artwork_path/.test(result.error.message||'')){
+   result=await supabaseClient.from('social_story_music_library')
+    .select('id,title,artist,file_path,duration_seconds,is_active,created_at,music_start_seconds,music_end_seconds,is_trending_hook')
+    .eq('is_active',true).order('created_at',{ascending:false});
+   if(!result.error)result.data=(result.data||[]).map(x=>({...x,artwork_path:null}));
+  }
+  if(result.error)throw result.error;
+  const tracks=result.data||[];
+  if(!tracks.length){storyMusicCatalog=[];host.innerHTML='<div class="tiny muted">No music is available yet. Admin will publish original tracks here.</div>';return;}
+  const paths=[...new Set(tracks.flatMap(x=>[x.file_path,x.artwork_path].filter(Boolean)))];
+  const signed=window.__storyMusicSignedCache||(window.__storyMusicSignedCache=new Map());
+  const now=Date.now(),missing=paths.filter(p=>{const v=signed.get(p);return !v||v.expiresAt<now+60000;});
+  if(missing.length){
+   try{
+    const {data,error}=await supabaseClient.storage.from(bucket).createSignedUrls(missing,3600);
+    if(error)throw error;
+    (data||[]).forEach(item=>{if(item.path&&item.signedUrl)signed.set(item.path,{url:item.signedUrl,expiresAt:now+3500000});});
+   }catch(batchError){
+    console.warn('Batch story music URL signing failed; using parallel fallback:',batchError);
+    const fallback=await Promise.all(missing.map(async path=>{
+     try{const {data,error}=await supabaseClient.storage.from(bucket).createSignedUrl(path,3600);return !error&&data?.signedUrl?[path,data.signedUrl]:[path,null];}
+     catch(e){return [path,null];}
+    }));
+    fallback.forEach(([path,url])=>{if(url)signed.set(path,{url,expiresAt:now+3500000});});
+   }
+  }
+  storyMusicCatalog=tracks.map(x=>({...x,
+   url:signed.get(x.file_path)?.url||'',
+   artworkUrl:x.artwork_path?(signed.get(x.artwork_path)?.url||''):''
+  })).filter(x=>x.url);
+  if(!storyMusicCatalog.length){
+   host.innerHTML='<div class="tiny" style="color:#f0b7b7">Music files could not be accessed. Please ask the admin to check the Social music storage permissions.</div>';
+   return;
+  }
   renderStoryMusicRows();
- }catch(e){host.innerHTML='<div class="tiny" style="color:#b33">Music library load nahi hui: '+safe(e.message||'Please retry')+'</div>';}
+ }catch(e){
+  console.error('Story music library load failed:',e);
+  host.innerHTML='<div class="tiny" style="color:#f0b7b7">Music library load nahi hui: '+safe(e.message||'Please retry')+'</div>';
+ }finally{window.__storyMusicLoading=false;}
 }
 function formatStoryTrackDuration(value){const n=Math.max(0,Math.floor(Number(value)||0));return Math.floor(n/60)+':'+String(n%60).padStart(2,'0');}
 function renderStoryMusicRows(){
@@ -2615,7 +2649,7 @@ function renderStoryMusicRows(){
  const q=($('storyMusicSearch')?.value||'').trim().toLowerCase();let saved=[];try{saved=JSON.parse(localStorage.getItem('smStorySavedMusic')||'[]');if(!Array.isArray(saved))saved=[];}catch(e){saved=[];}
  const savedSet=new Set(saved.map(String));let rows=[...(storyMusicCatalog||[])];if(tab==='saved')rows=rows.filter(x=>savedSet.has(String(x.id)));if(tab==='trending')rows=rows.slice().reverse();if(q)rows=rows.filter(x=>(x.title+' '+(x.artist||'')).toLowerCase().includes(q));
  if(!rows.length){host.innerHTML='<div class="sm-pdf-empty">'+(tab==='saved'?'No saved songs yet. Tap ☆ beside a track to save it.':'No tracks found. Try another search.')+'</div>';return;}
- host.innerHTML=rows.map(x=>'<div class="sm-pdf-track '+(storySelectedMusic?.id===x.id?'selected':'')+'" data-story-track="'+safe(x.id)+'"><button type="button" class="sm-pdf-track-main">'+(x.artworkUrl?'<img src="'+safe(x.artworkUrl)+'" alt="">':'<span class="sm-pdf-track-art">♫</span>')+'<span class="sm-pdf-track-info"><b>'+safe(x.title)+'</b><small>'+safe(x.artist||'Original audio')+' · '+Math.min(30,Number(x.duration_seconds)||30).toFixed(0)+'s</small></span></button><button type="button" class="sm-pdf-track-save '+(savedSet.has(String(x.id))?'saved':'')+'" aria-label="Save track">'+(savedSet.has(String(x.id))?'★':'☆')+'</button></div>').join('');
+ host.innerHTML=rows.map(x=>'<div class="sm-pdf-track '+(storySelectedMusic?.id===x.id?'selected':'')+'" data-story-track="'+safe(x.id)+'"><button type="button" class="sm-pdf-track-main">'+(x.artworkUrl?'<img src="'+safe(x.artworkUrl)+'" alt="" loading="lazy" decoding="async">':'<span class="sm-pdf-track-art">♫</span>')+'<span class="sm-pdf-track-info"><b>'+safe(x.title)+'</b><small>'+safe(x.artist||'Original audio')+' · '+Math.min(30,Number(x.duration_seconds)||30).toFixed(0)+'s</small></span></button><button type="button" class="sm-pdf-track-save '+(savedSet.has(String(x.id))?'saved':'')+'" aria-label="Save track">'+(savedSet.has(String(x.id))?'★':'☆')+'</button></div>').join('');
  host.querySelectorAll('[data-story-track]').forEach(row=>{row.querySelector('.sm-pdf-track-main')?.addEventListener('click',()=>selectStoryLibraryTrack(row.dataset.storyTrack));row.querySelector('.sm-pdf-track-save')?.addEventListener('click',e=>toggleStoryMusicSaved(row.dataset.storyTrack,e));});
 }
 function setStoryMusicTab(tab,button){window.storyMusicTab=tab;document.querySelectorAll('.sm-pdf-music-tabs button').forEach(b=>b.classList.toggle('active',b===button));if(tab==='original')clearStoryMusicSelection();renderStoryMusicRows();}
@@ -4918,6 +4952,17 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
   flex-basis:76px!important;
  }
 }
+</style>
+<style id="story-music-fast-loading-fix-v1">
+#modalBack.story-mode .sm-pdf-track{content-visibility:auto;contain-intrinsic-size:76px}
+#modalBack.story-mode .sm-pdf-track-main{min-height:62px}
+#modalBack.story-mode .sm-pdf-track-main img,
+#modalBack.story-mode .sm-pdf-track-art{
+ width:52px;height:52px;min-width:52px;min-height:52px;flex:0 0 52px;
+ display:grid;place-items:center;object-fit:cover;border-radius:10px;
+ background:linear-gradient(135deg,#1d3854,#0d1b2e);
+}
+#modalBack.story-mode #storyMusicAudioPreview{display:block;width:100%;max-width:100%}
 </style>
 </body>
 </html>
