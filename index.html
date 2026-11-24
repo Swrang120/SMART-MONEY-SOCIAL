@@ -1495,7 +1495,27 @@ body .profile-story-dot{display:none!important}
  #view-home .post-head .post-follow,#view-profile .post-head .post-follow{padding:6px 7px!important;font-size:10px!important}
 }
 </style>
-</head>
+<style id="social-composer-contrast-fix">
+#view-home .composer input{background:#fff!important;color:#172536!important;border:1px solid #b8c5d3!important}
+#view-home .composer input::placeholder{color:#596b7d!important;opacity:1!important}
+#view-home .composer-actions{align-items:center!important}
+#view-home .composer-actions button{background:#edf4fb!important;color:#17324b!important;border:1px solid #b8cbdc!important;font-weight:750!important}
+#modalBack .modal{background:#fff!important;color:#172536!important;border:1px solid #cbd5e1!important}
+#modalBack .modal h3,#modalBack .modal p,#modalBack .modal label,#modalBack .modal .field-help{color:#26384a!important}
+#modalBack .modal .field label{font-size:13px!important;font-weight:750!important}
+#modalBack .modal input,#modalBack .modal textarea,#modalBack .modal select{background:#fff!important;color:#172536!important;border:1px solid #aebdcb!important;min-height:44px}
+#modalBack .modal textarea{min-height:120px!important;line-height:1.5!important}
+#modalBack .modal input::placeholder,#modalBack .modal textarea::placeholder{color:#66788a!important;opacity:1!important}
+#modalBack .create-post-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+#modalBack .create-post-head h3{margin:0 0 4px!important;color:#12263a!important}
+#modalBack .create-post-head p{margin:0;color:#526579!important;font-size:13px}
+#modalBack .create-post-close{width:36px;height:36px;border:1px solid #cbd5e1;border-radius:10px;background:#f1f5f9;color:#24364a;font-size:24px;line-height:1}
+#modalBack .post-style-preview{color:#fff!important;text-shadow:0 1px 2px #0008}
+#modalBack .post-style-preview.bg-rose,#modalBack .post-style-preview.bg-citrus,#modalBack .post-style-preview.bg-mountain,#modalBack .post-style-preview.bg-paper{color:#172536!important;text-shadow:none}
+#modalBack .field-help{display:block;font-size:11px;color:#526579!important}
+#modalBack .modal-actions .soft{background:#edf2f7!important;color:#20354a!important;border:1px solid #bdc9d5!important}
+@media(max-width:520px){#modalBack .modal{padding:16px!important}#modalBack .modal-actions{position:sticky;bottom:-16px;background:#fff;padding:12px 0 2px;z-index:2}}
+</style></head>
 <body>
 
 <div class="app">
@@ -2403,13 +2423,29 @@ async function replyToStory(id){
  try{const {error}=await supabaseClient.from('social_story_replies').insert({story_id:id,user_id:myId(),body});if(error)throw error;await loadSocialData();viewStory(id);showToast('Story reply sent');}catch(e){showToast(e.message||'Could not send story reply');}
 }
 async function deleteStory(id){try{const s=db.stories.find(x=>x.id===id);if(s?.mediaPath){const stickerPaths=(s.stickers||[]).filter(o=>o.type==='image'&&o.path).map(o=>o.path);const {error:mediaError}=await supabaseClient.storage.from(bucket).remove([s.mediaPath,...stickerPaths]);if(mediaError)throw new Error('Story media delete nahi hua: '+mediaError.message+'. Story record abhi remove nahi kiya gaya. Please retry.');}const {error}=await supabaseClient.from('social_stories').delete().eq('id',id).eq('user_id',myId());if(error)throw error;closeModal();await loadSocialData();showToast('Story aur uska media permanently delete ho gaya.');}catch(e){showToast(e.message||'Story delete failed');}}
-function openComposer(kind='choose'){if(!myId()){showToast('Please sign in to create a post.');return;}if(kind==='choose'){openModal('<h3>Create a post</h3><p class="muted">Choose how you want to share with the community.</p><div class="post-type-choices"><button class="post-type-choice" onclick="openComposer(\'text\')"><span>✍️</span><b>Write Post</b><small>Share text with a beautiful background. No photo upload.</small></button><button class="post-type-choice" onclick="openComposer(\'photo\')"><span>📸</span><b>Photo Post</b><small>Upload a photo and add an optional caption.</small></button></div>');return;}const isPhoto=kind==='photo';const styles=[['sunset','Sunset Glow'],['ocean','Ocean Blue'],['forest','Forest Green'],['aurora','Aurora Lights'],['lavender','Lavender Dream'],['rose','Rose Bloom'],['gold','Golden Hour'],['midnight','Midnight Sky'],['citrus','Citrus Pop'],['mountain','Mountain Mist'],['cosmic','Cosmic Nebula'],['paper','Classic Paper']];const opts=styles.map(([v,l])=>'<option value="'+v+'">'+l+'</option>').join('');const body=isPhoto?'<div class="field"><label>Photo (required)</label><input id="newMedia" type="file" accept="image/jpeg,image/png,image/webp,image/gif" onchange="previewNewPostMedia()"><div id="mediaPreview" class="tiny muted"></div></div><div class="field"><label>Caption (optional)</label><textarea id="newText" maxlength="1500" placeholder="Write a caption for your photo..."></textarea></div>':'<div class="field"><label>Your text</label><textarea id="newText" maxlength="1500" placeholder="What would you like to share?" oninput="updatePostStylePreview()"></textarea></div><div class="field"><label>Choose a background</label><select id="newBackgroundStyle" onchange="updatePostStylePreview()" style="width:100%;padding:12px;border-radius:10px">'+opts+'</select><div id="postStylePreview" class="post-style-preview bg-sunset">Your words will appear here ✨</div></div>';openModal('<h3>'+(isPhoto?'Create Photo Post':'Write Post')+'</h3><div class="preview-note">'+(isPhoto?'Upload a photo and add a caption if you like.':'Write-only post: photo upload is not available in this mode.')+'</div>'+body+'<div class="field"><label>Category</label><select id="newCategory" style="width:100%;padding:12px;border-radius:10px"><option>General</option><option>Photography</option><option>Nature</option><option>Travel</option><option>Food</option><option>Art & Design</option><option>Education</option><option>Technology</option><option>Music</option><option>Sports</option><option>Entertainment</option><option>Other</option></select></div><div class="field"><label>Title (optional)</label><input id="newTitle" maxlength="100" placeholder="Add a title..."></div><div class="field"><label>Like count</label><select id="newHideLikes"><option value="false">Show like count</option><option value="true">Hide like count</option></select></div><div class="field"><label>Comments</label><select id="newCommentsEnabled"><option value="true">Allow comments</option><option value="false">Turn comments off</option></select></div><div class="modal-actions"><button class="soft" onclick="openComposer()">Back</button><button class="primary" onclick="createPost(\''+kind+'\')">Publish Post</button></div>');if(!isPhoto)updatePostStylePreview();}
+function openComposer(kind='choose'){
+ if(!myId()){showToast('Please sign in to create a post.');return;}
+ const styles=[['sunset','Sunset Glow'],['ocean','Ocean Blue'],['forest','Forest Green'],['aurora','Aurora Lights'],['lavender','Lavender Dream'],['rose','Rose Bloom'],['gold','Golden Hour'],['midnight','Midnight Sky'],['citrus','Citrus Pop'],['mountain','Mountain Mist'],['cosmic','Cosmic Nebula'],['paper','Classic Paper']];
+ const opts=styles.map(([v,l])=>'<option value="'+v+'">'+l+'</option>').join('');
+ const focusPhoto=kind==='photo';
+ openModal('<div class="create-post-head"><div><h3>Create a post</h3><p>Write your message and optionally add a photo.</p></div><button type="button" class="create-post-close" onclick="closeModal()" aria-label="Close">×</button></div>'+
+ '<div class="field"><label for="newText">Write something</label><textarea id="newText" maxlength="1500" placeholder="What would you like to share?" oninput="updatePostStylePreview()"></textarea></div>'+
+ '<div class="field"><label for="newMedia">Add photo</label><input id="newMedia" type="file" accept="image/jpeg,image/png,image/webp,image/gif" onchange="previewNewPostMedia()"><div id="mediaPreview" class="tiny muted"></div></div>'+
+ '<div class="field" id="postBackgroundField"><label for="newBackgroundStyle">Text post background</label><select id="newBackgroundStyle" onchange="updatePostStylePreview()">'+opts+'</select><div id="postStylePreview" class="post-style-preview bg-sunset">Your words will appear here ✨</div><small class="field-help">A photo post will use your uploaded photo instead.</small></div>'+
+ '<div class="field"><label for="newCategory">Category</label><select id="newCategory"><option>General</option><option>Photography</option><option>Nature</option><option>Travel</option><option>Food</option><option>Art & Design</option><option>Education</option><option>Technology</option><option>Music</option><option>Sports</option><option>Entertainment</option><option>Other</option></select></div>'+
+ '<div class="field"><label for="newTitle">Title (optional)</label><input id="newTitle" maxlength="100" placeholder="Add a title..."></div>'+
+ '<div class="field"><label for="newHideLikes">Like count</label><select id="newHideLikes"><option value="false">Show like count</option><option value="true">Hide like count</option></select></div>'+
+ '<div class="field"><label for="newCommentsEnabled">Comments</label><select id="newCommentsEnabled"><option value="true">Allow comments</option><option value="false">Turn comments off</option></select></div>'+
+ '<div class="modal-actions"><button class="soft" type="button" onclick="closeModal()">Cancel</button><button class="primary" type="button" onclick="createPost(&quot;mixed&quot;)">Publish Post</button></div>');
+ if(focusPhoto)setTimeout(()=>document.getElementById('newMedia')?.focus(),50);
+ updatePostStylePreview();
+}
 function updatePostStylePreview(){const el=$('postStylePreview');if(!el)return;const style=$('newBackgroundStyle')?.value||'sunset';el.className='post-style-preview bg-'+style;el.textContent=$('newText')?.value.trim()||'Your text will appear here ✨';}
 let postPreviewObjectUrl=null,postPublishInFlight=false;
 function previewNewPostMedia(){const f=$('newMedia')?.files?.[0],el=$('mediaPreview');if(!el)return;if(postPreviewObjectUrl){URL.revokeObjectURL(postPreviewObjectUrl);postPreviewObjectUrl=null;}if(!f){el.textContent='';return;}if(!['image/jpeg','image/png','image/webp','image/gif'].includes(f.type)){el.textContent='Choose JPG, PNG, WEBP or GIF.';return;}postPreviewObjectUrl=URL.createObjectURL(f);el.innerHTML='<img src="'+postPreviewObjectUrl+'" alt="Photo preview" style="display:block;width:100%;max-height:220px;object-fit:contain;border-radius:12px;margin-top:8px">';}
 async function createPost(kind='text'){
  if(postPublishInFlight){showToast('Your post is already being uploaded. Please wait.');return;}
- const body=$('newText')?.value.trim()||'',title=$('newTitle')?.value.trim()||'',f=$('newMedia')?.files?.[0]||null,isPhoto=kind==='photo',backgroundStyle=isPhoto?'none':$('newBackgroundStyle')?.value||'sunset';
+ const body=$('newText')?.value.trim()||'',title=$('newTitle')?.value.trim()||'',f=$('newMedia')?.files?.[0]||null,isPhoto=kind==='photo'||!!f,backgroundStyle=isPhoto?'none':$('newBackgroundStyle')?.value||'sunset';
  if(isPhoto&&!f){showToast('Please choose a photo to publish.');return;}
  if(!isPhoto&&!body&&!title){showToast('Please write something before publishing.');return;}
  if(f&&!['image/jpeg','image/png','image/webp','image/gif'].includes(f.type)){showToast('Choose a JPG, PNG, WEBP or GIF photo.');return;}
