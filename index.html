@@ -2287,21 +2287,31 @@ function renderStories(){const groups=orderedStoryGroups().filter(g=>!g.seen);co
 function renderSuggestions(){$('suggestions').innerHTML=people.filter(p=>p.id!==myId()).slice(0,8).map(p=>'<div class="person">'+avatar(p)+'<div class="grow"><b class="tiny">'+safe(p.name)+'</b><div class="tiny muted">'+safe(p.handle)+'</div></div><button class="follow '+(db.following.includes(p.id)?'on':'')+'" onclick="toggleFollow(\''+p.id+'\')">'+(db.following.includes(p.id)?'Following':'Follow')+'</button></div>').join('')||'<p class="tiny muted">No other members yet.</p>';}
 function messageMember(id){if(!id||id===myId())return;location.href=SOCIAL_BASE+'community.html?messages=1&peer='+encodeURIComponent(id);}
 let followListState=null;
-async function openFollowList(type,userId){followListState={type,userId};await renderFollowList();}
+async function openFollowList(type,userId){
+ if(!userId||!['followers','following'].includes(type)){showToast('Could not open this list.');return;}
+ followListState={type,userId};
+ await renderFollowList();
+}
 async function renderFollowList(){
  const state=followListState;if(!state)return;
  try{
-  const {data,error}=await supabaseClient.from('social_follows').select('follower_id,following_id');if(error)throw error;
-  const edges=data||[],ids=edges.filter(f=>state.type==='followers'?f.following_id===state.userId:f.follower_id===state.userId).map(f=>state.type==='followers'?f.follower_id:f.following_id);
+  const {data,error}=await supabaseClient.from('social_follows').select('follower_id,following_id');
+  if(error)throw error;
+  const edges=data||[];
+  const ids=edges.filter(f=>state.type==='followers'?f.following_id===state.userId:f.follower_id===state.userId)
+   .map(f=>state.type==='followers'?f.follower_id:f.following_id);
   const unique=[...new Set(ids)],title=state.type==='followers'?'Followers':'Following';
   const rows=unique.map(id=>{
    const p=person(id),on=db.following.includes(id),followsMe=edges.some(f=>f.follower_id===id&&f.following_id===myId());
-   const label=on?'Following · Unfollow':(followsMe?'Follow Back':'Follow');
-   const action=id===myId()?'':'<button class="follow '+(on?'on':'')+'" onclick="toggleFollow(\''+id+'\')">'+label+'</button>';
-   return '<div class="follow-list-row">'+avatar(p)+'<div class="grow"><b>'+safe(p.name)+'</b><div class="tiny muted">'+safe(p.handle)+'</div></div>'+action+'</div>';
+   const label=on?'✓ Following':(followsMe?'Follow Back':'＋ Follow');
+   const action=id===myId()?'':'<button type="button" class="follow '+(on?'on':'')+'" onclick="event.stopPropagation();toggleFollow(\''+id+'\')">'+label+'</button>';
+   return '<div class="follow-list-row" role="button" tabindex="0" onclick="closeModal();openProfile(\''+id+'\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();closeModal();openProfile(\''+id+'\')}">'+avatar(p)+'<div class="grow"><b>'+safe(p.name||'Community Member')+'</b><div class="tiny muted">'+safe(p.handle||'@member')+'</div></div>'+action+'</div>';
   }).join('');
-  openModal('<div class="follow-list-head"><div><h3>'+title+'</h3><div class="tiny muted">'+unique.length+' people</div></div><button class="iconbtn" onclick="followListState=null;closeModal()">×</button></div><div class="follow-list-items">'+(rows||'<div class="empty">No '+title.toLowerCase()+' yet.</div>')+'</div>');
- }catch(e){showToast(e.message||'Could not load follow list');}
+  openModal('<div class="follow-list-head"><div><h3>'+title+'</h3><div class="tiny muted">'+unique.length+' people</div></div><button type="button" class="iconbtn" onclick="followListState=null;closeModal()">×</button></div><div class="follow-list-items">'+(rows||'<div class="empty">No '+title.toLowerCase()+' yet.</div>')+'</div>');
+ }catch(e){
+  console.error('Could not load profile follow list:',e);
+  showToast('Could not load '+(state.type==='followers'?'followers':'following')+'. '+(e.message||'Please try again.'));
+ }
 }
 function renderProfile(){
  const p=person(activeProfile||myId()),own=activeProfile===myId();
@@ -4846,6 +4856,21 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
 }
 .post-text,.comment-body,.story-reply-row{overflow-wrap:anywhere;word-break:normal}
 #feed .post img.post-media{content-visibility:auto}
+</style>
+<style id="follow-list-profile-navigation-fix">
+#modalBack:not(.story-mode) .modal:has(.follow-list-items){
+ background:#0d1b30!important;color:#f4f7ff!important;border:1px solid #34506e!important;
+}
+#modalBack:not(.story-mode) .follow-list-head h3,
+#modalBack:not(.story-mode) .follow-list-head .tiny,
+#modalBack:not(.story-mode) .follow-list-row,
+#modalBack:not(.story-mode) .follow-list-row b,
+#modalBack:not(.story-mode) .follow-list-row .muted{color:#f4f7ff!important}
+#modalBack:not(.story-mode) .follow-list-row{
+ background:#142844!important;border-color:#34506e!important;cursor:pointer;
+}
+#modalBack:not(.story-mode) .follow-list-row:focus-visible{outline:2px solid #55cfff;outline-offset:2px}
+#modalBack:not(.story-mode) .follow-list-row .avatar{flex:0 0 42px}
 </style>
 </body>
 </html>
