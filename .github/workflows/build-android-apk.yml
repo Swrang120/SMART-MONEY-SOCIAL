@@ -1,0 +1,83 @@
+name: Build Smart Money Social Android APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-apk-build
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build Android Debug APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Prepare complete website for the Android app
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p www
+          rsync -a ./ www/ \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='www/' \
+            --exclude='node_modules/' \
+            --exclude='android/' \
+            --exclude='supabase/' \
+            --exclude='README.md'
+          test -s www/index.html
+          test -s www/community.html
+          test -s www/admin.html
+          echo "Website pages and assets copied:"
+          find www -maxdepth 2 -type f | sort | head -200
+
+      - name: Initialize Capacitor Android project
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm init -y
+          npm install --no-save --no-audit --no-fund \
+            @capacitor/core@6.2.1 \
+            @capacitor/cli@6.2.1 \
+            @capacitor/android@6.2.1
+          npx cap init "Smart Money Social" "com.smartmoney.social" --web-dir=www
+          npx cap add android
+          npx cap sync android
+
+      - name: Build Debug APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd android
+          chmod +x gradlew
+          ./gradlew --no-daemon assembleDebug
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: smart-money-social-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14
