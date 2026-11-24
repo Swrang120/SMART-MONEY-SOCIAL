@@ -1724,7 +1724,15 @@ function subscribeSocialRealtime(){
   .on('postgres_changes',{event:'*',schema:'public',table:'social_access',filter:'user_id=eq.'+myId()},async()=>{try{const {data}=await supabaseClient.from('social_access').select('access_status').eq('user_id',myId()).maybeSingle();canPublish=isAdmin||data?.access_status==='approved';$('accessNotice').textContent=canPublish?'Your Social account is active. You can publish posts and stories.':'You can view the entire community and interact. Posting photos, videos and stories unlocks after Social admin approval.';}catch(e){console.warn(e);}})
   .subscribe();
 }
-function queueSocialRefresh(){clearTimeout(socialRealtimeTimer);socialRealtimeTimer=setTimeout(()=>loadSocialData().catch(e=>console.error('Social realtime refresh:',e)),350);}
+function queueSocialRefresh(payload){
+ const row=payload?.new||payload?.old||{},uid=myId();
+ if(uid&&[row.user_id,row.follower_id,row.viewer_id].some(x=>x&&x===uid))return;
+ clearTimeout(socialRealtimeTimer);
+ socialRealtimeTimer=setTimeout(()=>{
+  if(document.visibilityState==='hidden')return;
+  loadSocialData().catch(e=>console.error('Social realtime refresh:',e));
+ },1400);
+}
 function toggleMobileMenu(force){const panel=$('mobileMenuPanel'),button=document.querySelector('.mobile-menu-trigger');if(!panel)return;const open=typeof force==='boolean'?force:!panel.classList.contains('open');panel.classList.toggle('open',open);panel.setAttribute('aria-hidden',String(!open));button?.setAttribute('aria-expanded',String(open));}
 function mobileMenuGo(view){toggleMobileMenu(false);showView(view);}
 let activeStandaloneSetting=null;
@@ -1879,7 +1887,17 @@ async function reportComment(postId,commentId){
   window.location.href='mailto:smartmoneysupport1@gmail.com?subject='+subject+'&body='+body;
  }catch(e){showToast(e.message||'Could not report comment');}
 }
-async function toggleLike(id){try{const post=db.posts.find(x=>x.id===id);if(!post||post.status!=='published'){showToast('You can like a post after admin approval.');return;}const exists=post.likes.includes(myId());const q=exists?supabaseClient.from('social_likes').delete().eq('post_id',id).eq('user_id',myId()):supabaseClient.from('social_likes').insert({post_id:id,user_id:myId()});const {error}=await q;if(error)throw error;await loadSocialData();}catch(e){showToast(e.message||'Could not update like');}}
+const socialPendingActions=new Set();
+async function toggleLike(id){
+ const post=db.posts.find(x=>x.id===id),uid=myId();if(!post||post.status!=='published'||!uid){showToast('You can like a post after admin approval.');return;}
+ const key='like:'+id;if(socialPendingActions.has(key))return;socialPendingActions.add(key);
+ const existed=post.likes.includes(uid);
+ post.likes=existed?post.likes.filter(x=>x!==uid):[...post.likes,uid];
+ renderFeed();
+ try{const q=existed?supabaseClient.from('social_likes').delete().eq('post_id',id).eq('user_id',uid):supabaseClient.from('social_likes').insert({post_id:id,user_id:uid});const {error}=await q;if(error)throw error;}
+ catch(e){post.likes=existed?[...post.likes,uid]:post.likes.filter(x=>x!==uid);renderFeed();showToast(e.message||'Could not update like');}
+ finally{socialPendingActions.delete(key);}
+}
 async function addComment(id){
  const post=db.posts.find(x=>x.id===id);
  if(!myId()){showToast('Please sign in to comment.');return;}
@@ -1907,7 +1925,13 @@ function retryPostMedia(element,path){
  .finally(()=>{element.dataset.retrying='0';});
 }
 function focusComment(id){$('comment-'+id)?.focus();}
-async function toggleSave(id){try{const exists=db.saved.includes(id);const q=exists?supabaseClient.from('social_saved_posts').delete().eq('post_id',id).eq('user_id',myId()):supabaseClient.from('social_saved_posts').insert({post_id:id,user_id:myId()});const {error}=await q;if(error)throw error;await loadSocialData();showToast(exists?'Removed from saved':'Post saved');}catch(e){showToast(e.message||'Could not save post');}}
+async function toggleSave(id){
+ const uid=myId();if(!uid)return;const key='save:'+id;if(socialPendingActions.has(key))return;socialPendingActions.add(key);
+ const existed=db.saved.includes(id);db.saved=existed?db.saved.filter(x=>x!==id):[...db.saved,id];renderFeed();if(document.getElementById('view-saved')?.classList.contains('active'))renderSaved();
+ try{const q=existed?supabaseClient.from('social_saved_posts').delete().eq('post_id',id).eq('user_id',uid):supabaseClient.from('social_saved_posts').insert({post_id:id,user_id:uid});const {error}=await q;if(error)throw error;showToast(existed?'Removed from saved':'Post saved');}
+ catch(e){db.saved=existed?[...db.saved,id]:db.saved.filter(x=>x!==id);renderFeed();if(document.getElementById('view-saved')?.classList.contains('active'))renderSaved();showToast(e.message||'Could not save post');}
+ finally{socialPendingActions.delete(key);}
+}
 async function sharePost(id){const p=db.posts.find(x=>x.id===id);if(!p)return;const text=(p.text||'Smart Money Social post')+' — Smart Money Social';try{if(navigator.share)await navigator.share({title:'Smart Money Social',text,url:location.href});else{await navigator.clipboard.writeText(text);showToast('Post text copied');}}catch(e){}}
 function postMenu(id){const p=db.posts.find(x=>x.id===id);if(!p)return;const own=p.user===myId();openModal('<h3>Post options</h3><button class="soft" style="width:100%;margin:5px 0" onclick="sharePost(\''+id+'\');closeModal()">↗ Share post</button>'+(own?'<button class="primary" style="width:100%;margin:5px 0" onclick="editPost(\''+id+'\')">✎ Edit post</button><button class="soft" style="width:100%;margin:5px 0;color:var(--red)" onclick="deletePost(\''+id+'\')">Delete post</button>':'<button class="soft" style="width:100%;margin:5px 0;color:var(--red)" onclick="reportPost(\''+id+'\')">⚑ Report post</button>')+ '<div class="modal-actions"><button class="soft" onclick="closeModal()">Close</button></div>');
   document.querySelectorAll('[data-task-toggle]').forEach(btn=>btn.addEventListener('click',()=>adminToggleRewardTask(btn.dataset.taskToggle,btn.dataset.taskActive==='true')));
@@ -2321,7 +2345,15 @@ async function savePostEdit(id){
 }
 async function deletePost(id){try{const p=db.posts.find(x=>x.id===id);if(p?.mediaPath){const {error:mediaError}=await supabaseClient.storage.from(bucket).remove([p.mediaPath]);if(mediaError)throw new Error('Photo delete nahi ho paya: '+mediaError.message+'. Post abhi remove nahi kiya gaya. Please retry.');}const {error}=await supabaseClient.from('social_posts').delete().eq('id',id).eq('user_id',myId());if(error)throw error;closeModal();await loadSocialData();showToast('Post aur uski photo permanently delete ho gayi.');}catch(e){showToast(e.message||'Delete failed');}}
 async function reportPost(id){const reason=prompt('Why are you reporting this post?');if(!reason)return;try{const {error}=await supabaseClient.from('social_reports').insert({reporter_id:myId(),post_id:id,reason,details:''});if(error)throw error;closeModal();showToast('Report sent to Social admin');}catch(e){showToast(e.message||'Report failed');}}
-async function toggleFollow(id){if(!id||id===myId())return;try{const exists=db.following.includes(id);const q=exists?supabaseClient.from('social_follows').delete().eq('follower_id',myId()).eq('following_id',id):supabaseClient.from('social_follows').upsert({follower_id:myId(),following_id:id},{onConflict:'follower_id,following_id',ignoreDuplicates:true});const {error}=await q;if(error)throw error;await loadSocialData();if(followListState)renderFollowList();}catch(e){showToast(e.message||'Follow update failed');}}
+async function toggleFollow(id){
+ const uid=myId();if(!id||id===uid)return;const key='follow:'+id;if(socialPendingActions.has(key))return;socialPendingActions.add(key);
+ const existed=db.following.includes(id);db.following=existed?db.following.filter(x=>x!==id):[...db.following,id];
+ db.followersById=db.followersById||{};db.followersById[id]=Math.max(0,(db.followersById[id]||0)+(existed?-1:1));
+ renderFeed();renderSuggestions();if(followListState)renderFollowList();if(activeProfile===id)renderProfile();
+ try{const q=existed?supabaseClient.from('social_follows').delete().eq('follower_id',uid).eq('following_id',id):supabaseClient.from('social_follows').upsert({follower_id:uid,following_id:id},{onConflict:'follower_id,following_id',ignoreDuplicates:true});const {error}=await q;if(error)throw error;}
+ catch(e){db.following=existed?[...db.following,id]:db.following.filter(x=>x!==id);db.followersById[id]=Math.max(0,(db.followersById[id]||0)+(existed?1:-1));renderFeed();renderSuggestions();if(followListState)renderFollowList();if(activeProfile===id)renderProfile();showToast(e.message||'Follow update failed');}
+ finally{socialPendingActions.delete(key);}
+}
 function notify(){/* Notifications are generated server-side when community activity triggers are enabled. */}
 function orderedStoryGroups(){const active=db.stories.filter(s=>s.status==='published'||s.user===myId());const groups=new Map();active.forEach(s=>{if(!groups.has(s.user))groups.set(s.user,[]);groups.get(s.user).push(s);});const rows=[...groups.entries()].map(([user,items])=>({user,items:items.sort((a,b)=>b.created-a.created),seen:user!==myId()&&items.some(x=>(x.viewers||[]).includes(myId()))}));rows.sort((a,b)=>a.user===myId()?-1:b.user===myId()?1:Number(a.seen)-Number(b.seen)||b.items[0].created-a.items[0].created);return rows;}
 function renderStories(){const groups=orderedStoryGroups().filter(g=>!g.seen);const mine='<button type="button" class="story story-add" aria-label="Upload a story" onclick="openStoryComposer()"><span class="story-ring"><span class="story-add-avatar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h2l1.4-2h4.2l1.4 2h2A2.5 2.5 0 0 1 20 8.5v9a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 17.5zM12 10a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M18 2v6m-3-3h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span></span><span>＋ Add story</span></button>';const html=groups.map(g=>{const p=person(g.user),s=g.items[0],thumb=s.kind==='video'?'<div class="avatar"><video muted playsinline preload="metadata" src="'+safe(s.media)+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%"></video></div>':'<div class="avatar"><img loading="lazy" src="'+safe(s.media)+'" alt=""></div>';return '<div class="story '+(g.seen?'story-seen':'story-unseen')+'" role="button" tabindex="0" onclick="viewStory(\''+s.id+'\')"><div class="story-ring">'+thumb+'</div>'+safe((p.name||'Member').split(' ')[0])+'</div>';}).join('');$('stories').innerHTML=mine+html;}
