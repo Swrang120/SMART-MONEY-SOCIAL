@@ -1,70 +1,191 @@
 name: Build Smart Money Social Android APK
-
 on:
   push:
     branches: [main]
   workflow_dispatch:
-
 permissions:
-  contents: read
-
+  contents: write
 concurrency:
   group: android-apk-build
   cancel-in-progress: true
-
 jobs:
   build:
-    name: Build Android Debug APK
+    name: Build Android APK
     runs-on: ubuntu-latest
     timeout-minutes: 30
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
-
-      - name: Prepare complete website for the Android app
+      - name: Configure persistent Android signing key (optional until one-time setup)
+        if: ${{ secrets.ANDROID_DEBUG_KEYSTORE_BASE64 != '' }
+        shell: bash
+        env:
+          ANDROID_DEBUG_KEYSTORE_BASE64: ${{ secrets.ANDROID_DEBUG_KEYSTORE_BASE64 }
+        run: |
+          set -euo pipefail
+          mkdir -p "$HOME/.android"
+          echo "$ANDROID_DEBUG_KEYSTORE_BASE64" | base64 --decode > "$HOME/.android/debug.keystore"
+          chmod 600 "$HOME/.android/debug.keystore"
+          keytool -list -keystore "$HOME/.android/debug.keystore" -storepass android -alias androiddebugkey >/dev/null
+          echo "Persistent Android signing key configured."
+      - name: Prepare website
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p www
-          rsync -a ./ www/ \
-            --exclude='.git/' \
-            --exclude='.github/' \
-            --exclude='www/' \
-            --exclude='node_modules/' \
-            --exclude='android/' \
-            --exclude='supabase/' \
-            --exclude='README.md'
+          rsync -a ./ www/ --exclude='.git/' --exclude='.github/' --exclude='www/' --exclude='node_modules/' --exclude='android/' --exclude='supabase/' --exclude='README.md'
           test -s www/index.html
-          test -s www/community.html
-          test -s www/admin.html
-          echo "Website pages and assets copied:"
-          find www -maxdepth 2 -type f | sort | head -200
-
+          test -s www/app-updater.js
       - name: Initialize Capacitor Android project
         shell: bash
         run: |
           set -euo pipefail
           npm init -y
-          npm install --no-save --no-audit --no-fund \
-            @capacitor/core@6.2.1 \
-            @capacitor/cli@6.2.1 \
-            @capacitor/android@6.2.1
+          npm install --no-save --no-audit --no-fund @capacitor/core@6.2.1 @capacitor/cli@6.2.1 @capacitor/android@6.2.1
           npx cap init "Smart Money Social" "com.smartmoney.social" --web-dir=www
           npx cap add android
           npx cap sync android
-
+      - name: Add native APK updater bridge
+        shell: bash
+        env:
+          VERSION_CODE: ${{ github.run_number }
+          VERSION_NAME: 1.${{ github.run_number }
+        run: |
+          set -euo pipefail
+          APP_DIR="android/app/src/main"
+          mkdir -p "$APP_DIR/java/com/smartmoney/social" "$APP_DIR/res/xml"
+          cat > "$APP_DIR/java/com/smartmoney/social/MainActivity.java" <<'JAVA'
+          package com.smartmoney.social;
+          import android.os.Bundle;
+          import com.getcapacitor.BridgeActivity;
+          public class MainActivity extends BridgeActivity {
+            @Override public void onCreate(Bundle savedInstanceState) {
+              registerPlugin(SmartAppUpdaterPlugin.class);
+              super.onCreate(savedInstanceState);
+            }
+          }
+          JAVA
+          cat > "$APP_DIR/java/com/smartmoney/social/SmartAppUpdaterPlugin.java" <<'JAVA'
+          package com.smartmoney.social;
+          import android.app.DownloadManager;
+          import android.content.Context;
+          import android.content.Intent;
+          import android.database.Cursor;
+          import android.net.Uri;
+          import android.os.Build;
+          import android.os.Environment;
+          import android.os.Handler;
+          import android.os.Looper;
+          import android.provider.Settings;
+          import androidx.core.content.FileProvider;
+          import com.getcapacitor.JSObject;
+          import com.getcapacitor.Plugin;
+          import com.getcapacitor.PluginCall;
+          import com.getcapacitor.PluginMethod;
+          import com.getcapacitor.annotation.CapacitorPlugin;
+          import java.io.File;
+          @CapacitorPlugin(name = "SmartAppUpdater")
+          public class SmartAppUpdaterPlugin extends Plugin {
+            @PluginMethod public void getAppVersion(PluginCall call) {
+              JSObject result = new JSObject();
+              result.put("versionCode", BuildConfig.VERSION_CODE);
+              result.put("versionName", BuildConfig.VERSION_NAME);
+              call.resolve(result);
+            }
+            @PluginMethod public void installApk(PluginCall call) {
+              String url = call.getString("url", "");
+              if (url == null || !url.startsWith("https://github.com/Swrang120/SMART-MONEY-SOCIAL/releases/")) {
+                call.reject("Invalid update download URL."); return;
+              }
+              if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !getContext().getPackageManager().canRequestPackageInstalls()) {
+                Intent settings = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:" + getContext().getPackageName()));
+                getActivity().startActivity(settings);
+                JSObject result = new JSObject(); result.put("permissionRequired", true); call.resolve(result); return;
+              }
+              try {
+                File destination = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "smart-money-social-update.apk");
+                if (destination.exists()) destination.delete();
+                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+                request.setTitle("Smart Money Social update");
+                request.setDescription("Downloading the latest app version");
+                request.setMimeType("application/vnd.android.package-archive");
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                request.setDestinationInExternalFilesDir(getContext(), Environment.DIRECTORY_DOWNLOADS, "smart-money-social-update.apk");
+                DownloadManager manager = (DownloadManager) getContext().getSystemService(Context.DOWNLOAD_SERVICE);
+                long downloadId = manager.enqueue(request);
+                Handler handler = new Handler(Looper.getMainLooper());
+                long startedAt = System.currentTimeMillis();
+                Runnable poll = new Runnable() {
+                  @Override public void run() {
+                    DownloadManager.Query query = new DownloadManager.Query().setFilterById(downloadId);
+                    try (Cursor cursor = manager.query(query)) {
+                      if (cursor == null || !cursor.moveToFirst()) { call.reject("Could not read update download status."); return; }
+                      int status = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS));
+                      long downloaded = cursor.getLong(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
+                      long total = cursor.getLong(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
+                      JSObject progress = new JSObject(); progress.put("percent", total > 0 ? Math.min(100, (downloaded * 100) / total) : 0);
+                      notifyListeners("downloadProgress", progress);
+                      if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                        try {
+                          Uri apkUri = FileProvider.getUriForFile(getContext(), getContext().getPackageName() + ".fileprovider", destination);
+                          Intent install = new Intent(Intent.ACTION_VIEW);
+                          install.setDataAndType(apkUri, "application/vnd.android.package-archive");
+                          install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
+                          getContext().startActivity(install); call.resolve(new JSObject());
+                        } catch (Exception error) { call.reject("Download finished, but Android could not open the installer.", error); }
+                      } else if (status == DownloadManager.STATUS_FAILED) {
+                        int reason = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_REASON));
+                        call.reject("Update download failed. Android download error: " + reason);
+                      } else if (System.currentTimeMillis() - startedAt > 15 * 60 * 1000) {
+                        manager.remove(downloadId); call.reject("Update download timed out. Please try again.");
+                      } else { handler.postDelayed(this, 500); }
+                    } catch (Exception error) { call.reject("Update download could not be completed.", error); }
+                  }
+                };
+                handler.post(poll);
+              } catch (Exception error) { call.reject("Could not start the APK download.", error); }
+            }
+          }
+          JAVA
+          cat > "$APP_DIR/res/xml/sm_update_paths.xml" <<'XML'
+          <?xml version="1.0" encoding="utf-8"?>
+          <paths xmlns:android="http://schemas.android.com/apk/res/android">
+            <external-files-path name="sm_updates" path="Download/" />
+          </paths>
+          XML
+          python3 - <<'PY'
+          from pathlib import Path
+          import os, re
+          p=Path("android/app/src/main/AndroidManifest.xml")
+          s=p.read_text()
+          if "REQUEST_INSTALL_PACKAGES" not in s:
+              s=s.replace("<application", '<uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />\n    <application', 1)
+          provider='''<provider
+                  android:name="androidx.core.content.FileProvider"
+                  android:authorities="${applicationId}.fileprovider"
+                  android:exported="false"
+                  android:grantUriPermissions="true">
+                  <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/sm_update_paths" />
+              </provider>'''
+          if "androidx.core.content.FileProvider" not in s:
+              s=s.replace("</application>", provider+"\n    </application>", 1)
+          p.write_text(s)
+          gradle=Path("android/app/build.gradle")
+          g=gradle.read_text()
+          g,n1=re.subn(r'versionCode\s+\d+', 'versionCode '+os.environ['VERSION_CODE'], g, count=1)
+          g,n2=re.subn(r'versionName\s+"[^"]+"', 'versionName "'+os.environ['VERSION_NAME']+'"', g, count=1)
+          if n1 != 1 or n2 != 1: raise SystemExit("Could not set Android app version")
+          gradle.write_text(g)
+          PY
       - name: Build Debug APK
         shell: bash
         run: |
@@ -72,7 +193,7 @@ jobs:
           cd android
           chmod +x gradlew
           ./gradlew --no-daemon assembleDebug
-
+          "$ANDROID_HOME/build-tools/$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -1)/apksigner" verify --print-certs app/build/outputs/apk/debug/app-debug.apk
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
@@ -80,3 +201,13 @@ jobs:
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14
+      - name: Publish versioned APK release for in-app updates
+        if: ${{ secrets.ANDROID_DEBUG_KEYSTORE_BASE64 != '' && github.ref == 'refs/heads/main' }
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: sm-social-${{ github.run_number }
+          name: Smart Money Social 1.${{ github.run_number }
+          generate_release_notes: true
+          make_latest: true
+          files: android/app/build/outputs/apk/debug/app-debug.apk
+          fail_on_unmatched_files: true
