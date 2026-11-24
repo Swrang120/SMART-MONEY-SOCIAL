@@ -5030,5 +5030,50 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
 #modalBack.story-mode .sm-story-tools svg,
 #modalBack.story-mode .sm-story-tools i{color:#fff!important;opacity:1!important}
 </style>
+<style id="story-filter-circles-only-v1">
+/* Filters view: no drawer/card slab or thumbnail tile backgrounds—show only round previews. */
+#modalBack.story-mode #smStoryPanel[data-active-tool="filters"],
+#modalBack.story-mode #smStoryFiltersPanel,
+#modalBack.story-mode #smStoryFiltersPanel .sm-story-filter-grid,
+#modalBack.story-mode #smStoryPanel[data-active-tool="filters"] .sm-story-filter-grid{
+ background:transparent!important;
+ background-color:transparent!important;
+ background-image:none!important;
+ border:0!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+#modalBack.story-mode #smStoryPanel[data-active-tool="filters"]{
+ outline:0!important;
+}
+#modalBack.story-mode #smStoryFiltersPanel .sm-story-filter-grid button,
+#modalBack.story-mode #smStoryPanel[data-active-tool="filters"] .sm-story-filter-grid button{
+ background:transparent!important;
+ background-color:transparent!important;
+ border:0!important;
+ box-shadow:none!important;
+ padding:0!important;
+}
+#modalBack.story-mode #smStoryFiltersPanel .story-filter-thumb,
+#modalBack.story-mode #smStoryFiltersPanel .sm-effect-thumb,
+#modalBack.story-mode #smStoryFiltersPanel .sm-effect-photo-thumb,
+#modalBack.story-mode #smStoryPanel[data-active-tool="filters"] .story-filter-thumb{
+ border-radius:50%!important;
+ overflow:hidden!important;
+ background:transparent!important;
+ box-shadow:none!important;
+}
+#modalBack.story-mode #smStoryFiltersPanel .story-filter-thumb img,
+#modalBack.story-mode #smStoryFiltersPanel .sm-effect-thumb img,
+#modalBack.story-mode #smStoryFiltersPanel .sm-effect-photo-thumb img{
+ width:100%!important;height:100%!important;object-fit:cover!important;
+ border-radius:50%!important;display:block!important;
+}
+#modalBack.story-mode #smStoryFiltersPanel button small,
+#modalBack.story-mode #smStoryFiltersPanel button b{
+ color:#fff!important;text-shadow:0 1px 3px #000!important;
+}
+</style>
 </body>
 </html>
