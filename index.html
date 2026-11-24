@@ -4964,5 +4964,71 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
 }
 #modalBack.story-mode #storyMusicAudioPreview{display:block;width:100%;max-width:100%}
 </style>
+<style id="story-effects-solid-controls-v1">
+/* Story tool drawer must be crisp and readable over the preview. */
+#modalBack.story-mode #smStoryPanel,
+#modalBack.story-mode #smStoryPanel[data-active-tool="effects"],
+#modalBack.story-mode #smStoryPanel[data-active-tool="filters"],
+#modalBack.story-mode #smStoryEffectsPanel,
+#modalBack.story-mode #smStoryFiltersPanel{
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ background:#101b2a!important;
+ background-image:none!important;
+ opacity:1!important;
+}
+#modalBack.story-mode #smStoryPanel[data-active-tool="effects"],
+#modalBack.story-mode #smStoryPanel[data-active-tool="filters"]{
+ border:1px solid #35516d!important;
+ border-bottom:0!important;
+ box-shadow:0 -8px 24px #0009!important;
+}
+#modalBack.story-mode #smStoryPanel[data-active-tool="effects"] .sm-story-panel-head,
+#modalBack.story-mode #smStoryPanel[data-active-tool="filters"] .sm-story-panel-head{
+ background:#101b2a!important;
+ color:#fff!important;
+ opacity:1!important;
+}
+#modalBack.story-mode .v23-effect-list,
+#modalBack.story-mode .sm-pdf-effect-grid,
+#modalBack.story-mode .sm-story-filter-grid{
+ background:#101b2a!important;
+ opacity:1!important;
+}
+#modalBack.story-mode .v23-effect-list button,
+#modalBack.story-mode .sm-pdf-effect-grid button,
+#modalBack.story-mode .sm-story-filter-grid button{
+ opacity:1!important;
+ filter:none!important;
+ color:#fff!important;
+ text-shadow:0 1px 3px #000!important;
+}
+#modalBack.story-mode .v23-effect-list button small{
+ color:#fff!important;font-weight:700!important;text-shadow:0 1px 3px #000!important;
+}
+#modalBack.story-mode .v23-effect-list .sm-effect-thumb{
+ opacity:1!important;filter:none!important;
+ border:2px solid #91b8d8!important;
+ box-shadow:0 2px 10px #0009!important;
+}
+#modalBack.story-mode .v23-effect-list button.active .sm-effect-thumb{
+ border:3px solid #f1c96c!important;
+ box-shadow:0 0 0 2px #f1c96c55,0 3px 12px #000b!important;
+}
+#modalBack.story-mode .sm-story-tools,
+#modalBack.story-mode .sm-story-tools button,
+#modalBack.story-mode .sm-story-tools .sm-story-tool,
+#modalBack.story-mode .sm-story-tools i{
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ opacity:1!important;filter:none!important;
+}
+#modalBack.story-mode .sm-story-tools button,
+#modalBack.story-mode .sm-story-tools .sm-story-tool{
+ background:#111d2d!important;border:1px solid #7592ad!important;
+ color:#fff!important;box-shadow:0 2px 9px #0009!important;
+}
+#modalBack.story-mode .sm-story-tools svg,
+#modalBack.story-mode .sm-story-tools i{color:#fff!important;opacity:1!important}
+</style>
 </body>
 </html>
