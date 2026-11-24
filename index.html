@@ -4872,5 +4872,52 @@ document.addEventListener('click',function(e){const b=document.querySelector('#m
 #modalBack:not(.story-mode) .follow-list-row:focus-visible{outline:2px solid #55cfff;outline-offset:2px}
 #modalBack:not(.story-mode) .follow-list-row .avatar{flex:0 0 42px}
 </style>
+<style id="perfect-circle-avatar-fix-v1">
+/* Keep every DP perfectly round; clip the image inside the circular frame. */
+.avatar{
+ box-sizing:border-box!important;
+ aspect-ratio:1 / 1!important;
+ border-radius:50%!important;
+ overflow:hidden!important;
+ flex-shrink:0!important;
+}
+.avatar img{
+ display:block!important;
+ width:100%!important;
+ height:100%!important;
+ max-width:none!important;
+ max-height:none!important;
+ min-width:100%!important;
+ min-height:100%!important;
+ border-radius:50%!important;
+ object-fit:cover!important;
+ object-position:center center!important;
+}
+/* Profile header DP: fixed square frame so it cannot become oval. */
+.profile-avatar-wrap{
+ width:88px!important;
+ height:88px!important;
+ min-width:88px!important;
+ min-height:88px!important;
+ border-radius:50%!important;
+ flex:0 0 88px!important;
+}
+.profile-main .profile-avatar-wrap>.avatar{
+ width:100%!important;
+ height:100%!important;
+ min-width:100%!important;
+ min-height:100%!important;
+ flex:0 0 100%!important;
+ border-radius:50%!important;
+ overflow:hidden!important;
+}
+@media(max-width:560px){
+ .profile-avatar-wrap{
+  width:76px!important;height:76px!important;
+  min-width:76px!important;min-height:76px!important;
+  flex-basis:76px!important;
+ }
+}
+</style>
 </body>
 </html>
